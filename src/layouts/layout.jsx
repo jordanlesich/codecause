@@ -28,7 +28,7 @@ const MainSpace = styled.main`
 
 const Layout = ({ children, sideMenu }) => {
   const [drawer, toggleDrawer] = useToggle(true);
-  const [stepper, toggleStepper] = useToggle(false);
+  const [stepper, toggleStepper] = useToggle(true);
   const [login, toggleLogin] = useToggle(false);
   const [signUp, toggleSignUp] = useToggle(false);
 

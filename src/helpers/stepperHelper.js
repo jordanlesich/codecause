@@ -16,6 +16,7 @@ const mapSingleQA = (step) => {
     completed: false,
   };
 };
+
 const mapMultiQA = (step) => {
   const { type, questions } = step.QA;
   return {
@@ -33,6 +34,7 @@ export const createStepperData = (instructions) => {
   return stepData.map((step) => {
     if (step.QA.type === "singleQA") return mapSingleQA(step);
     if (step.QA.type === "multiQA") return mapMultiQA(step);
+    if (step.QA.type === "tagPicker") return mapSingleQA(step);
     else {
       console.error("Step doesn't have a valid QA frame");
       return null;
@@ -187,7 +189,7 @@ export const instructions = [
     tag: "Q6",
     frames: [
       {
-        type: "singleQA",
+        type: "tagPicker",
         title: "Cause Tag",
         question: "What's your cause tag?",
         details:
@@ -195,8 +197,11 @@ export const instructions = [
         help:
           "Cause tags help devs who are looking to work on a specific cause find your project.",
         tag: "Q6",
-        input: {
-          type: "textBox",
+        pickerRules: {
+          type: "cause",
+          selectLimit: 1,
+          displayLimit: 15,
+          createTag: true,
           validation: [
             { type: "not-empty", response: "Please type in a response" },
           ],
@@ -208,16 +213,19 @@ export const instructions = [
     tag: "Q7",
     frames: [
       {
-        type: "singleQA",
+        type: "tagPicker",
         title: "Solution Tag",
-        question: "What sort of technology will help your cause?",
+        question: "What needs to be built?",
         details:
-          "Choose a tag that describes your project's solution, or create your own. If you don't know the solution, that's ok. Just type 'consultation'.",
+          "Choose a tag that describes your project's solution, or create your own. If you don't know the solution, that's ok. Just use the 'consultation' tag.",
         help:
           "Solution tags tell developers what type of project they will be working on, ex. 'Web app'.",
         tag: "Q7",
-        input: {
-          type: "textBox",
+        pickerRules: {
+          type: "solution",
+          selectLimit: 1,
+          displayLimit: 15,
+          createTag: true,
           validation: [
             { type: "not-empty", response: "Please type in a response" },
           ],
@@ -229,15 +237,19 @@ export const instructions = [
     tag: "Q8",
     frames: [
       {
-        type: "singleQA",
+        type: "tagPicker",
         title: "Skill Tags",
         question: "What sort of skills are you looking for? (10 max)",
-        details: "If you don't know that's ok. Just type 'consultation'.",
+        details:
+          "If you don't know that's ok. Just choose the 'consultation' tag.",
         help:
           "Cause tags help devs who are looking to work on a specific cause find your project.",
         tag: "Q8",
-        input: {
-          type: "textBox",
+        pickerRules: {
+          type: "skill",
+          selectLimit: 1,
+          displayLimit: 30,
+          createTag: true,
           validation: [
             { type: "not-empty", response: "Please type in a response" },
           ],

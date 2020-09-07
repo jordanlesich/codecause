@@ -2,31 +2,26 @@ import React, { useEffect, useState } from "react";
 import { MessageSquare, List, Users } from "react-feather";
 import { useParams } from "react-router-dom";
 
-import { db } from "../base";
 import Layout from "../layouts/layout";
 import TitleBar from "../components/TitleBar";
 import TabMenu from "../components/tabMenu";
 import Tab from "../components/tab";
 import WhitePaper from "../layouts/whitePaper";
+import { getProject } from "../actions/project";
 
-const ProjectsPage = () => {
-  const [project, setProject] = useState(null);
+const ProjectsPage = (props) => {
+  const [project, setProject] = useState(props.location.state || null);
   const { projectId } = useParams();
 
   useEffect(() => {
-    db.collection("projects")
-      .doc(projectId)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          console.log("Document data: ", doc.data());
-          setProject(doc.data());
-        } else {
-          console.error("Document does not exist");
-        }
-      })
-      .catch((err) => console.error(err));
-  }, [projectId]);
+    const fetchProject = async () => {
+      setProject(await getProject(projectId));
+    };
+    if (project === null) {
+      fetchProject();
+    }
+    return () => fetchProject;
+  }, [projectId, project]);
 
   const sideMenu = (
     <TabMenu
@@ -55,7 +50,7 @@ const ProjectsPage = () => {
       {project !== null && (
         <>
           <TitleBar title={project.name} creator={project.creator} />
-          <WhitePaper fields={project.body || null} title={project.name} />
+          <WhitePaper project={project} />
         </>
       )}
     </Layout>

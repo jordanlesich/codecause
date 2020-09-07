@@ -12,6 +12,7 @@ const getBtnText = (type) => {
   const texts = {
     message: "Next",
     singleQA: "Submit",
+    tagPicker: "Submit",
     results: "Complete",
   };
   return texts[type];
@@ -27,7 +28,6 @@ const NextFrameButton = ({ exitStepper }) => {
   } = useContext(StepperContext);
 
   const { user } = useContext(AuthContext);
-
   const { type } = currentFrame;
 
   const completeStep = (e) => {
@@ -43,6 +43,7 @@ const NextFrameButton = ({ exitStepper }) => {
     const functions = {
       message: next,
       singleQA: completeStep,
+      tagPicker: completeStep,
       results: completeForm,
     };
     return functions[type];

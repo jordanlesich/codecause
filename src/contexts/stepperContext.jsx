@@ -12,31 +12,57 @@ export const StepperProvider = ({ children }) => {
   const [stepperData, setStepperData] = useState(
     createStepperData(instructions)
   );
-  const [step, setStep] = useState(0);
+
+  const [step, setStep] = useState(6);
   const [frame, setFrame] = useState(0);
 
+  console.log(stepperData);
   //******************DATA Fns************************ */
   const currentInputValue = stepperData[step].answer;
 
   //TODO, refactor. I went for simplicity and safety over
   //performance. Should refactor to something that updates state
   //only when the user clicks to submit or to another page.
-  const typeAnswer = (str) => {
-    const newQA = { ...stepperData[step], answer: str };
+  const placeAnswer = (data) => {
     setStepperData((currentData) => [
       ...currentData.slice(0, step),
-      newQA,
+      data,
       ...currentData.slice(step + 1),
     ]);
+  };
+  const typeAnswer = (str) => {
+    const newQA = { ...stepperData[step], answer: str };
+    placeAnswer(newQA);
   };
 
   const addData = () => {
     const newQA = { ...stepperData[step], completed: true };
-    setStepperData((currentData) => [
-      ...currentData.slice(0, step),
-      newQA,
-      ...currentData.slice(step + 1),
-    ]);
+    placeAnswer(newQA);
+  };
+
+  //***********TagPicker Fns******************//
+
+  const initializeTagPicker = (tag) => {
+    const newQA = { ...stepperData[step], answer: [] };
+    placeAnswer(newQA);
+  };
+  const addTag = (str) => {
+    const newQA = {
+      ...stepperData[step],
+      answer: [...stepperData[step].answer, str],
+    };
+    placeAnswer(newQA);
+  };
+  const removeTag = ({ value }) => {
+    const newQA = {
+      ...stepperData[step],
+      answer: stepperData[step].answer.filter((tag) => {
+        console.log(tag, value);
+        return tag !== value;
+      }),
+    };
+    console.log(newQA);
+    placeAnswer(newQA);
   };
 
   //***********Navigational Fns******************//
@@ -83,6 +109,9 @@ export const StepperProvider = ({ children }) => {
         setFrame,
         step,
         setStep,
+        addTag,
+        removeTag,
+        initializeTagPicker,
         currentStep,
         currentFrame,
         prev,

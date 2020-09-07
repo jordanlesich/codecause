@@ -38,20 +38,26 @@ export const LargeTag = styled.button`
 `;
 
 const Tag = ({ text, type, value, fn }) => {
+  const handleClick = (e) => {
+    fn({
+      field: type,
+      value: value,
+    });
+  };
   return (
     <>
       {type === "skill" && (
-        <SmallTag value={value} onClick={fn}>
+        <SmallTag value={value} onClick={handleClick}>
           {text}
         </SmallTag>
       )}
-      {type === "project" && (
-        <LargeTag value={value} onClick={fn}>
+      {type === "solution" && (
+        <LargeTag value={value} onClick={handleClick}>
           {text}
         </LargeTag>
       )}
       {type === "cause" && (
-        <LargeTag value={value} onClick={fn}>
+        <LargeTag value={value} onClick={handleClick}>
           {text}
         </LargeTag>
       )}

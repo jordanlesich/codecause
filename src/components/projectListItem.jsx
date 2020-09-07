@@ -79,7 +79,13 @@ const ProjectListItem = ({ project }) => {
         <span className="vote-wrapper">
           {/* <Votes votes={project.votes} projectId={project.id} /> */}
         </span>
-        <Link to={`projects/${project.id}`} className="project-name">
+        <Link
+          to={{
+            pathname: `projects/${project.id}`,
+            state: project,
+          }}
+          className="project-name"
+        >
           {project.name}
         </Link>
         <p className="project-description">{project.description}</p>

@@ -32,10 +32,8 @@ const StyledTabMenu = styled.div`
     height: 100%;
   }
   .tab-stage {
+    margin-top: 3rem;
     height: 90%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
   .tab-buttons-bar {
     display: flex;
@@ -100,7 +98,6 @@ const TabMenu = ({ options, title, handleToggle }) => {
   return (
     <>
       <StyledTabMenu>
-        <h2 className="tab-title">{title}</h2>
         <div className="tab-frame">
           <div className="tab-buttons-bar">
             {options &&

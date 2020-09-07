@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
+import { format } from "date-fns";
 
+import Tag from "../components/tag";
 import { getColor } from "../helpers/palette";
 
 const Paper = styled.div`
@@ -61,19 +63,68 @@ const Paper = styled.div`
   }
 `;
 
-const WhitePaper = ({ title, fields }) => {
+const handleDateFormat = (date) => format(date, "MM/dd/yyyy");
+const getDate = (project) => {
+  if (project.lastUpdated) return handleDateFormat(project.lastUpdated);
+  if (project.timeCreated) return handleDateFormat(project.timeCreated);
+  else return "Error: No date found";
+};
+
+const WhitePaper = ({ project }) => {
   return (
     <>
       <Paper>
-        {title && <h2 className="paper-title">{title || "Error: No Title"}</h2>}
-        {fields.map((field) => {
-          return (
-            <div key={field.question} className={"section"}>
-              <h3 className="heading">{field.question}</h3>
-              <p className="response editable">{field.answer}</p>
-            </div>
-          );
-        })}
+        <h2 className="paper-title">{project.name || "Error: No Title"}</h2>
+        <div className="section">
+          <div>
+            {project.creator} is building a{" "}
+            <Tag type="solution" text={project.solutionTag} /> for
+            <Tag type="cause" text={project.causeTag} />
+            <p>
+              They are looking for:{" "}
+              {project.skillTags.map((tag) => (
+                <Tag type="skill" text={tag} key={tag} />
+              ))}
+            </p>
+          </div>
+          <p>Last updated: {getDate(project)}</p>
+        </div>
+        <div className="section">
+          <h3 className="heading">Brief:</h3>
+          <p className="response editable">
+            {project.description || "Error: No description found"}
+          </p>
+        </div>
+        <div className="section">
+          <h3 className="heading">Problem:</h3>
+          <p className="response editable">
+            {project.problem || "Error: No problem found"}
+          </p>
+        </div>
+        <div className="section">
+          <h3 className="heading">Solution:</h3>
+          <p className="response editable">
+            {project.solution || "Error: No solution found"}
+          </p>
+        </div>
+        <div className="section">
+          <h3 className="heading">The Minimum Viable Product:</h3>
+          <p className="response editable">
+            {project.mvp || "Error: No MVP found"}
+          </p>
+        </div>
+        <div className="section">
+          <h3 className="heading">Creator's Experience:</h3>
+          <p className="response editable">
+            {project.experience || "Error: No XP found"}
+          </p>
+        </div>
+        <div className="section">
+          <h3 className="heading">Extra details:</h3>
+          <p className="response editable">
+            {project.details || "Error: No details found"}
+          </p>
+        </div>
       </Paper>
     </>
   );

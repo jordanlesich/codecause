@@ -5,6 +5,7 @@ import { X } from "react-feather";
 import { StepperContext } from "../../contexts/stepperContext";
 import Message from "../frames/message";
 import SingleQA from "../frames/singleQA";
+import TagPicker from "../frames/tagPicker";
 import Results from "../frames/results";
 import Button from "../../components/button";
 import NextFrameButton from "../factories/nextFrameButton";
@@ -16,6 +17,7 @@ const getFrame = (type) => {
     message: <Message />,
     results: <Results />,
     singleQA: <SingleQA />,
+    tagPicker: <TagPicker />,
   };
   return frame[type];
 };
