@@ -1,9 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Star } from "react-feather";
 import styled from "styled-components";
 
 import { AuthContext } from "../contexts/authContext";
 import { getColor } from "../helpers/palette";
+import { addVote, removeVote } from "../actions/votes";
 
 const VoteBox = styled.div`
   display: flex;
@@ -51,36 +52,45 @@ const VoteBox = styled.div`
   }
 `;
 
-const Votes = ({ votes, projectId }) => {
-  const { user } = useContext(AuthContext);
-
-  const [voteData] = useState({
-    voteAmt: votes.length,
-    hasVoted: votes.includes((userId) => userId === user.id),
+const Votes = ({ votes, id }) => {
+  const { user, handleLocalVote } = useContext(AuthContext);
+  const [voteState, setVoteState] = useState({
+    votes: votes,
+    hasVoted: null,
   });
   const [loading, setLoading] = useState(false);
 
-  console.log(voteData);
+  useEffect(() => {
+    if (user && voteState.hasVoted === null) {
+      setVoteState((prevState) => ({
+        votes: prevState.votes,
+        hasVoted: user.profile.starredProjects.includes(id),
+      }));
+    }
+  }, [user, voteState, id]);
+
   const handleClick = (e) => {
-    if (!voteData.hasVoted) {
-      const params = {
-        user_id: user.id,
-        project_id: projectId,
-      };
-      // addVote({ setVoteData, params, setLoading, projectId });
+    if (loading) return;
+    if (!user) return;
+    if (voteState.hasVoted) {
+      removeVote(user.profile, id, setVoteState, setLoading);
+      handleLocalVote("remove", id);
     } else {
-      ///delete vote
+      addVote(user.profile, id, setVoteState, setLoading);
+      handleLocalVote("add", id);
     }
   };
 
   return (
-    <VoteBox onClick={handleClick} isClicked={voteData.hasVoted}>
+    <VoteBox onClick={handleClick} isClicked={voteState.hasVoted}>
       {loading ? (
-        <div className="loading-dots">...</div>
+        <p className="vote-text">...</p>
       ) : (
-        <Star className={`vote-icon`} />
+        <>
+          <Star className={`vote-icon`} />
+          <p className="vote-text ">{voteState.votes}</p>
+        </>
       )}
-      <p className="vote-text ">{voteData.voteAmt || "0"}</p>
     </VoteBox>
   );
 };

@@ -8,7 +8,6 @@ export const getColor = (name) => {
     lightBorder: "#e1e4e8",
     clearBorder: "#e1e4e8",
     font: "rgb(41,41,41)",
-    success: "#2ea44f",
     //500
     info: "#6f42c1",
     //000
@@ -36,6 +35,14 @@ export const getColor = (name) => {
     secondary300: "#d1d5da",
     secondary500: "#6a737d",
     secondary600: "#586069",
+
+    success: "#34d058",
+    success000: "#f0fff4",
+    success100: "#dcffe4",
+    success200: "#bef5cb",
+    success300: "#85e89d",
+    success500: "#28a745",
+    success600: "#22863a",
   };
   return palette[name];
 };

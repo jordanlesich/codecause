@@ -4,20 +4,27 @@ import styled from "styled-components";
 import { getColor } from "../helpers/palette";
 
 const StyledLabel = styled.label`
+  /* display: flex;
+  flex-direction: column; */
   display: flex;
   flex-direction: column;
-  color: #adb8ba;
+  font-size: 1.2rem;
+  letter-spacing: -0.022em;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-transform: capitalize;
+  width: ${(props) => props.width};
 `;
 
 const StyledInput = styled.input`
-  margin-bottom: 1vh;
   box-sizing: border-box;
   display: inline-block;
-  font-size: 0.9rem;
+  font-size: 1rem;
   height: 40px;
-  width: 250px;
+  width: ${(props) => props.width};
   padding-left: 9px;
   padding-bottom: 2px;
+  margin-top: 0.5rem;
   border: 1px solid ${getColor("lightBorder")};
   border-radius: 4px;
   background-color: ${(props) => props.bgColor};
@@ -28,12 +35,23 @@ const StyledInput = styled.input`
   :focus {
     background-color: #f2f6fa;
     outline: none;
-    border: 1px solid ${getColor("secondary")};
+
     box-shadow: 5px 5px 3px -3px rgba(89, 89, 89, 0.3);
   }
 `;
 
-const Input = ({ placeholder, label, id, fn, type, name, valid }) => {
+const Input = ({
+  placeholder,
+  label,
+  id,
+  fn,
+  type,
+  name,
+  valid,
+  value,
+  disabled = false,
+  width = "250px",
+}) => {
   let invalidInput;
   if (!valid) invalidInput = getColor("error");
   id ||
@@ -52,7 +70,10 @@ const Input = ({ placeholder, label, id, fn, type, name, valid }) => {
         onBlur={fn}
         placeholder={placeholder || "Placeholder text"}
         type={type}
+        value={value}
         bgColor={invalidInput || getColor("white")}
+        disabled={disabled}
+        width={width}
       />
     </StyledLabel>
   );

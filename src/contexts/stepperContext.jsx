@@ -13,10 +13,9 @@ export const StepperProvider = ({ children }) => {
     createStepperData(instructions)
   );
 
-  const [step, setStep] = useState(6);
+  const [step, setStep] = useState(0);
   const [frame, setFrame] = useState(0);
 
-  console.log(stepperData);
   //******************DATA Fns************************ */
   const currentInputValue = stepperData[step].answer;
 
@@ -61,7 +60,7 @@ export const StepperProvider = ({ children }) => {
         return tag !== value;
       }),
     };
-    console.log(newQA);
+
     placeAnswer(newQA);
   };
 

@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Search, Tag, Info } from "react-feather";
 
+import { AuthContext } from "../contexts/authContext";
 import TabMenu from "../components/tabMenu";
 import TagSearch from "../tabs/tagSearch";
 import Tab from "../components/tab";
@@ -43,22 +45,29 @@ const ListingSpace = styled.div`
   } */
 `;
 
-const ProjectsPage = () => {
+const ProjectsPage = (props) => {
   const [projects, setProjects] = useState(null);
+  const queryData = props.location.state;
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      setProjects(await getProjects());
-    };
-    if (projects == null) {
+    if (queryData !== undefined) {
+      queryByTag(queryData);
+    } else {
       fetchProjects();
     }
-  }, []);
+  }, [queryData]);
+
+  const fetchProjects = async () => {
+    setProjects(await getProjects());
+  };
+
   const queryByTag = async ({ field, value }) => {
     setProjects(null);
     const newProjects = await queryProjectsByTag(field, value);
     setProjects(newProjects);
   };
+
   const sideMenu = (
     <TabMenu
       options={[
@@ -86,12 +95,22 @@ const ProjectsPage = () => {
       return <h1 className="listing-title"> Loading...</h1>;
     }
     if (projects.length === 0) {
-      return <h1 className="listing-title"> No Results Found</h1>;
+      return (
+        <>
+          <h1 className="listing-title"> No Results Found</h1>
+          <Link to={{ pathName: "/projects", state: undefined }}>
+            Browse all{" "}
+          </Link>
+        </>
+      );
     }
     if (projects.length) {
       return (
         <>
           <h1 className="listing-title">{projects.length} Active Projects</h1>
+          <Link to={{ pathName: "/projects", state: undefined }}>
+            Browse all{" "}
+          </Link>
           <ul>
             {projects.map((project) => (
               <ProjectListItem project={project} key={project.id} />

@@ -1,40 +1,42 @@
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../base";
+import kebabCase from "lodash.kebabcase";
+
 import { handleNewTags } from "./tags";
 
 const projectRef = db.collection("projects");
 
-export const createProject = (stepperData, user, finishedFn, loadingFn) => {
+export const createProject = (stepperData, user, finishedFn) => {
   const params = {
+    slug: `${kebabCase(user.profile.displayName)}-${kebabCase(
+      stepperData[0].answer
+    )}`,
     id: uuidv4(),
     name: stepperData[0].answer,
     description: stepperData[1].answer,
-    creator: user.displayName,
+    creator: user.profile.displayName,
     timeCreated: Date.now(),
     problem: stepperData[2].answer,
     solution: stepperData[3].answer,
     experience: stepperData[4].answer,
     mvp: stepperData[5].answer,
-    causeTag: stepperData[6].answer,
-    solutionTag: stepperData[7].answer,
-    skillTags: stepperData[8].answer.split(" "),
+    causeTag: stepperData[6].answer[0],
+    solutionTag: stepperData[7].answer[0],
+    skillTags: stepperData[8].answer,
     details: stepperData[9].answer,
+    votes: 0,
   };
 
   projectRef
-    .doc(params.id)
+    .doc(params.slug)
     .set(params)
     .then(() => {
-      console.log(`${params.name} posted successfully`);
-      const newSkillTags = params.skillTags.map((tag) => ({
-        type: "skill",
-        text: tag,
-      }));
-      handleNewTags([
-        { type: "solution", text: params.solutionTag },
+      const allStrTags = [
+        ...params.skillTags.map((tag) => ({ type: "skill", text: tag })),
         { type: "cause", text: params.causeTag },
-        ...newSkillTags,
-      ]);
+        { type: "solution", text: params.solutionTag },
+      ];
+      handleNewTags(allStrTags);
       finishedFn();
     })
     .catch((err) => {
@@ -69,10 +71,10 @@ const getTagSearchOp = (tagType) => {
   if (tagType === "skill") return "array-contains";
   else return "==";
 };
+
 export const queryProjectsByTag = async (tagType, value) => {
   const op = getTagSearchOp(tagType);
   const field = getTagField(tagType);
-  console.log(field, op, value);
   return projectRef
     .where(field, op, value)
     .get()

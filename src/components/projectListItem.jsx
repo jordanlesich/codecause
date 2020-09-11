@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-// import Votes from "../components/votes";
+import Votes from "../components/votes";
 import { getColor } from "../helpers/palette";
 
 const ListItem = styled.li`
@@ -77,11 +77,11 @@ const ProjectListItem = ({ project }) => {
     <ListItem>
       <div className="info-wrapper">
         <span className="vote-wrapper">
-          {/* <Votes votes={project.votes} projectId={project.id} /> */}
+          <Votes votes={project.votes} id={project.slug} />
         </span>
         <Link
           to={{
-            pathname: `projects/${project.id}`,
+            pathname: `projects/${project.slug}`,
             state: project,
           }}
           className="project-name"

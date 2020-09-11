@@ -50,11 +50,17 @@ const NextFrameButton = ({ exitStepper }) => {
   };
   const disableBtnCondition = (type) => {
     const hasInputText = currentInputValue === "";
+    const hasArrayItem =
+      currentInputValue === "" || currentInputValue.length === 0;
+    const allStepsCompleted = stepperData.every((step) => step.completed);
+
     const conditions = {
       message: false,
       singleQA: hasInputText,
-      results: false,
+      tagPicker: hasArrayItem,
+      results: !allStepsCompleted,
     };
+
     return conditions[type];
   };
   return (

@@ -19,11 +19,11 @@ const MessageFrame = styled.div`
 
 const Message = () => {
   const { currentFrame } = useContext(StepperContext);
-  const { title, subTitle, body } = currentFrame;
+  const { title, subTitle, body, showTitle } = currentFrame;
 
   return (
     <MessageFrame>
-      <Title>{title}</Title>
+      {showTitle && <Title>{title}</Title>}
       {subTitle && <MsgText> {subTitle} </MsgText>}
       {body && (
         <div className="body-text">

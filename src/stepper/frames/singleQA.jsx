@@ -17,6 +17,7 @@ const SingleQA = () => {
     currentInputValue,
     next,
     addData,
+    showTitle,
   } = useContext(StepperContext);
 
   const { question, details, input, tag, title } = currentFrame;
@@ -32,7 +33,7 @@ const SingleQA = () => {
 
   return (
     <StyledQA onSubmit={completeStep}>
-      <Title>{title}</Title>
+      {showTitle && <Title>{title}</Title>}
       <Question htmlFor={tag} className="QA-label">
         {question}
       </Question>

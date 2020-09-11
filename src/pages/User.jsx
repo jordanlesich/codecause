@@ -15,7 +15,7 @@ const UserPage = () => {
   const { userId } = useParams();
 
   useEffect(() => {
-    db.collection("users")
+    db.collection("profiles")
       .doc(userId)
       .get()
       .then((doc) => {
@@ -51,7 +51,6 @@ const UserPage = () => {
     />
   );
 
-  console.log(user);
   return (
     <Layout sideMenu={sideMenu}>
       {user != null && <TitleBar title={user.name} subtitle={"newUi"} />}

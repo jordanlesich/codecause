@@ -28,7 +28,7 @@ const TagSearch = ({ queryByTag }) => {
   return (
     <TagSearchMenu>
       <h2>Search by Tag</h2>
-      {tags == null ? (
+      {tags === null ? (
         loading
       ) : (
         <>

@@ -149,6 +149,25 @@ export const StyledButton = styled.button`
       box-shadow: none;
     }
   }
+  &.success {
+    border: 1px solid ${getColor("success300")};
+    background-color: ${getColor("success000")};
+    color: ${getColor("success")};
+    :hover:enabled {
+      background-color: ${getColor("success100")};
+      border: 1px solid ${getColor("success")};
+    }
+    :focus:enabled {
+      background-color: ${getColor("success100")};
+      border: 1px solid ${getColor("success")};
+    }
+    :disabled {
+      background-color: ${getColor("white")};
+      border: 1px solid ${getColor("lightBorder")};
+      color: ${getColor("secondary")};
+      box-shadow: none;
+    }
+  }
 `;
 
 const Button = ({

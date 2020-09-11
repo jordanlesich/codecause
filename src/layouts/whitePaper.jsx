@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 import { format } from "date-fns";
 
 import Tag from "../components/tag";
@@ -71,6 +72,14 @@ const getDate = (project) => {
 };
 
 const WhitePaper = ({ project }) => {
+  const history = useHistory();
+
+  const searchByTag = ({ field, value }) => {
+    history.push({
+      pathname: "/projects",
+      state: { field, value },
+    });
+  };
   return (
     <>
       <Paper>
@@ -78,12 +87,29 @@ const WhitePaper = ({ project }) => {
         <div className="section">
           <div>
             {project.creator} is building a{" "}
-            <Tag type="solution" text={project.solutionTag} /> for
-            <Tag type="cause" text={project.causeTag} />
+            <Tag
+              type="solution"
+              text={project.solutionTag}
+              fn={searchByTag}
+              value={project.solutionTag}
+            />{" "}
+            for
+            <Tag
+              type="cause"
+              text={project.causeTag}
+              fn={searchByTag}
+              value={project.causeTag}
+            />
             <p>
               They are looking for:{" "}
               {project.skillTags.map((tag) => (
-                <Tag type="skill" text={tag} key={tag} />
+                <Tag
+                  type="skill"
+                  text={tag}
+                  key={tag}
+                  fn={searchByTag}
+                  value={tag}
+                />
               ))}
             </p>
           </div>

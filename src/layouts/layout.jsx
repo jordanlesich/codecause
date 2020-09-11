@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import Stepper from "../stepper/stepper";
+import { StepperProvider } from "../contexts/stepperContext";
 import Drawer from "../components/drawer";
 import Header from "../layouts/header";
 import Login from "../components/login";
@@ -28,7 +29,7 @@ const MainSpace = styled.main`
 
 const Layout = ({ children, sideMenu }) => {
   const [drawer, toggleDrawer] = useToggle(true);
-  const [stepper, toggleStepper] = useToggle(true);
+  const [stepper, toggleStepper] = useToggle(false);
   const [login, toggleLogin] = useToggle(false);
   const [signUp, toggleSignUp] = useToggle(false);
 
@@ -50,7 +51,10 @@ const Layout = ({ children, sideMenu }) => {
       </StyleTemplate>
       {login && <Login toggleModal={toggleLogin} />}
       {signUp && <SignUp toggleModal={toggleSignUp} />}
-      {stepper && <Stepper toggleStepper={toggleStepper} />}
+
+      <StepperProvider>
+        {stepper && <Stepper toggleStepper={toggleStepper} />}
+      </StepperProvider>
     </>
   );
 };

@@ -49,7 +49,8 @@ export const instructions = [
       {
         type: "message",
         title: "Starting a Project on Code Cause",
-        subTitle: "Here's what you need to know",
+        showTitle: false,
+        subTitle: "Here's What You Need to Know",
         body: {
           type: "list",
           strings: [
@@ -68,8 +69,8 @@ export const instructions = [
       {
         type: "singleQA",
         title: "The Name",
-        hideTitle: true,
-        question: "What's your project's name",
+        showTitle: false,
+        question: "What's Your Project's Name",
         tag: "Q0",
         details:
           "A good name is short, catchy, and describes the project well.",
@@ -89,6 +90,7 @@ export const instructions = [
       {
         type: "singleQA",
         title: "The Pitch",
+        showTitle: false,
         question: "Give us the Elevator Pitch.",
         details: "Describe your idea in a sentence.",
         tag: "Q1",
@@ -109,7 +111,8 @@ export const instructions = [
       {
         type: "singleQA",
         title: "The Problem",
-        question: "What problem needs solving?",
+        showTitle: false,
+        question: "Describe the Problem",
         details:
           "In a brief paragraph, describe what problem you aim to solve by making this project",
         tag: "Q2",
@@ -128,7 +131,8 @@ export const instructions = [
       {
         type: "singleQA",
         title: "The Solution",
-        question: "What's the Solution?",
+        showTitle: false,
+        question: "Describe your Solution?",
         details:
           "If you can describe the solution, do so in a short paragraph. If you can't, no problem. Just write, 'needs consultation'",
         help:
@@ -148,11 +152,11 @@ export const instructions = [
     frames: [
       {
         type: "singleQA",
-        title: "Your Experience (TODO: RADIO OUTPUT FROM 1-10?)",
-        question:
-          "What kind of experience do you have working with developers?",
+        title: "Experience",
+        showTitle: false,
+        question: "Do You Have Tech Experience?",
         details:
-          "It's ok if you don't have any experience, it helps the contributors know what to expect from you.",
+          "Do you have any experience working with developers, designers etc? It's ok if you don't.",
         help:
           "1 = you have no idea how to solve this problem, 10 means you know exactly how to solve the problem, you just need help.",
         tag: "Q4",
@@ -171,6 +175,7 @@ export const instructions = [
       {
         type: "singleQA",
         title: "The Finished Project",
+        showTitle: false,
         question: "What's the Minimum Viable Product?'",
         details: "At what point do you consider the project completed.",
         help:
@@ -191,6 +196,7 @@ export const instructions = [
       {
         type: "tagPicker",
         title: "Cause Tag",
+        showTitle: false,
         question: "What's your cause tag?",
         details:
           "Choose a tag that describes your project's cause, or create your own",
@@ -215,6 +221,7 @@ export const instructions = [
       {
         type: "tagPicker",
         title: "Solution Tag",
+        showTitle: false,
         question: "What needs to be built?",
         details:
           "Choose a tag that describes your project's solution, or create your own. If you don't know the solution, that's ok. Just use the 'consultation' tag.",
@@ -239,15 +246,16 @@ export const instructions = [
       {
         type: "tagPicker",
         title: "Skill Tags",
-        question: "What sort of skills are you looking for? (10 max)",
+        showTitle: false,
+        question: "What sort of skills are you looking for?",
         details:
-          "If you don't know that's ok. Just choose the 'consultation' tag.",
+          "If you don't know that's ok. Just choose the 'consultation' tag. ",
         help:
           "Cause tags help devs who are looking to work on a specific cause find your project.",
         tag: "Q8",
         pickerRules: {
           type: "skill",
-          selectLimit: 1,
+          selectLimit: 5,
           displayLimit: 30,
           createTag: true,
           validation: [
@@ -263,6 +271,7 @@ export const instructions = [
       {
         type: "singleQA",
         title: "The Nitty Gritty",
+        showTitle: false,
         question: "Describe any details you'd like",
         details:
           "Run wild. Add anything you think someone will want to know if they're helping with this project.",
@@ -278,6 +287,7 @@ export const instructions = [
       {
         type: "results",
         title: "Your Project",
+        showTitle: false,
         question: "Does all this look ok?",
         details: "Check everything over to make sure you have everything down.",
       },

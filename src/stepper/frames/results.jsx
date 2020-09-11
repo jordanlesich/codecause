@@ -22,7 +22,7 @@ const Results = () => {
   const { stepperData, currentFrame } = useContext(StepperContext);
   return (
     <ResultsFrame>
-      <Question>{currentFrame.title}</Question>
+      {currentFrame.showTitle && <Question>{currentFrame.title}</Question>}
       <ul>
         {stepperData.map((step) => {
           return (

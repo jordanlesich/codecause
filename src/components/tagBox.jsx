@@ -36,14 +36,14 @@ export const StyledTagBox = styled.div`
     padding: 1rem;
   }
 `;
-const TagBox = ({ type, tagObj, clickFn, limit = 10, label }) => {
+const TagBox = ({ type, tagObj, clickFn, limit = 10, label, disabled }) => {
   const [tags, setTags] = useState(null);
 
   useEffect(() => {
-    if (tagObj != undefined) {
+    if (tagObj != null) {
       setTags(sortTagsToArray(tagObj).slice(0, limit));
     }
-  }, [tagObj]);
+  }, [tagObj, limit]);
   return (
     <StyledTagBox>
       <p className="tag-title">{label ? label : `${type} tags:`}</p>
@@ -56,6 +56,7 @@ const TagBox = ({ type, tagObj, clickFn, limit = 10, label }) => {
               key={index}
               fn={clickFn}
               value={tag.name}
+              disabled={disabled}
             />
           ))
         ) : (

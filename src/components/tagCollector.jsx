@@ -4,14 +4,20 @@ import Tag from "./tag";
 import { StyledTagBox } from "./tagBox";
 
 const TagCollector = ({ tags, type, clickFn }) => {
-  console.log(tags);
   return (
     <StyledTagBox>
       <p className="tag-title">{type} tags:</p>
       <div className="inner-box">
         {tags &&
           tags.map((tag, index) => (
-            <Tag type={type} text={tag} key={index} fn={clickFn} value={tag} />
+            <Tag
+              type={type}
+              text={tag}
+              key={index}
+              fn={clickFn}
+              value={tag}
+              remove={true}
+            />
           ))}
       </div>
     </StyledTagBox>
