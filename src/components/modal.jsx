@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { X } from "react-feather";
 
@@ -19,7 +19,7 @@ const ModalBox = styled.div`
     ${(props) => (props.fadeIn ? slideUp : slideDown)} 0.2s ease-in-out both;
 `;
 
-const Modal = ({ children, toggleModal }) => {
+const Modal = ({ children, toggleModal, typeFn }) => {
   const [isFading, setIsOpening] = useState(true);
 
   const handleClick = (e) => {
@@ -44,7 +44,7 @@ const Modal = ({ children, toggleModal }) => {
   return (
     <Backdrop fadeIn={isFading} handleClick={handleClick}>
       <ModalBox fadeIn={isFading}>
-        <X className="x-icon" onClick={handleClick} />
+        <X className="x-icon" onClick={handleClick} type="button" />
         {children}
       </ModalBox>
     </Backdrop>

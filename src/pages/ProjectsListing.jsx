@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Search, Tag, Info } from "react-feather";
 
-import { AuthContext } from "../contexts/authContext";
 import TabMenu from "../components/tabMenu";
 import TagSearch from "../tabs/tagSearch";
 import Tab from "../components/tab";
@@ -48,7 +47,6 @@ const ListingSpace = styled.div`
 const ProjectsPage = (props) => {
   const [projects, setProjects] = useState(null);
   const queryData = props.location.state;
-  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     if (queryData !== undefined) {

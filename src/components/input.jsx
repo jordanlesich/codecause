@@ -42,6 +42,7 @@ const StyledInput = styled.input`
 
 const Input = ({
   placeholder,
+  autoFocus,
   label,
   id,
   fn,
@@ -74,6 +75,7 @@ const Input = ({
         bgColor={invalidInput || getColor("white")}
         disabled={disabled}
         width={width}
+        autoFocus={autoFocus}
       />
     </StyledLabel>
   );

@@ -15,9 +15,6 @@ export const StyledButton = styled.button`
   background-color: ${(props) => props.bgColor};
   color: ${(props) => (props.selected ? props.bgColor : props.color)};
   border: ${(props) => props.border};
-  :hover {
-    box-shadow: 5px 5px 3px -3px rgba(89, 89, 89, 0.3);
-  }
 
   .button-bar-icon {
     height: 40px;
@@ -183,6 +180,7 @@ const Button = ({
   border,
   radius,
   selected,
+  type,
   disabled,
 }) => {
   if (disabled) bgColor = getColor("error");
@@ -190,6 +188,7 @@ const Button = ({
     <StyledButton
       onClick={fn}
       value={value}
+      type={type}
       disabled={disabled}
       height={height || "2.5rem"}
       width={width || "7rem"}

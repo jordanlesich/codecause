@@ -88,7 +88,7 @@ const Votes = ({ votes, id }) => {
       ) : (
         <>
           <Star className={`vote-icon`} />
-          <p className="vote-text ">{voteState.votes}</p>
+          <p className="vote-text">{voteState.votes}</p>
         </>
       )}
     </VoteBox>

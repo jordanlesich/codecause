@@ -1,5 +1,5 @@
 import { db } from "../base";
-import firebase from "firebase";
+import firebase from "firebase/app";
 
 const voteDb = db.collection("votes");
 const projDb = db.collection("projects");

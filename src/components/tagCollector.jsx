@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import Tag from "./tag";
 import { StyledTagBox } from "./tagBox";
 

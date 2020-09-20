@@ -6,7 +6,6 @@ import UserForm from "../layouts/userForm";
 import Modal from "./modal";
 import Input from "./input";
 import Button from "./button";
-import TextBox from "./textbox";
 
 function SignUpPage({ toggleModal }) {
   const { signup } = useContext(AuthContext);
@@ -46,14 +45,7 @@ function SignUpPage({ toggleModal }) {
           type="email"
           fn={handleChange}
         />
-        <TextBox
-          id="bio"
-          name="bio"
-          value={inputs.bio}
-          placeholder="Enter bio..."
-          label="Write a bit about yourself"
-          fn={handleChange}
-        />
+
         <Input
           id="password"
           name="password"

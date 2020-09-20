@@ -7,7 +7,7 @@ import Layout from "../layouts/layout";
 import TitleBar from "../components/TitleBar";
 import TabMenu from "../components/tabMenu";
 import Tab from "../components/tab";
-import WhitePaper from "../layouts/whitePaper";
+// import WhitePaper from "../layouts/whitePaper";
 // import { getUser } from "../actions/user";
 
 const UserPage = () => {

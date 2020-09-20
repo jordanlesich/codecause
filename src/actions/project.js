@@ -2,9 +2,10 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "../base";
 import kebabCase from "lodash.kebabcase";
 
+import { buildComment } from "./comments";
 import { handleNewTags } from "./tags";
 
-const projectRef = db.collection("projects");
+const projDb = db.collection("projects");
 
 export const createProject = (stepperData, user, finishedFn) => {
   const params = {
@@ -13,29 +14,58 @@ export const createProject = (stepperData, user, finishedFn) => {
     )}`,
     id: uuidv4(),
     name: stepperData[0].answer,
-    description: stepperData[1].answer,
-    creator: user.profile.displayName,
     timeCreated: Date.now(),
-    problem: stepperData[2].answer,
-    solution: stepperData[3].answer,
-    experience: stepperData[4].answer,
-    mvp: stepperData[5].answer,
+    creator: user.profile.displayName,
     causeTag: stepperData[6].answer[0],
     solutionTag: stepperData[7].answer[0],
     skillTags: stepperData[8].answer,
-    details: stepperData[9].answer,
+    description: stepperData[1].answer,
+    body: [
+      { label: "Brief", text: stepperData[1].answer, id: uuidv4() },
+      { label: "Problem", text: stepperData[2].answer, id: uuidv4() },
+      { label: "Solution", text: stepperData[3].answer, id: uuidv4() },
+      {
+        label: "The Minimum Viable Product",
+        text: stepperData[5].answer,
+        id: uuidv4(),
+      },
+      {
+        label: "Creator's Experience",
+        text: stepperData[4].answer,
+        id: uuidv4(),
+      },
+      { label: "Details", text: stepperData[9].answer, id: uuidv4() },
+    ],
+    commentCount: 0,
     votes: 0,
   };
+  const allStrTags = [
+    ...params.skillTags.map((tag) => ({ type: "skill", text: tag })),
+    { type: "cause", text: params.causeTag },
+    { type: "solution", text: params.solutionTag },
+  ];
 
-  projectRef
-    .doc(params.slug)
-    .set(params)
+  const batch = db.batch();
+  const projRef = projDb.doc(params.slug);
+  batch.set(projRef, params);
+  batch.set(projRef.collection("comments").doc("all"), {
+    main: [
+      buildComment(
+        "Congrats on creating a CoLab project! This is the comment section where contributors will come to ask questions about your project. Be sure to provide them with prompt and thoughtful answers.",
+        {
+          id: "does-not-exist",
+          displayName: "CodeCause Team",
+        }
+      ),
+    ],
+  });
+  batch
+    .commit()
+    // batch.
+    // projDb
+    //   .doc(params.slug)
+    //   .set(params)
     .then(() => {
-      const allStrTags = [
-        ...params.skillTags.map((tag) => ({ type: "skill", text: tag })),
-        { type: "cause", text: params.causeTag },
-        { type: "solution", text: params.solutionTag },
-      ];
       handleNewTags(allStrTags);
       finishedFn();
     })
@@ -44,12 +74,12 @@ export const createProject = (stepperData, user, finishedFn) => {
     });
 };
 export const getProjects = async () => {
-  return projectRef
+  return projDb
     .get()
     .then((querySnapshot) => querySnapshot.docs.map((doc) => doc.data()));
 };
 export const getProject = async (projectId) => {
-  return projectRef
+  return projDb
     .doc(projectId)
     .get()
     .then((doc) => {
@@ -75,9 +105,33 @@ const getTagSearchOp = (tagType) => {
 export const queryProjectsByTag = async (tagType, value) => {
   const op = getTagSearchOp(tagType);
   const field = getTagField(tagType);
-  return projectRef
+  return projDb
     .where(field, op, value)
     .get()
     .then((querySnapshot) => querySnapshot.docs.map((doc) => doc.data()))
     .catch((err) => console.error(err));
+};
+export const replaceSections = (
+  sections,
+  projId,
+  setSections,
+  setLoading,
+  toggleModal
+) => {
+  setLoading(true);
+  console.log(sections);
+  console.log(projId);
+  projDb
+    .doc(projId)
+    .update({ body: sections })
+    .then(() => {
+      setSections(sections);
+      setLoading(false);
+      toggleModal();
+    })
+    .catch((error) => {
+      console.error(error);
+      setLoading(false);
+      toggleModal();
+    });
 };

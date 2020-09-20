@@ -1,6 +1,6 @@
 import React from "react";
 
-import TextBox from "../../components/textbox";
+import TextBox from "../textbox";
 import TextInput from "../../components/input";
 import TagCollector from "../../components/tagCollector";
 const GetInput = (inputData) => {

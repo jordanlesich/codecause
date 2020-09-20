@@ -27,7 +27,6 @@ export const getColor = (name) => {
     primaryLight2: "#c8e1ff",
     //300
     primaryMed: "#79b8ff",
-
     secondary: "#959da5",
     secondary000: "#fafbfc",
     secondary100: "#f6f8fa",
@@ -35,7 +34,6 @@ export const getColor = (name) => {
     secondary300: "#d1d5da",
     secondary500: "#6a737d",
     secondary600: "#586069",
-
     success: "#34d058",
     success000: "#f0fff4",
     success100: "#dcffe4",
