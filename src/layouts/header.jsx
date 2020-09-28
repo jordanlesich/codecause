@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import styled from "styled-components";
 
-import { AuthContext } from "../contexts/authContext";
+import { useAuth } from "../Hooks/useAuth";
 import Button from "../components/button";
 import { getColor } from "../helpers/palette";
 
@@ -15,7 +15,7 @@ const NavContainer = styled.nav`
 `;
 
 const Header = ({ toggleLogin, toggleSignUp, toggleDrawer, toggleStepper }) => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, signout } = useAuth();
 
   return (
     <NavContainer>
@@ -23,7 +23,7 @@ const Header = ({ toggleLogin, toggleSignUp, toggleDrawer, toggleStepper }) => {
       <Button fn={toggleStepper} content="Stepper" />
       {user ? (
         <>
-          <Button content="Logout" fn={logout} />
+          <Button content="Logout" fn={signout} />
           <h1 style={{ color: "white" }}>Welcome {user.displayName}</h1>
         </>
       ) : (

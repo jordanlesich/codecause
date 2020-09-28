@@ -119,8 +119,7 @@ export const replaceSections = (
   toggleModal
 ) => {
   setLoading(true);
-  console.log(sections);
-  console.log(projId);
+
   projDb
     .doc(projId)
     .update({ body: sections })

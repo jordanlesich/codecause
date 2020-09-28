@@ -18,7 +18,6 @@ export const StepperProvider = ({ children }) => {
 
   //******************DATA Fns************************ */
   const currentInputValue = stepperData[step].answer;
-
   //TODO, refactor. I went for simplicity and safety over
   //performance. Should refactor to something that updates state
   //only when the user clicks to submit or to another page.
@@ -56,7 +55,6 @@ export const StepperProvider = ({ children }) => {
     const newQA = {
       ...stepperData[step],
       answer: stepperData[step].answer.filter((tag) => {
-        console.log(tag, value);
         return tag !== value;
       }),
     };

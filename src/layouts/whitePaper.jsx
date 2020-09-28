@@ -1,11 +1,14 @@
 import React, { useState, useContext } from "react";
 import styled from "styled-components";
-import { v4 as uuidv4 } from "uuid";
+import { PlusCircle } from "react-feather";
 import { useHistory } from "react-router-dom";
 import { format } from "date-fns";
 
 import { AuthContext } from "../contexts/authContext";
 import EditModal from "../components/editModal";
+import WarnDeleteModal from "../components/warnDeleteModal";
+import AddSectionModal from "../components/addSectionModal";
+import MoveSectionModal from "../components/moveSectionModal";
 import Section from "../components/section";
 import Button from "../components/button";
 import DynamicSection from "../components/dynamicSection";
@@ -52,8 +55,12 @@ const getDate = (project) => {
 const WhitePaper = ({ project }) => {
   const history = useHistory();
   const { user } = useContext(AuthContext);
-  const [sections, setSections] = useState(project.body);
-  const [editModal, toggleModal] = useToggle(false);
+  const [sections, setSections] = useState([...project.body]);
+  const [editModal, toggleEdit] = useToggle(false);
+  const [deleteModal, toggleDelete] = useToggle(false);
+  const [addModal, toggleAdd] = useToggle(false);
+  const [moveModal, toggleMove] = useToggle(false);
+  // const [applyModal, toggleApply] = useToggle(false);
   const [loading, setLoading] = useState(false);
   const [selectedSection, setSelectedSection] = useState({});
 
@@ -96,9 +103,38 @@ const WhitePaper = ({ project }) => {
     }
   };
 
-  const selectAndDisplay = (index) => {
+  const selectAndDisplay = (index, action) => {
+    const toggleModalEnum = Object.freeze({
+      edit: toggleEdit,
+      delete: toggleDelete,
+      add: toggleAdd,
+      move: toggleMove,
+    });
     setSelectedSection({ ...sections[index] });
-    toggleModal(true);
+    toggleModalEnum[action]();
+  };
+
+  const saveSections = (newSections, toggleFn) => {
+    replaceSections(
+      newSections,
+      project.slug,
+      setSections,
+      setLoading,
+      toggleFn
+    );
+    setSelectedSection({});
+  };
+
+  const saveAdd = (newSection) => {
+    saveSections([...sections, newSection], toggleAdd);
+  };
+
+  const saveDelete = (e) => {
+    e.preventDefault();
+    const newSections = sections.filter(
+      (section) => section.id !== selectedSection.id
+    );
+    saveSections(newSections, toggleDelete);
   };
 
   const saveEdit = (e) => {
@@ -110,26 +146,54 @@ const WhitePaper = ({ project }) => {
         return section;
       }
     });
-    replaceSections(
-      newSections,
-      project.slug,
-      setSections,
-      setLoading,
-      toggleModal
-    );
+    saveSections(newSections, toggleEdit);
   };
   const handleEditTyping = (e) => {
     setSelectedSection({ ...selectedSection, [e.target.name]: e.target.value });
   };
+  const saveMove = (e) => {
+    const newIndex = e.target.value;
+    const filteredSections = sections.filter(
+      (section) => section.id !== selectedSection.id
+    );
+    const newSections = [
+      ...filteredSections.slice(0, newIndex),
+      { ...selectedSection },
+      ...filteredSections.slice(newIndex, sections.length),
+    ];
+    setSelectedSection(sections[newIndex]);
+    saveSections(newSections, toggleMove);
+  };
+
   return (
     <>
       <Paper>
         {editModal && (
           <EditModal
-            toggleModal={toggleModal}
+            toggleModal={toggleEdit}
             handleEditTyping={handleEditTyping}
             saveEdit={saveEdit}
             selectedSection={selectedSection}
+          />
+        )}
+        {deleteModal && (
+          <WarnDeleteModal
+            toggleModal={toggleDelete}
+            saveDelete={saveDelete}
+            selectedSection={selectedSection}
+          />
+        )}
+        {addModal && (
+          <AddSectionModal toggleModal={toggleAdd} saveAdd={saveAdd} />
+        )}
+        {moveModal && (
+          <MoveSectionModal
+            toggleModal={toggleMove}
+            saveMove={saveMove}
+            sections={sections}
+            currentIndex={sections.findIndex(
+              (s) => s.id === selectedSection.id
+            )}
           />
         )}
         <h2 className="paper-title">{project.name || "Error: No Title"}</h2>
@@ -165,6 +229,7 @@ const WhitePaper = ({ project }) => {
           </div>
           {getBodytext()}
         </div>
+        <Button content={<PlusCircle />} className="primary" fn={toggleAdd} />
       </Paper>
     </>
   );

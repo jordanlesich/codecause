@@ -20,7 +20,6 @@ const UserPage = () => {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          console.log("Document data: ", doc.data());
           setUser(doc.data());
         } else {
           console.error("Document does not exist");

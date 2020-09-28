@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 import Stepper from "../stepper/stepper";
 import { StepperProvider } from "../contexts/stepperContext";
-import Drawer from "../components/drawer";
 import Header from "../layouts/header";
 import Login from "../components/login";
 import SignUp from "../components/signUp";
@@ -42,19 +41,15 @@ const Layout = ({ children, sideMenu }) => {
         toggleStepper={toggleStepper}
       />
       <StyleTemplate className={!drawer && "drawer-closed"}>
-        {drawer && sideMenu && (
-          <Drawer width={"400px"} isOpen={drawer} toggleDrawer={toggleDrawer}>
-            {sideMenu}
-          </Drawer>
-        )}
         <MainSpace>{children}</MainSpace>
       </StyleTemplate>
       {login && <Login toggleModal={toggleLogin} />}
       {signUp && <SignUp toggleModal={toggleSignUp} />}
-
-      <StepperProvider>
-        {stepper && <Stepper toggleStepper={toggleStepper} />}
-      </StepperProvider>
+      {stepper && (
+        <StepperProvider test={"test"}>
+          <Stepper toggleStepper={toggleStepper} />
+        </StepperProvider>
+      )}
     </>
   );
 };

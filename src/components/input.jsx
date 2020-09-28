@@ -2,41 +2,53 @@ import React from "react";
 import styled from "styled-components";
 
 import { getColor } from "../helpers/palette";
+import { HeaderXs, BodySm } from "../styles/typography";
+
+const InputGroup = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: 28rem;
+  min-width: 22rem;
+  flex-direction: column;
+  margin-bottom: 0.8rem;
+  .error-msg {
+    margin-top: 0.4rem;
+    display: inline-block;
+    height: 1.3rem;
+    color: ${getColor("red300")};
+  }
+`;
 
 const StyledLabel = styled.label`
-  /* display: flex;
-  flex-direction: column; */
-  display: flex;
-  flex-direction: column;
-  font-size: 1.2rem;
-  letter-spacing: -0.022em;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  text-transform: capitalize;
-  width: ${(props) => props.width};
+  p {
+    margin-bottom: 0.8rem;
+  }
 `;
 
 const StyledInput = styled.input`
-  box-sizing: border-box;
-  display: inline-block;
-  font-size: 1rem;
-  height: 40px;
-  width: ${(props) => props.width};
-  padding-left: 9px;
-  padding-bottom: 2px;
-  margin-top: 0.5rem;
+  display: block;
+  width: 100%;
+  font-size: 1.5rem;
+  line-height: 2.3rem;
+  padding: 1rem 1.6rem;
+  outline: none;
   border: 1px solid ${getColor("lightBorder")};
   border-radius: 4px;
-  background-color: ${(props) => props.bgColor};
   transition: 0.2s all;
   ::placeholder {
-    margin-left: 6px;
+    font-style: italic;
   }
-  :focus {
-    background-color: #f2f6fa;
+  :focus:enabled {
+    background-color: ${getColor("white")};
+    border: 1px solid ${getColor("blue300")};
     outline: none;
-
-    box-shadow: 5px 5px 3px -3px rgba(89, 89, 89, 0.3);
+  }
+  &.invalid:enabled {
+    border: 1px solid ${getColor("red300")};
+  }
+  :disabled {
+    border: 1px solid ${getColor("grey200")};
+    background-color: ${getColor("grey200")};
   }
 `;
 
@@ -45,39 +57,33 @@ const Input = ({
   autoFocus,
   label,
   id,
-  fn,
+  onType,
   type,
   name,
   valid,
   value,
   disabled = false,
-  width = "250px",
+  errMsg = "Car gone! Car gone!",
 }) => {
-  let invalidInput;
-  if (!valid) invalidInput = getColor("error");
-  id ||
-    console.warn(
-      "Styled Input requires an id string to match the label with the input "
-    );
-  label || console.warn("Styled Input requires a label string for a11y");
-
   return (
-    <StyledLabel htmlFor={id}>
-      {label ? label : "No Label Passed In"}
+    <InputGroup>
+      <StyledLabel htmlFor={id}>
+        <HeaderXs>{label ? label : "No Label Passed In"}</HeaderXs>
+      </StyledLabel>
       <StyledInput
         id={id}
         name={name || id || "name your Input"}
-        onChange={fn}
-        onBlur={fn}
+        onChange={onType}
+        onBlur={onType}
         placeholder={placeholder || "Placeholder text"}
         type={type}
         value={value}
-        bgColor={invalidInput || getColor("white")}
+        className={`${!valid && "invalid"}`}
         disabled={disabled}
-        width={width}
         autoFocus={autoFocus}
       />
-    </StyledLabel>
+      <BodySm className="error-msg">{!valid && errMsg}</BodySm>
+    </InputGroup>
   );
 };
 

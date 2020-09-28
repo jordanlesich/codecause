@@ -2,7 +2,6 @@ import React from "react";
 import Modal from "../components/modal";
 import Input from "../components/input";
 import TextBox from "../components/textBox";
-import Section from "../components/section";
 import Button from "../components/button";
 
 const EditModal = ({
@@ -12,12 +11,13 @@ const EditModal = ({
   saveEdit,
 }) => {
   return (
-    <Modal>
+    <Modal toggleModal={toggleModal}>
       <form onSubmit={saveEdit}>
         <h2>Edit Section</h2>
         <Input
           name="label"
           id="edit-section-input"
+          type="text"
           value={selectedSection.label}
           label="Edit Section Heading"
           fn={handleEditTyping}

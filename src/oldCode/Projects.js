@@ -13,7 +13,6 @@ const Projects = () => {
       });
   }, []);
 
-  console.log(projects);
   return projects ? <h1>Projects are in!</h1> : <h1>No Projects Loaded</h1>;
 };
 

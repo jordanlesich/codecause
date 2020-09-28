@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Edit, Trash } from "react-feather";
+import { Edit, Move, Trash } from "react-feather";
 
 import Section from "./section";
 import Button from "../components/button";
@@ -37,10 +37,14 @@ const DynamicSection = ({ label, children, selectAndDisplay, index }) => {
   const handleDelete = () => {
     selectAndDisplay(index, "delete");
   };
+  const handleMove = () => {
+    selectAndDisplay(index, "move");
+  };
   return (
     <StyledDynamicSection label={label}>
       <div className="icon-box">
         <Button className="icon-button" content={<Edit />} fn={handleEdit} />
+        <Button className="icon-button" content={<Move />} fn={handleMove} />
         <Button className="icon-button" content={<Trash />} fn={handleDelete} />
       </div>
       <p>{children}</p>

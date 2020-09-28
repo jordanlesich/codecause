@@ -2,167 +2,65 @@ import React from "react";
 import styled from "styled-components";
 
 import { getColor } from "../helpers/palette";
-
 export const StyledButton = styled.button`
-  border-radius: ${(props) => props.radius};
-  outline: none;
-  font-weight: 500;
-  font-size: ${(props) => props.fontSize};
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 40px;
+  font-size: 1.4rem;
+  line-height: 2rem;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 1.1rem 2.4rem;
+  border-radius: 100px;
+  border: none;
+  background-color: transparent;
   cursor: pointer;
   transition: 0.2s all;
-  height: ${(props) => props.height};
-  width: ${(props) => props.width};
-  background-color: ${(props) => props.bgColor};
-  color: ${(props) => (props.selected ? props.bgColor : props.color)};
-  border: ${(props) => props.border};
+  outline: none;
 
-  .button-bar-icon {
-    height: 40px;
-    width: 40px;
-  }
-  & > * {
-    pointer-events: none;
-  }
-  &.open-button {
-    position: absolute;
-    top: 6rem;
-    left: 0;
-    grid-column: 3/4;
-  }
-  &.tabButton {
-    color: ${getColor("secondary")};
-    border-radius: 0;
-    box-shadow: none;
-    border-bottom: none;
-    border-left: none;
-    :hover {
-      background-color: ${getColor("darkHighlight")};
-      color: ${getColor("lightBorder")};
-      box-shadow: none;
-    }
-    &.selected {
-      color: ${getColor("dark")};
-      background-color: ${getColor("white")};
-    }
-    &.selected:hover {
-      color: ${getColor("dark")};
-      background-color: ${getColor("white")};
-    }
-  }
-  :disabled {
-    cursor: auto;
-  }
-
-  &.stepper-tab-button {
-    background-color: ${getColor("dark")};
-    color: ${getColor("secondary")};
-    border: 1px solid ${getColor("secondary")};
-    :hover:enabled {
-      background-color: #182533;
-      color: ${getColor("lightBorder")};
-      box-shadow: none;
-    }
-    :focus:enabled {
-      background-color: #182533;
-      color: ${getColor("lightBorder")};
-      box-shadow: none;
-    }
-    :disabled {
-      color: ${getColor("darkgrey")};
-      border: 1px solid ${getColor("darkgrey")};
-      box-shadow: none;
-    }
-  }
   &.primary {
-    border: 1px solid ${getColor("primaryLight2")};
-    background-color: ${getColor("primaryLight")};
-    color: ${getColor("primary")};
-    :hover:enabled {
-      background-color: ${getColor("primaryLight2")};
-      border: 1px solid ${getColor("primaryMed")};
-    }
+    background-color: ${getColor("primary")};
+    color: ${getColor("white")};
+    :hover:enabled,
     :focus:enabled {
-      background-color: ${getColor("primaryLight2")};
-      border: 1px solid ${getColor("primaryMed")};
+      background-color: ${getColor("blue300")};
+    }
+    :active:enabled {
+      background-color: ${getColor("blue500")};
+    }
+    :disabled {
+      background-color: ${getColor("blue000")};
+      cursor: default;
+    }
+  }
+  &.secondary {
+    background-color: ${getColor("white")};
+    border: 1px solid ${getColor("grey300")};
+    color: ${getColor("font")};
+    :hover:enabled,
+    :focus:enabled {
+      background-color: ${getColor("grey100")};
+    }
+    :active:enabled {
+      background-color: ${getColor("grey200")};
     }
     :disabled {
       background-color: ${getColor("white")};
-      border: 1px solid ${getColor("lightBorder")};
-      color: ${getColor("secondary")};
-      box-shadow: none;
+      border: 1px solid ${getColor("grey200")};
+      cursor: default;
     }
   }
-  &.secondary,
-  &.x-button {
-    border: 1px solid ${getColor("secondary300")};
-    background-color: ${getColor("secondary100")};
-    color: ${getColor("dark")};
-    :hover:enabled {
-      background-color: ${getColor("white")};
-      border: 1px solid ${getColor("secondary")};
-      color: ${getColor("dark")};
-    }
-    :focus:enabled {
-      background-color: ${getColor("white")};
-      border: 1px solid ${getColor("secondary")};
-      color: ${getColor("dark")};
-    }
-    :disabled {
-      background-color: ${getColor("white")};
-      border: 1px solid ${getColor("lightBorder")};
-      color: ${getColor("secondary")};
-      box-shadow: none;
-    }
+  &.text-button {
+    background-color: transparent;
+    padding: 1.1rem 0;
   }
-
-  &.x-button {
-    border: none;
-    :hover:enabled {
-      border: none;
-      background-color: ${getColor("secondary200")};
-    }
-    :focus:enabled {
-      border: none;
-      background-color: ${getColor("secondary200")};
-    }
-  }
-
-  &.info {
-    border: 1px solid ${getColor("infoLight")};
-    background-color: ${getColor("infoBG")};
-    color: ${getColor("info")};
-    :hover:enabled {
-      background-color: ${getColor("infoLight")};
-      border: 1px solid ${getColor("infoMed")};
-    }
-    :focus:enabled {
-      background-color: ${getColor("infoLight")};
-      border: 1px solid ${getColor("infoMed")};
-    }
-    :disabled {
-      background-color: ${getColor("white")};
-      border: 1px solid ${getColor("lightBorder")};
-      color: ${getColor("secondary")};
-      box-shadow: none;
-    }
-  }
-  &.success {
-    border: 1px solid ${getColor("success300")};
-    background-color: ${getColor("success000")};
-    color: ${getColor("success")};
-    :hover:enabled {
-      background-color: ${getColor("success100")};
-      border: 1px solid ${getColor("success")};
-    }
-    :focus:enabled {
-      background-color: ${getColor("success100")};
-      border: 1px solid ${getColor("success")};
-    }
-    :disabled {
-      background-color: ${getColor("white")};
-      border: 1px solid ${getColor("lightBorder")};
-      color: ${getColor("secondary")};
-      box-shadow: none;
+  &.with-icon {
+    padding: 1.1rem 1.8rem;
+    .icon-wrapper {
+      display: inline-block;
+      margin: 0.2rem 0.5rem;
+      transform: translate(-0.2rem, 0.2rem);
     }
   }
 `;
@@ -170,35 +68,25 @@ export const StyledButton = styled.button`
 const Button = ({
   className,
   fn,
-  fontSize,
   content,
   value,
-  height,
-  width,
-  bgColor,
-  color,
-  border,
-  radius,
   selected,
   type,
   disabled,
+  //Icon size needs to specified in icon component
+  //being passed in as props from the parent
+  //1.7rem or 17px is reccomended
+  withIcon = null,
 }) => {
-  if (disabled) bgColor = getColor("error");
   return (
     <StyledButton
       onClick={fn}
       value={value}
       type={type}
       disabled={disabled}
-      height={height || "2.5rem"}
-      width={width || "7rem"}
-      fontSize={fontSize || "1.2rem"}
-      color={color || getColor("dark")}
-      bgColor={bgColor || getColor("white")}
-      radius={radius || "4px"}
-      border={border || `1px solid ${getColor("lightBorder")}`}
-      className={`${selected && "selected"} ${className}`}
+      className={`${className} ${withIcon && "with-icon"}`}
     >
+      {withIcon && <span className="icon-wrapper">{withIcon}</span>}
       {content}
     </StyledButton>
   );
