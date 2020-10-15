@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 
 import Layout from "../layouts/layout";
 import TitleBar from "../components/TitleBar";
-import TabMenu from "../components/tabMenu";
+import TabMenu from "../components/sideMenu";
 import Tab from "../components/tab";
 // import WhitePaper from "../layouts/whitePaper";
 // import { getUser } from "../actions/user";

@@ -42,6 +42,12 @@ export const HeaderXs = styled.p`
   line-height: 1.5rem;
   font-weight: 700;
 `;
+export const Overline = styled.h5`
+  font-size: 1.1rem;
+  letter-spacing: 0.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+`;
 
 export const BodyLg = styled.p`
   font-size: 1.7rem;

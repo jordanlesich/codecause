@@ -3,15 +3,6 @@ import * as firebase from "firebase/app";
 import { getProfile, getProfileByEmail } from "../actions/profiles";
 import "firebase/auth";
 
-// firebase.initializeApp({
-//   apiKey: process.env.REACT_APP_FIREBASE_KEY,
-//   authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
-//   databaseURL: process.env.REACT_APP_FIREBASE_DATABASE,
-//   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-//   storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-//   messagingSenderId: process.env.REACT_APP_FIREBASE_SENDER_ID,
-// });
-
 const authContext = createContext();
 
 // Provider component that wraps your app and makes auth object ...
@@ -37,9 +28,11 @@ function useProvideAuth() {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((response) => {
-        setUser(response.user);
+        // setUser(response.user);
+        localStorage.setItem("coLabLocal", "true");
         return response.user;
-      });
+      })
+      .catch((err) => ({ type: "error", error: err }));
   };
 
   const signup = async ({ email, password, displayName }) => {
@@ -106,6 +99,24 @@ function useProvideAuth() {
       });
   };
 
+  const handleLocalVote = (action, vote) => {
+    let newVotedProjects = [];
+    if (action === "add") {
+      newVotedProjects = [vote, ...user.votedProjects];
+    }
+    if (action === "remove") {
+      newVotedProjects = user.votedProjects.filter(
+        (userVote) => userVote !== vote
+      );
+    }
+    const newUser = {
+      ...user,
+      votedProjects: newVotedProjects,
+    };
+
+    setUser(newUser);
+  };
+
   // Subscribe to user on mount
   // Because this sets state in the callback it will cause any ...
   // ... component that utilizes this hook to re-render with the ...
@@ -137,5 +148,6 @@ function useProvideAuth() {
     signout,
     sendPasswordResetEmail,
     confirmPasswordReset,
+    handleLocalVote,
   };
 }

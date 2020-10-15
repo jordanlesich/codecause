@@ -16,23 +16,35 @@ export const addProfile = async ({ displayName, email }) => {
   if (profileExists) {
     return { type: "error", error: "Error: Username already exists" };
   } else {
-    return db
-      .collection("profiles")
-      .doc(kebabCase(displayName))
-      .set({
-        displayName,
-        email,
-        timeJoined: Date.now(),
-        starredProjects: [],
-        projectsCreated: [],
-        projectsContributing: [],
-      })
-      .then(() => {
-        return true;
+    const batch = db.batch();
+    const profileRef = db.collection("profiles").doc(kebabCase(displayName));
+    const profileData = {
+      displayName,
+      email,
+      timeJoined: Date.now(),
+      votedProjects: [],
+      projectsCreated: [],
+      projectsContributing: [],
+    };
+    batch.set(profileRef, profileData);
+    batch.set(profileRef.collection("messages").doc("all"), {
+      main: [
+        {
+          from: "Jordan",
+          to: displayName,
+          msg:
+            "Welcome to CoLab, I will make a better welcome message later on!",
+          timeSent: Date.now(),
+        },
+      ],
+    });
+    return batch
+      .commit()
+      .then((res) => {
+        return { type: "success", data: profileData };
       })
       .catch((err) => {
-        console.error(err);
-        return false;
+        return { type: "error", error: err.toString() };
       });
   }
 };
@@ -47,7 +59,6 @@ export const getProfile = async (displayName) => {
 };
 
 export const getProfileByEmail = async (email) => {
-  console.log(email);
   return db
     .collection("profiles")
     .where("email", "==", email)

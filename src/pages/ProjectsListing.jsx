@@ -1,90 +1,143 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Search, Tag, Info } from "react-feather";
+import { Redirect } from "react-router-dom";
 
-import TabMenu from "../components/tabMenu";
+import { useAuth } from "../Hooks/useAuth";
+import { TagSearchProvider } from "../contexts/tagSearchContext";
+import SideMenu from "../components/sideMenu";
 import TagSearch from "../tabs/tagSearch";
-import Tab from "../components/tab";
+import MainPanel from "../tabs/mainPanel";
+import InfoButton from "../components/infoButton";
+import Chip from "../components/chip";
 import Layout from "../layouts/layout";
 import ProjectListItem from "../components/projectListItem";
-import { getProjects, queryProjectsByTag } from "../actions/project";
-import { getColor } from "../helpers/palette";
+import {
+  getProjects,
+  queryProjectsByTag,
+  queryProjectsByName,
+} from "../actions/project";
+import { listingInfo } from "../copy/infoText";
+import { DisplayLg, DisplayMd, BodySm, HeaderMd } from "../styles/typography";
 
 const ListingSpace = styled.div`
   display: flex;
   margin: 0 auto;
-  margin-top: 2.5rem;
+  width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+
   .listing-section {
-    position: relative;
-    z-index: 0;
-    .listing-title {
-      font-size: 3rem;
-      margin-bottom: 2.5rem;
-      font-weight: 300;
+    width: 100%;
+  }
+
+  .title-section {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 2.4rem;
+    span {
+      transform: translate(0.32rem, -0.24rem);
     }
   }
-  /* .tag-section {
-    margin-right: 6vw;
-    background-color: ${getColor(
-    "lightgrey"
-  )};
-
-    aside {
-      height: 20rem;
-      border-radius: 4px;
-      width: 10rem;
-      border: 1px solid ${getColor(
-    "lightBorder"
-  )};
+  .tag-chips {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 1.6rem;
+    button {
+      margin-right: 1.6rem;
+      margin-bottom: 0.8rem;
     }
-  } */
+  }
 `;
 
 const ProjectsPage = (props) => {
   const [projects, setProjects] = useState(null);
-  const queryData = props.location.state;
+  const [sideMenu, setSideMenu] = useState("main");
+  const { user } = useAuth();
 
+  const routerData = props.location.state;
+
+  //this useEffect is used to list projects when someone chooses to search
+  //projects by tag from another page. The router props passes in the query state.
+  //this useEffect listens to that state, if it undefined (router's choice, null doesn't work)
+  //then we fetch all projects. If there is state, we fetch with that query.
   useEffect(() => {
-    if (queryData !== undefined) {
-      queryByTag(queryData);
+    if (routerData !== undefined) {
+      queryByTag(routerData);
     } else {
       fetchProjects();
     }
-  }, [queryData]);
+  }, [routerData]);
+
+  if (!user) {
+    return <Redirect to="/login" />;
+  }
 
   const fetchProjects = async () => {
     setProjects(await getProjects());
   };
-
   const queryByTag = async ({ field, value }) => {
     setProjects(null);
     const newProjects = await queryProjectsByTag(field, value);
     setProjects(newProjects);
   };
 
-  const sideMenu = (
-    <TabMenu
-      options={[
-        {
-          value: "index",
-          tabButton: <Info value="r" />,
-          tabCard: <Tab content="Search For Projects" />,
-        },
-        {
-          value: "chat",
-          tabButton: <Tag value="tag-search" />,
-          tabCard: <TagSearch queryByTag={queryByTag} />,
-        },
-        {
-          value: "contributors",
-          tabButton: <Search value="search" />,
-          tabCard: <Tab content="Liked Projects" />,
-        },
-      ]}
+  const queryByName = async (name) => {
+    if (name === "") return;
+    const result = await queryProjectsByName(name);
+    setProjects(result);
+  };
+
+  const switchSideMenu = (e) => {
+    const val = e.target.value;
+    if (val === sideMenu) {
+      setSideMenu("main");
+    } else {
+      setSideMenu(val);
+    }
+  };
+  const info = (
+    <div className="modal-body">
+      <DisplayMd className="title">{listingInfo.title}</DisplayMd>
+      <ul className="section-list">
+        {listingInfo.sections.map((section) => (
+          <li key={section.heading} className="section">
+            <HeaderMd className="section-heading">{section.heading}</HeaderMd>
+            <BodySm>{section.body}</BodySm>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
+  const sidePanel = (
+    <SideMenu
+      currentOption={sideMenu}
+      options={{
+        main: <MainPanel queryByName={queryByName} />,
+        skill: (
+          <TagSearch
+            tagType="skill"
+            sideMenu={setSideMenu}
+            key="skill-search"
+          />
+        ),
+        cause: (
+          <TagSearch
+            tagType="cause"
+            sideMenu={setSideMenu}
+            key="cause-search"
+          />
+        ),
+        solution: (
+          <TagSearch
+            tagType="solution"
+            sideMenu={setSideMenu}
+            key="solution-search"
+          />
+        ),
+      }}
     />
   );
 
@@ -93,23 +146,36 @@ const ProjectsPage = (props) => {
       return <h1 className="listing-title"> Loading...</h1>;
     }
     if (projects.length === 0) {
-      return (
-        <>
-          <h1 className="listing-title"> No Results Found</h1>
-          <Link to={{ pathName: "/projects", state: undefined }}>
-            Browse all{" "}
-          </Link>
-        </>
-      );
+      return <h1 className="listing-title"> No Results Found</h1>;
     }
     if (projects.length) {
       return (
         <>
-          <h1 className="listing-title">{projects.length} Active Projects</h1>
-          <Link to={{ pathName: "/projects", state: undefined }}>
-            Browse all{" "}
-          </Link>
-          <ul>
+          <div className="title-section">
+            <DisplayLg>Browse</DisplayLg>
+            <InfoButton className="info-btn" toggle content={info} />
+          </div>
+          <div className="tag-chips">
+            <Chip
+              initialStr="Cause Tags"
+              value="cause"
+              fn={switchSideMenu}
+              selected={sideMenu === "cause"}
+            />
+            <Chip
+              initialStr="Solution Tags"
+              value="solution"
+              fn={switchSideMenu}
+              selected={sideMenu === "solution"}
+            />
+            <Chip
+              initialStr="Skill Tags"
+              value="skill"
+              fn={switchSideMenu}
+              selected={sideMenu === "skill"}
+            />
+          </div>
+          <ul className="listing-section">
             {projects.map((project) => (
               <ProjectListItem project={project} key={project.id} />
             ))}
@@ -122,11 +188,11 @@ const ProjectsPage = (props) => {
   };
 
   return (
-    <Layout sideMenu={sideMenu}>
-      <ListingSpace>
-        <section className="listing-section">{renderProjects()}</section>
-      </ListingSpace>
-    </Layout>
+    <TagSearchProvider setProjects={setProjects}>
+      <Layout sideMenu={sidePanel}>
+        <ListingSpace>{renderProjects()}</ListingSpace>
+      </Layout>
+    </TagSearchProvider>
   );
 };
 

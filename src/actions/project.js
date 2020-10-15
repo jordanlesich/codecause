@@ -3,9 +3,18 @@ import { db } from "../base";
 import kebabCase from "lodash.kebabcase";
 
 import { buildComment } from "./comments";
-import { handleNewTags } from "./tags";
+import { handleNewTags, formatIncomingTags, formatOutgoingTags } from "./tags";
 
 const projDb = db.collection("projects");
+
+const formatIncomingProject = (project) => {
+  return {
+    ...project,
+    skillTags: formatIncomingTags(project.skillTags, "skill"),
+    causeTags: formatIncomingTags(project.causeTags, "cause"),
+    solutionTags: formatIncomingTags(project.solutionTags, "solution"),
+  };
+};
 
 export const createProject = (stepperData, user, finishedFn) => {
   const params = {
@@ -16,9 +25,9 @@ export const createProject = (stepperData, user, finishedFn) => {
     name: stepperData[0].answer,
     timeCreated: Date.now(),
     creator: user.profile.displayName,
-    causeTag: stepperData[6].answer[0],
-    solutionTag: stepperData[7].answer[0],
-    skillTags: stepperData[8].answer,
+    causeTag: formatOutgoingTags(stepperData[6].answer),
+    solutionTag: formatOutgoingTags(stepperData[7].answer),
+    skillTags: formatOutgoingTags(stepperData[8].answer),
     description: stepperData[1].answer,
     body: [
       { label: "Brief", text: stepperData[1].answer, id: uuidv4() },
@@ -37,7 +46,8 @@ export const createProject = (stepperData, user, finishedFn) => {
       { label: "Details", text: stepperData[9].answer, id: uuidv4() },
     ],
     commentCount: 0,
-    votes: 0,
+    contributors: [],
+    votes: [],
   };
   const allStrTags = [
     ...params.skillTags.map((tag) => ({ type: "skill", text: tag })),
@@ -61,10 +71,6 @@ export const createProject = (stepperData, user, finishedFn) => {
   });
   batch
     .commit()
-    // batch.
-    // projDb
-    //   .doc(params.slug)
-    //   .set(params)
     .then(() => {
       handleNewTags(allStrTags);
       finishedFn();
@@ -76,19 +82,55 @@ export const createProject = (stepperData, user, finishedFn) => {
 export const getProjects = async () => {
   return projDb
     .get()
-    .then((querySnapshot) => querySnapshot.docs.map((doc) => doc.data()));
+    .then((querySnapshot) =>
+      querySnapshot.docs.map((doc) => formatIncomingProject(doc.data()))
+    );
 };
-export const getProject = async (projectId) => {
+export const getProject = async (slug) => {
   return projDb
-    .doc(projectId)
+    .doc(slug)
     .get()
     .then((doc) => {
       if (doc.exists) {
-        return doc.data();
+        return formatIncomingProject(doc.data());
       } else {
         console.error("Document does not exist");
       }
     })
+    .catch((err) => console.error(err));
+};
+
+export const queryProjectsByName = async (name) => {
+  return projDb
+    .where("name", "==", name)
+    .get()
+    .then((querySnapshot) => {
+      return querySnapshot.docs.map((doc) => formatIncomingProject(doc.data()));
+    })
+    .catch((err) => console.error(err));
+};
+export const queryProjectsByTag = async (tagType, value) => {
+  const op = getTagSearchOp(tagType);
+  const field = getTagField(tagType);
+  return projDb
+    .where(field, op, value)
+    .get()
+    .then((querySnapshot) =>
+      querySnapshot.docs.map((doc) => formatIncomingProject(doc.data()))
+    )
+    .catch((err) => console.error(err));
+};
+
+export const queryProjectsByTags = async (allTags) => {
+  let queryRef = projDb;
+  allTags.forEach((tag) => {
+    queryRef = queryRef.where(`${tag.type}Tags.${tag.name}`, "==", true);
+  });
+  return await queryRef
+    .get()
+    .then((querySnapshot) =>
+      querySnapshot.docs.map((doc) => formatIncomingProject(doc.data()))
+    )
     .catch((err) => console.error(err));
 };
 
@@ -102,15 +144,6 @@ const getTagSearchOp = (tagType) => {
   else return "==";
 };
 
-export const queryProjectsByTag = async (tagType, value) => {
-  const op = getTagSearchOp(tagType);
-  const field = getTagField(tagType);
-  return projDb
-    .where(field, op, value)
-    .get()
-    .then((querySnapshot) => querySnapshot.docs.map((doc) => doc.data()))
-    .catch((err) => console.error(err));
-};
 export const replaceSections = (
   sections,
   projId,

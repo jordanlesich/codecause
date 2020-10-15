@@ -3,7 +3,7 @@ export const getColor = (name) => {
     white: "#ffffff",
     dark: "#394352",
     font: "#394352",
-    lightBorder: "#ced6e2",
+    lightBorder: "#E8EEF2",
     primary: "#005FCC",
 
     blue000: "#E6F0FC",

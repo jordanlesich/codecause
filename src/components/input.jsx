@@ -17,11 +17,17 @@ const InputGroup = styled.div`
     height: 1.3rem;
     color: ${getColor("red300")};
   }
+  &.search-input {
+    max-width: 19.2rem;
+  }
 `;
 
 const StyledLabel = styled.label`
   p {
     margin-bottom: 0.8rem;
+  }
+  &.search-input {
+    display: none;
   }
 `;
 
@@ -37,6 +43,13 @@ const StyledInput = styled.input`
   transition: 0.2s all;
   ::placeholder {
     font-style: italic;
+  }
+  &.search-input {
+    font-size: 1.3rem;
+    padding: 0.8rem;
+    ::placeholder {
+      font-size: 1.3rem;
+    }
   }
   :focus:enabled {
     background-color: ${getColor("white")};
@@ -60,14 +73,17 @@ const Input = ({
   onType,
   type,
   name,
-  valid,
+  valid = true,
   value,
   disabled = false,
   errMsg = "Car gone! Car gone!",
+  className,
+  // prependEl = false,
+  appendEl = null,
 }) => {
   return (
-    <InputGroup>
-      <StyledLabel htmlFor={id}>
+    <InputGroup className={className}>
+      <StyledLabel htmlFor={id} className={className}>
         <HeaderXs>{label ? label : "No Label Passed In"}</HeaderXs>
       </StyledLabel>
       <StyledInput
@@ -78,10 +94,11 @@ const Input = ({
         placeholder={placeholder || "Placeholder text"}
         type={type}
         value={value}
-        className={`${!valid && "invalid"}`}
+        className={`${!valid && "invalid"} ${className}`}
         disabled={disabled}
         autoFocus={autoFocus}
       />
+      {appendEl}
       <BodySm className="error-msg">{!valid && errMsg}</BodySm>
     </InputGroup>
   );

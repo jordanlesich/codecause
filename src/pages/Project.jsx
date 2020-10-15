@@ -24,28 +24,6 @@ const ProjectsPage = (props) => {
     return () => fetchProject;
   }, [projectId, project]);
 
-  // const sideMenu = (
-  //   <TabMenu
-  //     options={[
-  //       {
-  //         value: "index",
-  //         tabButton: <List value="index" />,
-  //         tabCard: <Tab content="Index" />,
-  //       },
-  //       {
-  //         value: "chat",
-  //         tabButton: <MessageSquare />,
-  //         tabCard: <Tab content="Chat" />,
-  //       },
-  //       {
-  //         value: "contributors",
-  //         tabButton: <Users value="contributors" />,
-  //         tabCard: <Tab content="Contributors" />,
-  //       },
-  //     ]}
-  //   />
-  // );
-
   return (
     <Layout>
       {project !== null && (

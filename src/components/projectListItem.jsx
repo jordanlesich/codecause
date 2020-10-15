@@ -1,114 +1,107 @@
 import React from "react";
+import { MessageSquare, Users } from "react-feather";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import Votes from "../components/votes";
+import Tag from "./tag";
+import Votes from "./votes";
+import Button from "./button";
+import Break from "./break";
 import { getColor } from "../helpers/palette";
+import { BodyMd, DisplayMd } from "../styles/typography";
 
 const ListItem = styled.li`
-  display: flex;
+  width: 100%;
+  /* width: 72rem; */
   position: relative;
-  background-color: ${getColor("white")};
-  width: 40rem;
-  padding: 0.5rem 0;
   list-style: none;
-  border-top: 1px solid ${getColor("lightBorder")};
+  padding: 2.4rem 3.2rem;
+  border: 1px solid ${getColor("lightBorder")};
   border-radius: 4px;
-  transition: 0.2s all;
-  .posted-by-panel {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.8rem;
-    align-items: center;
-    padding: 0 2rem;
-    margin-top: 0.8rem;
-    margin-bottom: 0.5rem;
-  }
-  .avatar-wrapper {
-    margin-bottom: 0.25rem;
-  }
-  .posted-by-text {
-    text-align: center;
-    margin-bottom: 0.5rem;
-  }
-  .project-created-at {
-    opacity: 0.8;
-  }
-  .info-wrapper {
-    border-left: 1px solid ${getColor("lightBorder")};
-    padding-left: 1.5rem;
-  }
-  .project-name {
-    display: inline-block;
-    font-size: 1.4rem;
-    font-weight: 500;
-    margin: 0.25rem;
-    padding: 0.25rem;
-    color: ${getColor("primary")};
-  }
-  .project-name:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
-  .project-description {
-    margin: 0 0.25rem;
-    padding: 0.25rem;
-  }
-  .skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    flex-basis: auto;
-    margin-bottom: 1rem;
+  margin-bottom: 1.6rem;
+  .block-link {
+    position: absolute;
+    z-index: -10000;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
   }
 
-  .bottom-section {
+  .item-title-section {
     display: flex;
-    margin-bottom: 0.5rem;
+    align-items: flex-start;
+    button {
+      transform: translateY(0.35rem);
+    }
   }
-  .vote-wrapper {
-    position: absolute;
-    top: 1rem;
-    right: 1.5rem;
+  .project-title {
+    margin-bottom: 0.8rem;
+    margin-right: auto;
+    max-width: 58rem;
+  }
+  .project-description {
+    margin-bottom: 1.6rem;
+    max-width: 58rem;
+  }
+  .divider {
+    margin: 1.6rem 0;
+  }
+  .bottom-buttons-section {
+    display: flex;
+    width: 100%;
+    button {
+      padding: 0;
+      margin-right: 1.6rem;
+    }
+  }
+  .vote-button {
+    margin-right: auto;
   }
 `;
 
 const ProjectListItem = ({ project }) => {
   return (
     <ListItem>
+      <Link
+        to={{
+          pathname: `projects/${project.slug}`,
+          state: project,
+        }}
+        className="block-link"
+      />
+      <div className="item-title-section">
+        <DisplayMd className="project-title">{project.name}</DisplayMd>
+        <Tag tag={project.solutionTags[0]} />
+        <Tag tag={project.causeTags[0]} className="cause-tag" />
+      </div>
       <div className="info-wrapper">
         <span className="vote-wrapper">
-          <Votes votes={project.votes} id={project.slug} />
+          {/* <Votes votes={project.votes} id={project.slug} /> */}
         </span>
-        <Link
-          to={{
-            pathname: `projects/${project.slug}`,
-            state: project,
-          }}
-          className="project-name"
-        >
-          {project.name}
-        </Link>
-        <p className="project-description">{project.description}</p>
-        <div className="bottom-section">
-          {/* <div className="project-tag">
-            {project.tags
-              .filter((proj) => proj.category === "project")
-              .map((proj) => {
-                return (
-                  <Tag
-                    type={proj.category}
-                    text={proj.name}
-                    key={proj.id}
-                    value={tag}
-                  />
-                );
-              })}
-          </div> */}
-          {/* <div className="cause-tag">
-            {getFakeTags(fakeCauseTags, 1, 1).map((tag, index) => {
-              return <Tag type="project" text={tag} key={index} value={tag} />;
-            })}
-          </div> */}
+        <BodyMd className="project-description">{project.description}</BodyMd>
+        <div className="skill-tags">
+          {project.skillTags.map((tag) => (
+            <Tag tag={tag} key={`${project.name}-${tag.name}`} />
+          ))}
+        </div>
+        <div className="divider">
+          <Break type="soft" />
+        </div>
+        <div className="bottom-buttons-section">
+          <Votes project={project} />
+          <Button
+            content={project.commentCount}
+            className="text-button"
+            withIcon={
+              <MessageSquare size="2.4rem" color={getColor("grey500")} />
+            }
+          />
+          <Button
+            content={project.contributors.length}
+            className="text-button"
+            withIcon={<Users size="2.4rem" color={getColor("grey500")} />}
+          />
         </div>
       </div>
     </ListItem>

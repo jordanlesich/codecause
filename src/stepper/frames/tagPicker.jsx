@@ -54,7 +54,7 @@ const TagPicker = () => {
   const handleAdd = ({ value }) => {
     if (currentInputValue.includes(kebabCase(value))) return;
     else {
-      addTag(kebabCase(value));
+      addTag(kebabCase(value).replace("-", String.fromCharCode(0x2011)));
     }
   };
   const createTag = () => {

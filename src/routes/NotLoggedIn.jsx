@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import SignUp from "../components/signUp";
@@ -7,7 +7,10 @@ import Error from "../components/error";
 import Success from "../components/success";
 import Login from "../components/login";
 import { Redirect } from "react-router";
+import { BodySm } from "../styles/typography";
+import { getColor } from "../helpers/palette";
 // Set up individual routes paths here
+
 // Example:
 //TODO Build 404. Make default route
 
@@ -17,11 +20,18 @@ const LoginScreen = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100%;
+  .error-text {
+    color: ${getColor("red300")};
+  }
 `;
 
 const NotLoggedIn = () => {
   const [message, setMessage] = useState(null);
-
+  const history = useHistory();
+  const tryAgain = () => {
+    setMessage(null);
+    history.goBack();
+  };
   return (
     <LoginScreen>
       <Switch>
@@ -38,7 +48,14 @@ const NotLoggedIn = () => {
         <Route
           path="/error"
           exact
-          render={(props) => <Error {...props} setMessage={setMessage} />}
+          render={(props) => (
+            <Error
+              {...props}
+              setMessage={setMessage}
+              tryAgain={tryAgain}
+              errMsg={message?.error}
+            />
+          )}
         />
         <Route path="/success" exact render={() => <Success />} />
         <Redirect from="/" to={`/signup`} />
@@ -46,7 +63,9 @@ const NotLoggedIn = () => {
       <Route path="/error" exact component={<div>error</div>} /> */}
         {/* <Route path="/?" default component={<div>404</div>} /> */}
       </Switch>
-      {message?.type === "error" && <p>{message.error}</p>}
+      {message?.type === "error" && (
+        <BodySm className="error-text">{message.error}</BodySm>
+      )}
     </LoginScreen>
   );
 };

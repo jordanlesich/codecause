@@ -11,15 +11,39 @@ const ModalBox = styled.div`
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   border-radius: 4px;
   background-color: #ffffff;
-  width: 35rem;
-  padding: 1.5rem;
+  width: 40vw;
+  padding: 3.2rem;
   z-index: 20;
   animation: ${(props) => (props.fadeIn ? fadeIn : fadeOut)} 0.2s ease-in-out
       both,
     ${(props) => (props.fadeIn ? slideUp : slideDown)} 0.2s ease-in-out both;
+  .x-icon {
+    position: absolute;
+    top: 1.6rem;
+    right: 1.6rem;
+  }
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+  }
+  .title {
+    margin-bottom: 1.6rem;
+  }
+  .section {
+    margin-bottom: 2.4rem;
+  }
+  .section-list {
+    list-style: none;
+    width: 30vw;
+  }
+  .section-heading {
+    margin-bottom: 0.8rem;
+  }
 `;
 
-const Modal = ({ children, toggleModal, typeFn }) => {
+const Modal = ({ children, toggleModal }) => {
   const [isFading, setIsOpening] = useState(true);
 
   const handleClick = (e) => {

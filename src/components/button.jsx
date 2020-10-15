@@ -2,16 +2,18 @@ import React from "react";
 import styled from "styled-components";
 
 import { getColor } from "../helpers/palette";
+
 export const StyledButton = styled.button`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  height: 40px;
-  font-size: 1.4rem;
-  line-height: 2rem;
-  font-weight: 700;
-  font-family: inherit;
+  height: 4rem;
   padding: 1.1rem 2.4rem;
+
+  font-family: inherit;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 2rem;
   border-radius: 100px;
   border: none;
   background-color: transparent;
@@ -54,6 +56,7 @@ export const StyledButton = styled.button`
   &.text-button {
     background-color: transparent;
     padding: 1.1rem 0;
+    color: ${getColor("font")};
   }
   &.with-icon {
     padding: 1.1rem 1.8rem;
@@ -62,6 +65,14 @@ export const StyledButton = styled.button`
       margin: 0.2rem 0.5rem;
       transform: translate(-0.2rem, 0.2rem);
     }
+  }
+  &.icon-button {
+    padding: 0;
+    margin: 0;
+    line-height: 0;
+    justify-content: center;
+    height: 24px;
+    width: 24px;
   }
 `;
 
@@ -72,22 +83,25 @@ const Button = ({
   value,
   selected,
   type,
+  id,
   disabled,
-  //Icon size needs to specified in icon component
-  //being passed in as props from the parent
-  //1.7rem or 17px is reccomended
   withIcon = null,
+  iconButton = null,
 }) => {
   return (
     <StyledButton
       onClick={fn}
       value={value}
       type={type}
+      id={id}
       disabled={disabled}
       className={`${className} ${withIcon && "with-icon"}`}
+      selected={selected}
+      aria-label={content}
     >
       {withIcon && <span className="icon-wrapper">{withIcon}</span>}
       {content}
+      {iconButton && <span className="icon-button-wrapper">{iconButton}</span>}
     </StyledButton>
   );
 };

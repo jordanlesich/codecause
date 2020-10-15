@@ -104,24 +104,6 @@
 //       .catch((err) => console.warn(err));
 //   };
 
-//   const handleLocalVote = (action, vote) => {
-//     let newStarredProjects = [];
-//     if (action === "add") {
-//       newStarredProjects = [vote, ...user.profile.starredProjects];
-//     }
-//     if (action === "remove") {
-//       newStarredProjects = user.profile.starredProjects.filter(
-//         (userVote) => userVote !== vote
-//       );
-//     }
-//     const newUser = {
-//       auth: user.auth,
-//       profile: { ...user.profile, starredProjects: newStarredProjects },
-//     };
-
-//     setUser(newUser);
-//   };
-
 //   return (
 //     <AuthContext.Provider
 //       value={{

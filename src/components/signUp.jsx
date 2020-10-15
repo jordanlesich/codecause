@@ -60,7 +60,9 @@ const SignUpPage = ({ setMessage }) => {
   const history = useHistory();
 
   const fullPageResult = (msg, url) => {
+    console.log(msg);
     setMessage(msg);
+    history.push(url);
   };
 
   const createAuth = async (inputs) => {
@@ -86,10 +88,14 @@ const SignUpPage = ({ setMessage }) => {
       return;
     }
     const result = await addProfile({ displayName, email, password });
-    if (!result.error) {
+
+    if (result.error) {
+      fullPageResult(result, "/error");
+    } else if (result.data) {
+      console.log(result.data);
       createAuth({ displayName, email, password });
     } else {
-      fullPageResult(result, "/error");
+      fullPageResult({ type: "error", error: "There was an unkown error." });
     }
   };
 

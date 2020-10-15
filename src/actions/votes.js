@@ -4,69 +4,75 @@ import firebase from "firebase/app";
 const voteDb = db.collection("votes");
 const projDb = db.collection("projects");
 const profileDb = db.collection("profiles");
-const increment = firebase.firestore.FieldValue.increment(1);
-const decrement = firebase.firestore.FieldValue.increment(-1);
 
 const makeVoteId = (profileId, projSlug) => `${profileId}-${projSlug}`;
 
-export const addVote = async (profile, projSlug, setVoteState, setLoading) => {
+export const addVote = async (voter, project, setVoteState, setLoading) => {
   setLoading(true);
-  const profileId = profile.id;
-  const voteId = makeVoteId(profileId, projSlug);
+  const voteId = makeVoteId(voter.displayName, project.slug);
   const batch = db.batch();
-  const voteRef = voteDb.doc(voteId);
-  const projRef = projDb.doc(projSlug);
-  const profileRef = profileDb.doc(profileId);
-
-  batch.set(voteRef, {
-    from: profileId,
-    project: projSlug,
+  //create a vote receipt in the votes collection
+  batch.set(voteDb.doc(voteId), {
+    from: voter.displayName,
+    project: project.slug,
     timeVoted: Date.now(),
   });
-  batch.update(projRef, { votes: increment });
-  batch.update(profileRef, {
-    starredProjects: firebase.firestore.FieldValue.arrayUnion(projSlug),
+  //adds the voter's id to the project's votes array
+  batch.update(projDb.doc(project.slug), {
+    votes: firebase.firestore.FieldValue.arrayUnion(voter.displayName),
   });
-  batch
+  //sends a message to the project's creator
+  batch.set(profileDb.doc(project.creator).collection("messages").doc("all"), {
+    main: firebase.firestore.FieldValue.arrayUnion({
+      from: "CoLab",
+      type: "news",
+      msg: `${voter.displayName} added a like to ${project.name}`,
+      date: Date.now(),
+    }),
+  });
+  //adds the project slug(id) to the user's 'voted projects' array
+  batch.update(profileDb.doc(voter.displayName), {
+    votedProjects: firebase.firestore.FieldValue.arrayUnion(project.slug),
+  });
+  return batch
     .commit()
     .then(() => {
       setVoteState((prevState) => ({
-        votes: prevState.votes + 1,
+        votes: [voter.displayName, ...prevState.votes],
         hasVoted: true,
       }));
       setLoading(false);
     })
     .catch((err) => {
+      console.error(err);
       setLoading(false);
     });
 };
 
-export const removeVote = async (
-  profile,
-  projSlug,
-  setVoteState,
-  setLoading
-) => {
+export const removeVote = async (voter, project, setVoteState, setLoading) => {
   setLoading(true);
-  const profileId = profile.id;
-  const voteId = makeVoteId(profileId, projSlug);
+  const voteId = makeVoteId(voter.displayName, project.slug);
   const batch = db.batch();
-  const voteRef = voteDb.doc(voteId);
-  const projRef = projDb.doc(projSlug);
-  const profileRef = profileDb.doc(profileId);
 
-  batch.delete(voteRef);
-  batch.update(projRef, { votes: decrement });
-  batch.update(profileRef, {
-    starredProjects: firebase.firestore.FieldValue.arrayRemove(projSlug),
+  //remove the vote receipt from the votes collection
+  batch.delete(voteDb.doc(voteId));
+  //remove the voter's id to the project's votes array
+  batch.update(projDb.doc(project.slug), {
+    votes: firebase.firestore.FieldValue.arrayRemove(voter.displayName),
   });
-  batch
+  //removes the project slug(id) to the user's 'voted projects' array
+  batch.update(profileDb.doc(voter.displayName), {
+    votedProjects: firebase.firestore.FieldValue.arrayRemove(project.slug),
+  });
+  return batch
     .commit()
     .then(() => {
-      setVoteState((prevState) => ({
-        votes: prevState.votes - 1,
-        hasVoted: false,
-      }));
+      setVoteState((prevState) => {
+        return {
+          votes: prevState.votes.filter((votes) => votes !== voter.displayName),
+          hasVoted: false,
+        };
+      });
       setLoading(false);
     })
     .catch((err) => {

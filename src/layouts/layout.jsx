@@ -7,22 +7,26 @@ import Header from "../layouts/header";
 import Login from "../components/login";
 import SignUp from "../components/signUp";
 import useToggle from "../Hooks/useToggle";
+import { getColor } from "../helpers/palette";
 
 const StyleTemplate = styled.main`
   display: grid;
-  grid-template-columns: 400px minmax(0, 50px) minmax(800px, 1000px) auto;
+  height: calc(100% - 5.6rem);
+  grid-template-columns: 28rem 1fr minmax(60rem, 72rem) 4fr;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
     sans-serif, Apple Color Emoji, Segoe UI Emoji;
   transition: 0.2s all;
-
-  &.drawer-closed {
-    grid-template-columns: auto 0 minmax(800px, 1000px) auto;
-  }
 `;
 const MainSpace = styled.main`
   width: 100%;
   padding-top: 4rem;
   grid-column: 3/4;
+  grid-row: 1;
+`;
+
+const SideSpace = styled.aside`
+  width: 100%;
+  grid-column: 1;
   grid-row: 1;
 `;
 
@@ -41,6 +45,7 @@ const Layout = ({ children, sideMenu }) => {
         toggleStepper={toggleStepper}
       />
       <StyleTemplate className={!drawer && "drawer-closed"}>
+        <SideSpace>{sideMenu}</SideSpace>
         <MainSpace>{children}</MainSpace>
       </StyleTemplate>
       {login && <Login toggleModal={toggleLogin} />}
