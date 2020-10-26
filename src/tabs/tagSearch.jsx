@@ -51,7 +51,7 @@ const TagSearch = ({ tagType }) => {
   useEffect(() => {
     if (!tags.length) {
       const getTagsFromFirestore = async () => {
-        const result = await getTags(tagType);
+        const result = await getTags(tagType, "tagSearch");
         dispatchTags({
           type: "INIT",
           payload: result,

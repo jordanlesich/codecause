@@ -1,3 +1,16 @@
+const omit = (obj, omitKey) => {
+  return Object.keys(obj).reduce((result, key) => {
+    if (key !== omitKey) {
+      result[key] = obj[key];
+    }
+    return result;
+  }, {});
+};
+
+// export const omitStepError = (step) => {
+//   omit(step, "error");
+// };
+
 const onlyQAFrames = (steps) => {
   return steps.map((step) => {
     return {
@@ -13,6 +26,18 @@ const mapSingleQA = (step) => {
     type,
     question,
     answer: "",
+    valid: true,
+    completed: false,
+  };
+};
+const mapTagPicker = (step) => {
+  const { type, question } = step.QA;
+  return {
+    tag: step.tag,
+    type,
+    question,
+    answer: [],
+    valid: true,
     completed: false,
   };
 };
@@ -23,7 +48,8 @@ const mapMultiQA = (step) => {
     tag: step.tag,
     type,
     questions,
-    answers: questions.map((question) => ""),
+    valid: true,
+    answers: questions.map((q) => ""),
     completed: false,
   };
 };
@@ -34,7 +60,7 @@ export const createStepperData = (instructions) => {
   return stepData.map((step) => {
     if (step.QA.type === "singleQA") return mapSingleQA(step);
     if (step.QA.type === "multiQA") return mapMultiQA(step);
-    if (step.QA.type === "tagPicker") return mapSingleQA(step);
+    if (step.QA.type === "tagPicker") return mapTagPicker(step);
     else {
       console.error("Step doesn't have a valid QA frame");
       return null;
@@ -48,12 +74,11 @@ export const instructions = [
     frames: [
       {
         type: "message",
-        title: "Starting a Project on Code Cause",
-        showTitle: false,
-        subTitle: "Here's What You Need to Know",
+        sideTitle: "Starting a Project on Code Cause",
+        cardTitle: "Here's What You Need to Know",
         body: {
           type: "list",
-          strings: [
+          listItems: [
             "You're about to post your project idea to a public listing online",
             "Anyone can read that listing",
             "The idea is to inspire developers (aspiring or otherwise) to help you make something.",
@@ -68,18 +93,17 @@ export const instructions = [
       },
       {
         type: "singleQA",
-        title: "The Name",
-        showTitle: false,
-        question: "What's Your Project's Name",
+        sideTitle: "The Name",
+        question: "What's The Name?",
         tag: "Q0",
         details:
           "A good name is short, catchy, and describes the project well.",
         help: "Don't overthink it. You can always change the name later.",
         input: {
-          type: "textBox",
-          validation: [
-            { type: "not-empty", response: "Please type in a response" },
-          ],
+          responseSize: "sentence",
+          validations: {
+            checkSlugUnique: true,
+          },
         },
       },
     ],
@@ -89,18 +113,14 @@ export const instructions = [
     frames: [
       {
         type: "singleQA",
-        title: "The Pitch",
-        showTitle: false,
+        sideTitle: "The Pitch",
         question: "Give us the Elevator Pitch.",
         details: "Describe your idea in a sentence.",
         tag: "Q1",
         help:
           "If you can't describe your idea in one sentence, it's likely too complicated. Try to get to the core of what the idea is.",
         input: {
-          type: "textBox",
-          validation: [
-            { type: "not-empty", response: "Please type in a response" },
-          ],
+          responseSize: "sentence",
         },
       },
     ],
@@ -110,17 +130,13 @@ export const instructions = [
     frames: [
       {
         type: "singleQA",
-        title: "The Problem",
-        showTitle: false,
+        sideTitle: "The Problem",
         question: "Describe the Problem",
         details:
           "In a brief paragraph, describe what problem you aim to solve by making this project",
         tag: "Q2",
         input: {
-          type: "textBox",
-          validation: [
-            { type: "not-empty", response: "Please type in a response" },
-          ],
+          responseSize: "paragraph",
         },
       },
     ],
@@ -130,8 +146,7 @@ export const instructions = [
     frames: [
       {
         type: "singleQA",
-        title: "The Solution",
-        showTitle: false,
+        sideTitle: "The Solution",
         question: "Describe your Solution?",
         details:
           "If you can describe the solution, do so in a short paragraph. If you can't, no problem. Just write, 'needs consultation'",
@@ -139,10 +154,7 @@ export const instructions = [
           "It's ok to not know the solution right away. Often experts will have a more thorough solution.",
         tag: "Q3",
         input: {
-          type: "textBox",
-          validation: [
-            { type: "not-empty", response: "Please type in a response" },
-          ],
+          responseSize: "paragraph",
         },
       },
     ],
@@ -152,8 +164,7 @@ export const instructions = [
     frames: [
       {
         type: "singleQA",
-        title: "Experience",
-        showTitle: false,
+        sideTitle: "Experience",
         question: "Do You Have Tech Experience?",
         details:
           "Do you have any experience working with developers, designers etc? It's ok if you don't.",
@@ -161,10 +172,7 @@ export const instructions = [
           "1 = you have no idea how to solve this problem, 10 means you know exactly how to solve the problem, you just need help.",
         tag: "Q4",
         input: {
-          type: "textBox",
-          validation: [
-            { type: "not-empty", response: "Please type in a response" },
-          ],
+          responseSize: "paragraph",
         },
       },
     ],
@@ -174,18 +182,14 @@ export const instructions = [
     frames: [
       {
         type: "singleQA",
-        title: "The Finished Project",
-        showTitle: false,
+        sideTitle: "The Finished Project",
         question: "What's the Minimum Viable Product?'",
         details: "At what point do you consider the project completed.",
         help:
           "This helps us get an idea of an endpoint to your project. Some projects could also have multiple endpoints.",
         tag: "Q5",
         input: {
-          type: "textBox",
-          validation: [
-            { type: "not-empty", response: "Please type in a response" },
-          ],
+          responseSize: "paragraph",
         },
       },
     ],
@@ -195,8 +199,7 @@ export const instructions = [
     frames: [
       {
         type: "tagPicker",
-        title: "Cause Tag",
-        showTitle: false,
+        sideTitle: "Cause Tag",
         question: "What's your cause tag?",
         details:
           "Choose a tag that describes your project's cause, or create your own",
@@ -206,11 +209,8 @@ export const instructions = [
         pickerRules: {
           type: "cause",
           selectLimit: 1,
-          displayLimit: 15,
+          displayLimit: 5,
           createTag: true,
-          validation: [
-            { type: "not-empty", response: "Please type in a response" },
-          ],
         },
       },
     ],
@@ -220,8 +220,7 @@ export const instructions = [
     frames: [
       {
         type: "tagPicker",
-        title: "Solution Tag",
-        showTitle: false,
+        sideTitle: "Solution Tag",
         question: "What needs to be built?",
         details:
           "Choose a tag that describes your project's solution, or create your own. If you don't know the solution, that's ok. Just use the 'consultation' tag.",
@@ -231,11 +230,8 @@ export const instructions = [
         pickerRules: {
           type: "solution",
           selectLimit: 1,
-          displayLimit: 15,
+          displayLimit: 5,
           createTag: true,
-          validation: [
-            { type: "not-empty", response: "Please type in a response" },
-          ],
         },
       },
     ],
@@ -245,8 +241,7 @@ export const instructions = [
     frames: [
       {
         type: "tagPicker",
-        title: "Skill Tags",
-        showTitle: false,
+        sideTitle: "Skill Tags",
         question: "What sort of skills are you looking for?",
         details:
           "If you don't know that's ok. Just choose the 'consultation' tag. ",
@@ -256,11 +251,8 @@ export const instructions = [
         pickerRules: {
           type: "skill",
           selectLimit: 5,
-          displayLimit: 30,
+          displayLimit: 5,
           createTag: true,
-          validation: [
-            { type: "not-empty", response: "Please type in a response" },
-          ],
         },
       },
     ],
@@ -270,26 +262,21 @@ export const instructions = [
     frames: [
       {
         type: "singleQA",
-        title: "The Nitty Gritty",
-        showTitle: false,
+        sideTitle: "The Nitty Gritty",
         question: "Describe any details you'd like",
         details:
           "Run wild. Add anything you think someone will want to know if they're helping with this project.",
         help: "Just details. That's all.",
         tag: "Q9",
         input: {
-          type: "textBox",
-          validation: [
-            { type: "not-empty", response: "Please type in a response" },
-          ],
+          responseSize: "paragraph",
         },
       },
       {
         type: "results",
-        title: "Your Project",
-        showTitle: false,
-        question: "Does all this look ok?",
-        details: "Check everything over to make sure you have everything down.",
+        sideTitle: "Your Project",
+        title: "Confirmation",
+        details: "Double check and verify your information.",
       },
     ],
   },

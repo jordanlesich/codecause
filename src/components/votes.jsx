@@ -7,6 +7,7 @@ import { useAuth } from "../Hooks/useAuth";
 import { getColor } from "../helpers/palette";
 import { BodyMd } from "../styles/typography";
 import { addVote, removeVote } from "../actions/votes";
+import { set } from "date-fns/esm";
 
 const getVoteText = (hasVoted, voteAmt) => {
   if (hasVoted) {
@@ -60,44 +61,61 @@ const StyledVoteButton = styled.div`
 const Votes = ({ project }) => {
   const { user, handleLocalVote } = useAuth();
   const { votes, slug } = project;
-  const [voteState, setVoteState] = useState({
-    votes: votes,
-    hasVoted: user?.votedProjects?.includes(slug),
-  });
+  const [hasVoted, setHasVoted] = useState(votes[user.displayName]);
+  const [voteList, setVoteList] = useState(Object.keys(votes));
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   if (user && voteState.hasVoted === null) {
-  //     setVoteState((prevState) => ({
-  //       votes: prevState.votes,
-  //       hasVoted: ,
-  //     }));
-  //   }
-  // }, [user, voteState, slug]);
+  const handleRemoveVote = async () => {
+    try {
+      const result = await removeVote(user, project);
+      setHasVoted(false);
+      setVoteList((prevVotes) =>
+        prevVotes.filter((vote) => vote !== user.displayName)
+      );
+      handleLocalVote("remove", slug);
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleClick = async (e) => {
+  const handleAddVote = async () => {
+    try {
+      const result = await addVote(user, project);
+      setHasVoted(true);
+      setVoteList((prevVotes) => [user.displayName, ...prevVotes]);
+      handleLocalVote("remove", slug);
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleClick = (e) => {
     if (loading) return;
     if (!user) return;
-    if (voteState.hasVoted) {
-      removeVote(user, project, setVoteState, setLoading);
-      handleLocalVote("remove", slug);
+    setLoading(true);
+    if (hasVoted) {
+      handleRemoveVote();
     } else {
-      addVote(user, project, setVoteState, setLoading);
-      handleLocalVote("add", slug);
+      handleAddVote();
     }
   };
 
   return (
     <StyledVoteButton className="vote-button">
       <Button
-        content={getVoteText(voteState.hasVoted, voteState.votes.length)}
-        className={`text-button ${voteState.hasVoted && "has-voted"}`}
+        content={getVoteText(hasVoted, voteList.length)}
+        className={`text-button ${hasVoted && "has-voted"}`}
         fn={handleClick}
         withIcon={<ThumbsUp size="2.4rem" />}
       />
-      {votes?.length && (
+      {voteList?.length && (
         <div className="vote-list">
-          {voteState.votes.slice(0, 15).map((vote) => (
+          {voteList.slice(0, 15).map((vote) => (
             <BodyMd key={vote}>{vote}</BodyMd>
           ))}
         </div>

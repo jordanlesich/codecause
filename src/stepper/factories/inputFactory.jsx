@@ -1,15 +1,15 @@
 import React from "react";
 
-import TextBox from "../textbox";
-import TextInput from "../../components/input";
+import TextBox from "../../components/textBox";
+import Input from "../../components/input";
 import TagCollector from "../../components/tagCollector";
 const GetInput = (inputData) => {
   const inputs = {
-    textInput: <TextInput {...inputData} />,
-    textBox: <TextBox {...inputData} />,
+    sentence: <Input {...inputData} />,
+    paragraph: <TextBox {...inputData} />,
     tagCollector: <TagCollector />,
   };
-  return inputs[inputData.type];
+  return inputs[inputData.responseSize];
 };
 
 const InputFactory = ({ inputData }) => {

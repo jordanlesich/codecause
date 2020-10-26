@@ -7,6 +7,8 @@ import { handleNewTags, formatIncomingTags, formatOutgoingTags } from "./tags";
 
 const projDb = db.collection("projects");
 
+//***********************HELPERS****************** */
+
 const formatIncomingProject = (project) => {
   return {
     ...project,
@@ -15,19 +17,38 @@ const formatIncomingProject = (project) => {
     solutionTags: formatIncomingTags(project.solutionTags, "solution"),
   };
 };
-
-export const createProject = (stepperData, user, finishedFn) => {
-  const params = {
-    slug: `${kebabCase(user.profile.displayName)}-${kebabCase(
-      stepperData[0].answer
-    )}`,
+const getProjectSlug = (displayName, projectName) => {
+  if (!displayName || !projectName)
+    throw new Error(
+      "Did not recieve the required argument to create a project slug"
+    );
+  else {
+    return `${kebabCase(displayName)}-${kebabCase(projectName)}`;
+  }
+};
+export const isSlugUnique = async (displayName, projectName) => {
+  return projDb
+    .doc(getProjectSlug(displayName, projectName))
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        return false;
+      } else {
+        return true;
+      }
+    })
+    .catch((error) => console.error(error));
+};
+const createProjectParams = (stepperData, displayName, slug) => {
+  return {
+    slug,
     id: uuidv4(),
-    name: stepperData[0].answer,
     timeCreated: Date.now(),
-    creator: user.profile.displayName,
-    causeTag: formatOutgoingTags(stepperData[6].answer),
-    solutionTag: formatOutgoingTags(stepperData[7].answer),
-    skillTags: formatOutgoingTags(stepperData[8].answer),
+    creator: displayName,
+    name: stepperData[0].answer,
+    causeTags: formatOutgoingTags(stepperData[6].answer, "projectDB"),
+    solutionTags: formatOutgoingTags(stepperData[7].answer, "projectDB"),
+    skillTags: formatOutgoingTags(stepperData[8].answer, "projectDB"),
     description: stepperData[1].answer,
     body: [
       { label: "Brief", text: stepperData[1].answer, id: uuidv4() },
@@ -48,37 +69,79 @@ export const createProject = (stepperData, user, finishedFn) => {
     commentCount: 0,
     contributors: [],
     votes: [],
+    awards: [],
   };
-  const allStrTags = [
-    ...params.skillTags.map((tag) => ({ type: "skill", text: tag })),
-    { type: "cause", text: params.causeTag },
-    { type: "solution", text: params.solutionTag },
-  ];
+};
+
+//*******************REQUESTS*********************/
+
+export const createProject = async (stepperData, displayName) => {
+  if (!stepperData || !displayName)
+    throw new Error("Create Project received falsy arguments");
+  if (!Array.isArray(stepperData) || !typeof displayName === "string")
+    throw new Error(
+      "Create Project did not receive arguments of the correct type"
+    );
+  const isUnique = await isSlugUnique(displayName, stepperData[0].answer);
+  if (!isUnique) throw new Error("Project id is not unique");
+  if (!stepperData.every((step) => step.completed)) {
+    throw new Error(
+      "Project was submitted for creation with incomplete stepper data"
+    );
+  }
+
+  const slug = getProjectSlug(displayName, stepperData[0].answer);
+  const projectParams = createProjectParams(stepperData, displayName, slug);
+  const outgoingCause = formatOutgoingTags(
+    stepperData[6].answer,
+    "tagDB",
+    slug
+  );
+  const outgoingSolution = formatOutgoingTags(
+    stepperData[7].answer,
+    "tagDB",
+    slug
+  );
+  const outgoingSkill = formatOutgoingTags(
+    stepperData[8].answer,
+    "tagDB",
+    slug
+  );
+  const starterComment = buildComment(
+    "Congrats on creating a CoLab project! This is the comment section where contributors will come to ask questions about your project. Be sure to provide them with prompt and thoughtful answers.",
+    "Jordan"
+  );
 
   const batch = db.batch();
-  const projRef = projDb.doc(params.slug);
-  batch.set(projRef, params);
-  batch.set(projRef.collection("comments").doc("all"), {
-    main: [
-      buildComment(
-        "Congrats on creating a CoLab project! This is the comment section where contributors will come to ask questions about your project. Be sure to provide them with prompt and thoughtful answers.",
-        {
-          id: "does-not-exist",
-          displayName: "CodeCause Team",
-        }
-      ),
-    ],
+
+  batch.set(projDb.doc(slug), projectParams);
+  batch.set(projDb.doc(slug).collection("comments").doc("main"), {
+    all: [starterComment],
   });
-  batch
+  batch.set(projDb.doc(slug).collection("applications").doc("main"), {
+    all: [],
+  });
+  batch.set(db.collection("tags").doc("causeTags"), outgoingCause, {
+    merge: true,
+  });
+  batch.set(db.collection("tags").doc("solutionTags"), outgoingSolution, {
+    merge: true,
+  });
+  batch.set(db.collection("tags").doc("skillTags"), outgoingSkill, {
+    merge: true,
+  });
+
+  return batch
     .commit()
     .then(() => {
-      handleNewTags(allStrTags);
-      finishedFn();
+      console.log("Project Created!");
+      return `/project/${slug}`;
     })
     .catch((err) => {
-      console.err(err);
+      return err;
     });
 };
+
 export const getProjects = async () => {
   return projDb
     .get()
@@ -86,6 +149,7 @@ export const getProjects = async () => {
       querySnapshot.docs.map((doc) => formatIncomingProject(doc.data()))
     );
 };
+
 export const getProject = async (slug) => {
   return projDb
     .doc(slug)
@@ -109,6 +173,7 @@ export const queryProjectsByName = async (name) => {
     })
     .catch((err) => console.error(err));
 };
+
 export const queryProjectsByTag = async (tagType, value) => {
   const op = getTagSearchOp(tagType);
   const field = getTagField(tagType);
@@ -136,8 +201,8 @@ export const queryProjectsByTags = async (allTags) => {
 
 const getTagField = (tagType) => {
   if (tagType === "skill") return "skillTags";
-  if (tagType === "cause") return "causeTag";
-  if (tagType === "solution") return "solutionTag";
+  if (tagType === "cause") return "causeTags";
+  if (tagType === "solution") return "solutionTags";
 };
 const getTagSearchOp = (tagType) => {
   if (tagType === "skill") return "array-contains";

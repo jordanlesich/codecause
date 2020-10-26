@@ -1,73 +1,108 @@
-import React, { useState, useEffect, useContext } from "react";
-import styled from "styled-components";
+import React, { useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
 
-import { AuthContext } from "../contexts/authContext";
+import { isSlugUnique } from "../actions/project";
+import { useAuth } from "../Hooks/useAuth";
 import { StepperContext } from "../contexts/stepperContext";
 import FrameFactory from "./factories/frameFactory";
-import StepperMap from "./stepperMap";
-import Background from "./background";
-import { getColor } from "../helpers/palette";
 
-const StepperWindow = styled.div`
-  height: 100%;
-  width: 100%;
-  display: grid;
-  grid-template-columns:
-    minmax(300px, 400px)
-    minmax(auto, 100px)
-    minmax(700px, 800px)
-    auto;
-  .stepper-panel {
-    grid-column: 3/4;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-`;
+const Stepper = ({ submit }) => {
+  const {
+    currentStep,
+    currentFrame,
+    frame,
+    step,
+    steps,
+    addData,
+    currentInputValue,
+    setValid,
+    checkCompleted,
+    stepperData,
+  } = useContext(StepperContext);
+  const history = useHistory();
+  const { user } = useAuth();
+  const [inputLoading, setInputLoading] = useState(false);
 
-const Stepper = ({ toggleStepper }) => {
-  const { currentFrame } = useContext(StepperContext);
-  const { user } = useContext(AuthContext);
-  const [isOpening, setIsOpening] = useState(true);
-  const exitStepper = (e) => {
-    setIsOpening(false);
-    setTimeout(() => toggleStepper(), 200);
+  const canMoveForward = () =>
+    frame < currentStep.frames.length - 1 || step < steps.length - 1;
+
+  const canMoveBackward = () => frame > 0 || step > 0;
+
+  const goTo = (step, frame) => {
+    history.push(`/create/${step}/${frame}`);
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Escape") {
-      setIsOpening(false);
-      setTimeout(() => toggleStepper(), 200);
+  const next = () => {
+    if (canMoveForward()) {
+      if (frame + 1 < currentStep.frames.length) {
+        goTo(step, frame + 1);
+      } else {
+        goTo(step + 1, 0);
+      }
+    } else {
+      return;
+    }
+  };
+  const prev = () => {
+    if (canMoveBackward()) {
+      if (frame === 0) {
+        const prevStep = steps[step - 1];
+        goTo(step - 1, prevStep.frames.length - 1);
+      } else {
+        goTo(step, frame - 1);
+      }
+    } else {
+      return;
     }
   };
 
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyPress);
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  });
+  const finishStepper = () => {
+    if (checkCompleted) {
+      submit(stepperData, user.displayName);
+      console.log("submitting request");
+    } else {
+      console.error(
+        "User was able to overide disable conditions to submit project to stepper."
+      );
+    }
+  };
+
+  const handleCheckUnique = async () => {
+    //in future, this might need to support conditional
+    //logic for other functions
+    setInputLoading(true);
+    try {
+      const isUnique = await isSlugUnique(user.displayName, currentInputValue);
+      if (isUnique) {
+        addData();
+        next();
+      } else {
+        setValid(false, "Users cannot have projects with the same name");
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setInputLoading(false);
+    }
+  };
+
+  const finishStep = () => {
+    if (currentFrame.input?.validations?.checkSlugUnique) {
+      handleCheckUnique();
+    } else {
+      addData();
+      next();
+    }
+  };
 
   return (
-    <Background
-      duration={"0.3s"}
-      bgColor={getColor("lightgrey")}
-      fadeIn={isOpening}
-    >
-      <StepperWindow>
-        <div className="stepper-panel">
-          {user ? (
-            <FrameFactory
-              frameType={currentFrame.type}
-              exitStepper={exitStepper}
-            />
-          ) : (
-            <h2>Must be signed in</h2>
-          )}
-        </div>
-        <StepperMap />
-      </StepperWindow>
-    </Background>
+    <FrameFactory
+      navFns={{ canMoveForward, canMoveBackward }}
+      actions={{ finishStepper, finishStep, prev, next }}
+      inputLoading={inputLoading}
+      location={`/${step}/${frame}`}
+    />
   );
 };
 

@@ -9,7 +9,6 @@ export const StyledButton = styled.button`
   align-items: center;
   height: 4rem;
   padding: 1.1rem 2.4rem;
-
   font-family: inherit;
   font-size: 1.3rem;
   font-weight: 700;
@@ -20,6 +19,7 @@ export const StyledButton = styled.button`
   cursor: pointer;
   transition: 0.2s all;
   outline: none;
+  text-align: start;
 
   &.primary {
     background-color: ${getColor("primary")};
@@ -65,6 +65,14 @@ export const StyledButton = styled.button`
       margin: 0.2rem 0.5rem;
       transform: translate(-0.2rem, 0.2rem);
     }
+  }
+  &.step-button {
+    background-color: transparent;
+    padding: 0;
+    height: 2.4rem;
+    color: ${getColor("font")};
+    font-weight: 400;
+    transition: none;
   }
   &.icon-button {
     padding: 0;

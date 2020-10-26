@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 
-import { AuthContext } from "../../contexts/authContext";
+import { useAuth } from "../../Hooks/useAuth";
 import { createProject } from "../../actions/project";
 import { StepperContext } from "../../contexts/stepperContext";
 import Button from "../../components/button";
@@ -10,24 +10,20 @@ const NextFrameBtn = styled(Button)``;
 
 const getBtnText = (type) => {
   const texts = {
-    message: "Next",
-    singleQA: "Submit",
-    tagPicker: "Submit",
+    message: "Continue",
+    singleQA: "Continue",
+    tagPicker: "Continue",
     results: "Complete",
   };
   return texts[type];
 };
 
-const NextFrameButton = ({ exitStepper }) => {
-  const {
-    currentInputValue,
-    next,
-    addData,
-    currentFrame,
-    stepperData,
-  } = useContext(StepperContext);
+const NextFrameButton = ({ next }) => {
+  const { currentInputValue, addData, currentFrame, stepperData } = useContext(
+    StepperContext
+  );
 
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const { type } = currentFrame;
 
   const completeStep = (e) => {
@@ -37,7 +33,7 @@ const NextFrameButton = ({ exitStepper }) => {
   };
   const completeForm = (e) => {
     // TODO: navigate to the finished project if successful
-    createProject(stepperData, user, exitStepper);
+    createProject(stepperData, user);
   };
   const completeBtnFn = (type) => {
     const functions = {

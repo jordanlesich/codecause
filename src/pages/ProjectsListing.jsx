@@ -55,7 +55,7 @@ const ProjectsPage = (props) => {
   const [projects, setProjects] = useState(null);
   const [sideMenu, setSideMenu] = useState("main");
   const { user } = useAuth();
-
+  console.log("rendering listing");
   const routerData = props.location.state;
 
   //this useEffect is used to list projects when someone chooses to search
@@ -75,7 +75,8 @@ const ProjectsPage = (props) => {
   }
 
   const fetchProjects = async () => {
-    setProjects(await getProjects());
+    const projects = await getProjects();
+    setProjects(projects);
   };
   const queryByTag = async ({ field, value }) => {
     setProjects(null);

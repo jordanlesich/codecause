@@ -1,16 +1,5 @@
 import { db } from "../base";
-
-const sampleTags = [
-  { type: "cause", text: "sample-causes-everywhere" },
-  { type: "solution", text: "sample-app" },
-  { type: "skill", text: "sampleJS" },
-  { type: "skill", text: "sampleJS" },
-  { type: "skill", text: "sampleJS" },
-  { type: "skill", text: "samplebase" },
-  { type: "skill", text: "samplestore" },
-  { type: "skill", text: "sample-developer" },
-  { type: "skill", text: "sample-designer" },
-];
+import firebase from "firebase/app";
 
 export const formatIncomingTags = (obj, type) =>
   Object.keys(obj).map((key) => ({
@@ -29,27 +18,55 @@ const formatTagsForSearch = (tags, type) => {
   return newArr;
 };
 
-export const formatOutgoingTags = (tags) => {
+const formatTagsForPicker = (tags) => {
+  let newArr = [];
+  for (let tag in tags) {
+    newArr = [...newArr, { name: tag, projects: tags[tag].projects.length }];
+  }
+
+  return newArr;
+};
+
+//passes in array of strings and outputs a 'mapping' usable for Firebase queries
+export const formatOutgoingTags = (tags, destination, projSlug) => {
   let newObj = {};
-  tags.forEach((tag) => {
-    newObj[tag] = true;
-  });
+  if (destination === "projectDB") {
+    tags.forEach((tag) => {
+      newObj[tag] = true;
+    });
+  } else if (destination === "tagDB") {
+    tags.forEach((tag) => {
+      newObj[tag] = {
+        projects: firebase.firestore.FieldValue.arrayUnion(projSlug),
+      };
+    });
+  } else {
+    console.error(
+      "Did not recieve the correct destination value while formatting outgoing tags"
+    );
+  }
+  console.log(newObj);
   return newObj;
 };
 
-export const getTags = async (type) => {
+export const getTags = async (type, format) => {
+  if (!type) throw new Error("tag type was falsy, likely undefined");
   return db
     .collection("tags")
     .doc(`${type}Tags`)
     .get()
     .then((doc) => {
-      return formatTagsForSearch(doc.data(), type);
+      if (format === "tagSearch") {
+        return formatTagsForSearch(doc.data(), type);
+      } else if (format === "tagPicker") {
+        return formatTagsForPicker(doc.data(), type);
+      } else {
+        throw new Error("getTags did not recieve a proper format argument");
+      }
     })
     .catch((err) => {
-      return {
-        error: `Could not find tags with the givem query paramter: "${type}"`,
-        details: err,
-      };
+      console.error(err);
+      return [];
     });
 };
 
@@ -81,6 +98,31 @@ export const handleNewTags = async (newTags) => {
   return saveNewTags(collection);
 };
 
-export const testTags = () => {
-  handleNewTags(sampleTags);
+// export const testTags = () => {
+//   handleNewTags(sampleTags);
+// };
+
+export const testAddTag = async (str, slug = "lil-bitch-test") => {
+  const batch = db.batch();
+
+  batch.set(
+    db.collection("tags").doc("causeTags"),
+    formatOutgoingTags(["cause"], "tagDB", slug),
+    { merge: true }
+  );
+  batch.set(
+    db.collection("tags").doc("solutionTags"),
+    formatOutgoingTags(["daddy"], "tagDB", slug),
+    { merge: true }
+  );
+  batch.set(
+    db.collection("tags").doc("skillTags"),
+    formatOutgoingTags(["a", "b", "c", "d", "e"], "tagDB", slug),
+    { merge: true }
+  );
+
+  return batch
+    .commit()
+    .then(() => true)
+    .catch((err) => console.error(err));
 };

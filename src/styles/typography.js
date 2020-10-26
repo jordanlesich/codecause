@@ -1,4 +1,7 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
+
+import { getColor } from "../helpers/palette";
 
 export const DisplayXl = styled.h1`
   font-size: 4rem;
@@ -64,4 +67,19 @@ export const BodySm = styled.p`
 export const BodyXs = styled.p`
   font-size: 1.1rem;
   line-height: 1.5rem;
+`;
+
+export const BoldText = styled.span`
+  font-weight: 700;
+`;
+
+export const StyledLink = styled(Link)`
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 1.3rem;
+  line-height: 2rem;
+  color: ${getColor("primary")};
+  :visited {
+    color: ${getColor("purple400")};
+  }
 `;

@@ -12,8 +12,9 @@ export const checkProfileExists = async (displayName) => {
 };
 
 export const addProfile = async ({ displayName, email }) => {
-  const profileExists = await checkProfileExists(displayName);
-  if (profileExists) {
+  const profileAlreadyExists = await checkProfileExists(displayName);
+
+  if (profileAlreadyExists) {
     return { type: "error", error: "Error: Username already exists" };
   } else {
     const batch = db.batch();
@@ -22,7 +23,7 @@ export const addProfile = async ({ displayName, email }) => {
       displayName,
       email,
       timeJoined: Date.now(),
-      votedProjects: [],
+      votedProjects: {},
       projectsCreated: [],
       projectsContributing: [],
     };

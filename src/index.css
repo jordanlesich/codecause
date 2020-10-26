@@ -26,3 +26,6 @@ textarea {
 #root {
   height: 100%;
 }
+button > * {
+  pointer-events: none;
+}

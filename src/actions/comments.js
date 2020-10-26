@@ -4,13 +4,10 @@ import { db } from "../base";
 
 const projDb = db.collection("projects");
 
-export const buildComment = (text, profile) => ({
+export const buildComment = (text, from) => ({
   id: uuidv4(),
-  text: text,
-  from: {
-    id: profile.id,
-    name: profile.displayName,
-  },
+  text,
+  from,
   sent: Date.now(),
   replies: [],
 });

@@ -34,7 +34,7 @@ const UserProjectList = ({ contributing, created }) => {
   const generateCreated = () => {
     return (
       <>
-        <Overline>My Projects</Overline>
+        <Overline>MY PROJECTS</Overline>
         <ul className="inner-section">
           {created.map((project) => (
             <li>
@@ -50,7 +50,7 @@ const UserProjectList = ({ contributing, created }) => {
   const generateContributing = () => {
     return (
       <>
-        <Overline>Contributing</Overline>
+        <Overline>CONTRIBUTING</Overline>
         <ul className="inner-section">
           {contributing.map((project) => (
             <li>
@@ -68,7 +68,7 @@ const UserProjectList = ({ contributing, created }) => {
     if (!contributing.length && !created.length) {
       return (
         <>
-          <Overline>My Projects</Overline>
+          <Overline>MY PROJECTS</Overline>
           <BodySm className="no-project-text">You have no projects</BodySm>;
         </>
       );

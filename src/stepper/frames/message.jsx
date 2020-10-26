@@ -2,39 +2,39 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 
 import { StepperContext } from "../../contexts/stepperContext";
-import { Title, MsgText } from "./elements";
+import { DisplayLg, BodyMd } from "../../styles/typography";
 
 const MessageFrame = styled.div`
   position: relative;
 
   .list {
     list-style: square;
-    margin-left: 1.5rem;
-
+    margin-left: 1.6rem;
     li {
-      margin: 0.5rem 0;
+      margin-bottom: 0.8rem;
     }
   }
 `;
 
 const Message = () => {
   const { currentFrame } = useContext(StepperContext);
-  const { title, subTitle, body, showTitle } = currentFrame;
+  const { cardTitle, sideTitle, body } = currentFrame;
+
+  const title = cardTitle || sideTitle || null;
 
   return (
     <MessageFrame>
-      {showTitle && <Title>{title}</Title>}
-      {subTitle && <MsgText> {subTitle} </MsgText>}
+      {title && <DisplayLg className="title">{title}</DisplayLg>}
       {body && (
         <div className="body-text">
-          {body.type === "list" ? (
+          {body.type === "list" && (
             <ul className="list">
-              {body.strings.map((str, i) => (
-                <li key={i}>{str}</li>
+              {body.listItems.map((str, i) => (
+                <li key={i}>
+                  <BodyMd>{str}</BodyMd>
+                </li>
               ))}
             </ul>
-          ) : (
-            body.strings.map((str, i) => <p key={i}>{str}</p>)
           )}
         </div>
       )}

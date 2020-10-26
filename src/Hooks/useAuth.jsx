@@ -99,22 +99,22 @@ function useProvideAuth() {
       });
   };
 
-  const handleLocalVote = (action, vote) => {
-    let newVotedProjects = [];
+  const handleLocalVote = (action, slug) => {
+    let newVoteObj = {};
     if (action === "add") {
-      newVotedProjects = [vote, ...user.votedProjects];
+      newVoteObj = { slug, ...user.votedProjects };
     }
     if (action === "remove") {
-      newVotedProjects = user.votedProjects.filter(
-        (userVote) => userVote !== vote
-      );
+      for (let v in user.votedProjects) {
+        if (v !== slug) {
+          newVoteObj[v] = true;
+        }
+      }
     }
-    const newUser = {
+    setUser({
       ...user,
-      votedProjects: newVotedProjects,
-    };
-
-    setUser(newUser);
+      votedProjects: newVoteObj,
+    });
   };
 
   // Subscribe to user on mount

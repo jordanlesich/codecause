@@ -1,38 +1,92 @@
 import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { StepperContext } from "../../contexts/stepperContext";
+import Break from "../../components/break";
+import { BodyMd, HeaderMd, DisplayLg } from "../../styles/typography";
 import { getColor } from "../../helpers/palette";
-import { Title, Question, Details } from "./elements";
 
 const ResultsFrame = styled.div`
-  /* position: relative; */
-
+  overflow-y: auto;
   ul {
     list-style: none;
   }
-  .QA-list-item {
-    padding-top: 0.5rem;
-    margin-top: 0.5rem;
-    border-top: 1px solid ${getColor("lightBorder")};
+  .result {
+    position: relative;
+    margin-right: 4rem;
+  }
+  .question {
+    margin-bottom: 0.8rem;
+  }
+  .single-answer,
+  .tag-box,
+  .results-break {
+    margin-bottom: 1.6rem;
+  }
+  .single-answer {
+    margin-right: 3.2rem;
+  }
+  .tag-box {
+    display: flex;
+    margin-right: 3.2rem;
+  }
+  .tag-answer {
+    margin-right: 1.6rem;
+  }
+  .edit-link {
+    position: absolute;
+    right: 0;
+    top: 20%;
+    text-decoration: none;
+    color: ${getColor("primary")};
+    :visited {
+      color: ${getColor("primary")};
+    }
   }
 `;
 
+const formatAnswer = (answer) => {
+  if (answer === "" || !answer) {
+    return <BodyMd className="single-answer">{"Answer still required"}</BodyMd>;
+  } else if (Array.isArray(answer) && !answer?.length) {
+    return <BodyMd className="single-answer">{"Answer still required"}</BodyMd>;
+  } else if (typeof answer === "string") {
+    return <BodyMd className="single-answer">{answer}</BodyMd>;
+  } else if (Array.isArray(answer)) {
+    return (
+      <div className="tag-box">
+        {answer.map((tag) => {
+          return (
+            <BodyMd className="tag-answer" key={tag}>
+              {tag}
+            </BodyMd>
+          );
+        })}
+      </div>
+    );
+  }
+};
+
 const Results = () => {
   const { stepperData, currentFrame } = useContext(StepperContext);
+  const { title, details } = currentFrame;
+
   return (
     <ResultsFrame>
-      {currentFrame.showTitle && <Question>{currentFrame.title}</Question>}
+      {title && <DisplayLg className="title">{title}</DisplayLg>}
+      {details && <BodyMd className="details">{details}</BodyMd>}
+      <Break type="soft" className="results-break result" />
       <ul>
-        {stepperData.map((step) => {
+        {stepperData.map((step, index) => {
           return (
-            <li key={step.tag} className="QA-list-item">
-              <Title>{step.question}</Title>
-              {step.answer ? (
-                <Details>{step.answer}</Details>
-              ) : (
-                <Details>{"Answer required"}</Details>
-              )}
+            <li key={step.tag} className="result">
+              <Link className="edit-link" to={`/create/${index}/0`}>
+                <BodyMd>Edit</BodyMd>
+              </Link>
+              <HeaderMd className="question">{step.question}</HeaderMd>
+              {formatAnswer(step.answer)}
+              <Break type="soft" className="results-break" />
             </li>
           );
         })}

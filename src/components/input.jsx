@@ -20,6 +20,10 @@ const InputGroup = styled.div`
   &.search-input {
     max-width: 19.2rem;
   }
+  &.tag-search-dropdown,
+  &.singleQA {
+    max-width: 34.8rem;
+  }
 `;
 
 const StyledLabel = styled.label`
@@ -35,6 +39,7 @@ const StyledInput = styled.input`
   display: block;
   width: 100%;
   font-size: 1.5rem;
+  font-family: inherit;
   line-height: 2.3rem;
   padding: 1rem 1.6rem;
   outline: none;
@@ -70,31 +75,39 @@ const Input = ({
   autoFocus,
   label,
   id,
+  onFocus,
+  onBlur,
   onType,
   type,
   name,
   valid = true,
   value,
   disabled = false,
+  externalLabel,
   errMsg = "Car gone! Car gone!",
   className,
-  // prependEl = false,
+  divClassName,
+  inputClassName,
+  labelClassName,
   appendEl = null,
 }) => {
   return (
-    <InputGroup className={className}>
-      <StyledLabel htmlFor={id} className={className}>
-        <HeaderXs>{label ? label : "No Label Passed In"}</HeaderXs>
-      </StyledLabel>
+    <InputGroup className={divClassName || className}>
+      {externalLabel || (
+        <StyledLabel htmlFor={id} className={labelClassName || className}>
+          <HeaderXs>{label ? label : "No Label Passed In"}</HeaderXs>
+        </StyledLabel>
+      )}
       <StyledInput
         id={id}
+        onFocus={onFocus}
+        onBlur={onBlur || onType}
         name={name || id || "name your Input"}
         onChange={onType}
-        onBlur={onType}
         placeholder={placeholder || "Placeholder text"}
         type={type}
         value={value}
-        className={`${!valid && "invalid"} ${className}`}
+        className={`${!valid && "invalid"} ${inputClassName || className}`}
         disabled={disabled}
         autoFocus={autoFocus}
       />

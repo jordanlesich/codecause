@@ -4,48 +4,50 @@ import styled from "styled-components";
 import { StepperContext } from "../../contexts/stepperContext";
 import InputFactory from "../factories/inputFactory";
 
-import { Title, Question, Details } from "./elements";
+import { DisplayLg, BodyMd, BodySm } from "../../styles/typography";
 
-const StyledQA = styled.form`
-  position: relative;
-`;
+const StyledQA = styled.form``;
 
-const SingleQA = () => {
+const SingleQA = ({ submitFn }) => {
   const {
     currentFrame,
     typeAnswer,
+    step,
+    stepperData,
     currentInputValue,
-    next,
-    addData,
-    showTitle,
+    currentInputValid,
   } = useContext(StepperContext);
 
-  const { question, details, input, tag, title } = currentFrame;
+  const { question, details, input, tag, help } = currentFrame;
+  // const [info, setInfo] = useToggle(false);
   const handleTyping = (e) => {
     typeAnswer(e.target.value);
   };
 
   const completeStep = (e) => {
     e.preventDefault();
-    addData();
-    next();
+    submitFn();
   };
 
   return (
     <StyledQA onSubmit={completeStep}>
-      {showTitle && <Title>{title}</Title>}
-      <Question htmlFor={tag} className="QA-label">
+      <DisplayLg htmlFor={tag} className="title">
         {question}
-      </Question>
-      {details && <Details details={details}>{details}</Details>}
+      </DisplayLg>
+
+      {details && <BodyMd className="details">{details}</BodyMd>}
       <InputFactory
         inputData={{
           ...input,
-          fn: handleTyping,
+          onType: handleTyping,
           id: tag,
+          externalLabel: true,
           tag: tag,
-          className: "QA-input",
+          valid: currentInputValid,
+          errMsg: stepperData[step].error,
+          className: "singleQA",
           placeholder: "Type here",
+          autoFocus: true,
           value: currentInputValue,
         }}
       />

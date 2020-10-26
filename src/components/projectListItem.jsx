@@ -21,7 +21,7 @@ const ListItem = styled.li`
   margin-bottom: 1.6rem;
   .block-link {
     position: absolute;
-    z-index: -10000;
+    /* z-index: -10000; */
     top: 0;
     bottom: 0;
     right: 0;
@@ -58,6 +58,12 @@ const ListItem = styled.li`
   .vote-button {
     margin-right: auto;
   }
+  .skill-tags {
+    display: flex;
+    button {
+      margin-right: 0.8rem;
+    }
+  }
 `;
 
 const ProjectListItem = ({ project }) => {
@@ -65,24 +71,29 @@ const ProjectListItem = ({ project }) => {
     <ListItem>
       <Link
         to={{
-          pathname: `projects/${project.slug}`,
+          pathname: `project/${project.slug}`,
           state: project,
         }}
         className="block-link"
       />
       <div className="item-title-section">
         <DisplayMd className="project-title">{project.name}</DisplayMd>
-        <Tag tag={project.solutionTags[0]} />
-        <Tag tag={project.causeTags[0]} className="cause-tag" />
+        <Tag tag={project.solutionTags[0].name} type="solution" />
+        <Tag
+          tag={project.causeTags[0].name}
+          type="cause"
+          className="cause-tag"
+        />
       </div>
       <div className="info-wrapper">
-        <span className="vote-wrapper">
-          {/* <Votes votes={project.votes} id={project.slug} /> */}
-        </span>
         <BodyMd className="project-description">{project.description}</BodyMd>
         <div className="skill-tags">
           {project.skillTags.map((tag) => (
-            <Tag tag={tag} key={`${project.name}-${tag.name}`} />
+            <Tag
+              tag={tag.name}
+              type="skill"
+              key={`${project.name}-${tag.name}`}
+            />
           ))}
         </div>
         <div className="divider">

@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import { PlusCircle, List, HelpCircle, MessageSquare } from "react-feather";
+import styled from "styled-components";
+import {
+  Users,
+  ArrowLeft,
+  HelpCircle,
+  List,
+  MessageSquare,
+} from "react-feather";
 
-import { useAuth } from "../Hooks/useAuth";
 import Break from "../components/break";
-import Search from "../components/search";
-import UserProjectList from "../components/userProjectList";
+import ActiveUserList from "../components/activeUserList";
 import Button from "../components/button";
 import { getColor } from "../helpers/palette";
 
@@ -18,7 +22,7 @@ const MainMenuPanel = styled.div`
   flex-direction: column;
   .top-list-section,
   .search-section,
-  .project-list-section,
+  .people-list-section,
   .feedback-about-section {
     padding: 1.6rem 2.4rem;
   }
@@ -29,7 +33,7 @@ const MainMenuPanel = styled.div`
       margin-bottom: 0.8rem;
     }
   }
-  .project-list-section {
+  .people-list-section {
     margin-bottom: auto;
   }
 
@@ -65,51 +69,57 @@ const MainMenuPanel = styled.div`
   }
 `;
 
-const MainPanel = ({ queryByName }) => {
-  const { user } = useAuth();
-  const [searchText, setSearchText] = useState("");
+const ProjectVisitorPanel = ({
+  projectDisplay,
+  setProjectDisplay,
+  creator,
+  contributors,
+  awards,
+}) => {
   const history = useHistory();
-
-  const handleType = (e) => {
-    setSearchText(e.target.value);
+  const ApplyToProject = () => {
+    setProjectDisplay("applying");
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    queryByName(searchText);
+  const ReadWhitepaper = () => {
+    setProjectDisplay("paper");
   };
-
-  const toStepper = () => {
-    history.push("/create/0/0");
+  const goTo = (e) => {
+    console.log(e.target.value);
+    history.push(e.target.value);
   };
 
   return (
     <MainMenuPanel>
-      <form className="search-section" onSubmit={handleSubmit}>
-        <Search
-          placeholder="Search for projects"
-          value={searchText}
-          onType={handleType}
-        />
-      </form>
-      <Break type="hard" />
       <div className="top-list-section">
+        {projectDisplay === "paper" ? (
+          <Button
+            className="text-button list-button"
+            fn={ApplyToProject}
+            withIcon={<Users size="2.4rem" />}
+            content="Send Application"
+          />
+        ) : (
+          <Button
+            className="text-button list-button"
+            fn={ReadWhitepaper}
+            withIcon={<List size="2.4rem" />}
+            content="Whitepaper"
+            value="/projects"
+          />
+        )}
         <Button
           className="text-button list-button"
-          fn={toStepper}
-          withIcon={<PlusCircle size="2.4rem" />}
-          content="Create a Project"
-        />
-        <Button
-          className="text-button list-button"
-          withIcon={<List size="2.4rem" />}
-          content="Browse Projects"
+          fn={goTo}
+          withIcon={<ArrowLeft size="2.4rem" />}
+          content="Back to Listing"
         />
       </div>
       <Break type="hard" />
-      <div className="project-list-section">
-        <UserProjectList
-          contributing={user.projectsContributing || []}
-          created={user.projectsCreated || []}
+      <div className="people-list-section">
+        <ActiveUserList
+          contributors={contributors}
+          creator={creator}
+          awards={awards}
         />
       </div>
       <Break type="hard" />
@@ -119,15 +129,19 @@ const MainPanel = ({ queryByName }) => {
           className="text-button list-button"
           withIcon={<HelpCircle size="2.4rem" />}
           content="About Us"
+          fn={goTo}
+          value="/about"
         />
         <Button
           className="text-button list-button"
           withIcon={<MessageSquare size="2.4rem" />}
           content="Feedback"
+          fn={goTo}
+          value="/feedback"
         />
       </div>
     </MainMenuPanel>
   );
 };
 
-export default MainPanel;
+export default ProjectVisitorPanel;

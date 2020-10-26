@@ -2,16 +2,17 @@ import React from "react";
 import styled from "styled-components";
 import { ChevronDown, ChevronUp, LogOut, Settings, Home } from "react-feather";
 
-import Break from "../components/break";
 import { useAuth } from "../Hooks/useAuth";
 import useToggle from "../Hooks/useToggle";
 import Button from "../components/button";
-import { DisplayMd, HeaderMd } from "../styles/typography";
+import { DisplaySm, HeaderMd } from "../styles/typography";
 import { getColor } from "../helpers/palette";
 
 const NavContainer = styled.nav`
   height: 5.6rem;
-  max-width: 100vw;
+  width: 100%;
+  grid-row: 1;
+  grid-column: 1/6;
   position: sticky;
   display: flex;
   align-items: center;
@@ -58,12 +59,12 @@ const NavContainer = styled.nav`
 
 const Header = () => {
   const { user, signout } = useAuth();
-  const [userMenu, toggleUserMenu] = useToggle(true);
+  const [userMenu, toggleUserMenu] = useToggle(false);
 
   return (
     <NavContainer>
       <Button
-        content={<DisplayMd>colab</DisplayMd>}
+        content={<DisplaySm>colab</DisplaySm>}
         className="text-button co-lab nav-button"
       />
       {user.displayName}
