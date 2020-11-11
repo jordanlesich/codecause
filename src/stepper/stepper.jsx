@@ -18,6 +18,7 @@ const Stepper = ({ submit }) => {
     setValid,
     checkCompleted,
     stepperData,
+    route,
   } = useContext(StepperContext);
   const history = useHistory();
   const { user } = useAuth();
@@ -29,7 +30,7 @@ const Stepper = ({ submit }) => {
   const canMoveBackward = () => frame > 0 || step > 0;
 
   const goTo = (step, frame) => {
-    history.push(`/create/${step}/${frame}`);
+    history.push(`${route}/${step}/${frame}`);
   };
 
   const next = () => {
@@ -58,7 +59,7 @@ const Stepper = ({ submit }) => {
 
   const finishStepper = () => {
     if (checkCompleted) {
-      submit(stepperData, user.displayName);
+      submit({ data: stepperData, user });
       console.log("submitting request");
     } else {
       console.error(
@@ -72,7 +73,7 @@ const Stepper = ({ submit }) => {
     //logic for other functions
     setInputLoading(true);
     try {
-      const isUnique = await isSlugUnique(user.displayName, currentInputValue);
+      const isUnique = await isSlugUnique(user.id, currentInputValue);
       if (isUnique) {
         addData();
         next();

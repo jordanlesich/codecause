@@ -8,12 +8,13 @@ const profileDb = db.collection("profiles");
 const makeVoteId = (profileId, projSlug) => `${profileId}-${projSlug}`;
 
 export const addVote = async (voter, project) => {
-  const voteId = makeVoteId(voter.displayName, project.slug);
+  const voterID = voter.id;
+  const voteId = makeVoteId(voterID, project.slug);
   const timeVoted = Date.now();
   const batch = db.batch();
   //create a vote receipt in the votes collection
   batch.set(voteDb.doc(voteId), {
-    from: voter.displayName,
+    from: voterID,
     project: project.slug,
     timeVoted,
   });
@@ -25,18 +26,9 @@ export const addVote = async (voter, project) => {
     },
     { merge: true }
   );
-  //sends a message to the project's creator
-  batch.set(profileDb.doc(project.creator).collection("messages").doc("all"), {
-    main: firebase.firestore.FieldValue.arrayUnion({
-      from: "CoLab",
-      type: "news",
-      msg: `${voter.displayName} added a like to ${project.name}`,
-      date: timeVoted,
-    }),
-  });
   //adds the project slug(id) to the user's 'voted projects' array
   batch.set(
-    profileDb.doc(voter.displayName),
+    profileDb.doc(voterID),
     {
       votedProjects: { [project.slug]: true },
     },
@@ -53,7 +45,7 @@ export const addVote = async (voter, project) => {
 };
 
 export const removeVote = async (voter, project) => {
-  const voteId = makeVoteId(voter.displayName, project.slug);
+  const voteId = makeVoteId(voter.id, project.slug);
   const batch = db.batch();
 
   //remove the vote receipt from the votes collection
@@ -65,7 +57,7 @@ export const removeVote = async (voter, project) => {
     // { merge: true }
   );
   //removes the project slug(id) to the user's 'voted projects' array
-  batch.update(profileDb.doc(voter.displayName), {
+  batch.update(profileDb.doc(voter.id), {
     [`votedProjects.${project.slug}`]: firebase.firestore.FieldValue.delete(),
   });
   return batch

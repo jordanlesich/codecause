@@ -3,33 +3,23 @@ import { db } from "../base";
 
 //create check connected function
 
-export const sendFail = async (type, user, data, error) => {
+export const sendFail = async (type, user, errorData) => {
   const errorID = uuidv4();
-  //check online, short fn if offline.
-
+  const { data, error } = errorData;
   const report = {
-    data,
     type,
-    displayName: user.displayName,
-    user,
+    userID: user.id,
     time: Date.now(),
     error,
+    data,
   };
+  console.log(report);
 
   try {
-    await db.collections("epicfails").doc(errorID).set(report);
-    localStorage.setItem(
-      "stepperBackup",
-      JSON.stringify({ error: report, data })
-    );
-    return errorID;
+    await db.collection("epicfails").doc(errorID).set(report);
+    // localStorage.setItem("stepperBackup", JSON.stringify(report));
   } catch (error) {
-    localStorage.setItem(
-      "stepperBackup",
-      JSON.stringify({ error: "receipt", data })
-    );
-    console.error(
-      "Could not submit stepper form or send error receipt. User is likely not connected to the internet. "
-    );
+    // localStorage.setItem("stepperBackup", JSON.stringify(report));
+    console.error(error);
   }
 };

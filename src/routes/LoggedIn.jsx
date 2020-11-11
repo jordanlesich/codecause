@@ -3,8 +3,9 @@ import { Route, Switch, Redirect } from "react-router-dom";
 
 import ProjectsListing from "../pages/ProjectsListing";
 import Project from "../pages/Project";
-import BriefUser from "../pages/BriefUser";
+import Build from "../pages/BuildMode";
 import Create from "../pages/Create";
+import Apply from "../pages/Apply";
 
 // Set up individual routes paths here
 // Example:
@@ -14,7 +15,8 @@ const LoggedIn = () => {
     <Switch>
       <Route path="/projects" exact component={ProjectsListing} />
       <Route path="/project/:id" exact component={Project} />
-      <Route path="/brief/" exact component={BriefUser} />
+      <Route path="/project/:id/apply/:step/:frame" exact component={Apply} />
+      <Route path="/build/:id" exact component={Build} />
       <Route path="/create/:step/:frame" exact component={Create} />
       <Redirect from="/" to="/projects" />
       {/* <Route path="/projects" exact component={ProjectsListingPage} />

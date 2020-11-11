@@ -1,18 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import {
-  Users,
-  ArrowLeft,
-  HelpCircle,
-  List,
-  MessageSquare,
-} from "react-feather";
+import { Users, ArrowLeft } from "react-feather";
 
 import Break from "../components/break";
 import ActiveUserList from "../components/activeUserList";
 import Button from "../components/button";
 import { getColor } from "../helpers/palette";
+import FeedbackAbout from "../components/feedbackAbout";
 
 const MainMenuPanel = styled.div`
   height: 100%;
@@ -69,78 +64,60 @@ const MainMenuPanel = styled.div`
   }
 `;
 
-const ProjectVisitorPanel = ({
-  projectDisplay,
-  setProjectDisplay,
-  creator,
-  contributors,
-  awards,
-}) => {
+const ProjectVisitorPanel = ({ id, project, isInvolved }) => {
   const history = useHistory();
-  const ApplyToProject = () => {
-    setProjectDisplay("applying");
+  const applyToProject = () => {
+    history.push(`/project/${id}/apply/0/0`);
   };
-  const ReadWhitepaper = () => {
-    setProjectDisplay("paper");
-  };
+
   const goTo = (e) => {
-    console.log(e.target.value);
     history.push(e.target.value);
+  };
+  const toProjectDashboard = () => {
+    //TODO authenticate
+    history.push(`/build/${project.id}`);
   };
 
   return (
-    <MainMenuPanel>
-      <div className="top-list-section">
-        {projectDisplay === "paper" ? (
+    <>
+      <MainMenuPanel>
+        <div className="top-list-section">
+          {isInvolved ? (
+            <Button
+              className="text-button list-button"
+              fn={toProjectDashboard}
+              withIcon={<Users size="2.4rem" />}
+              content="Go To Members Only"
+            />
+          ) : (
+            <Button
+              className="text-button list-button"
+              fn={applyToProject}
+              withIcon={<Users size="2.4rem" />}
+              content="Send Application"
+            />
+          )}
           <Button
             className="text-button list-button"
-            fn={ApplyToProject}
-            withIcon={<Users size="2.4rem" />}
-            content="Send Application"
-          />
-        ) : (
-          <Button
-            className="text-button list-button"
-            fn={ReadWhitepaper}
-            withIcon={<List size="2.4rem" />}
-            content="Whitepaper"
+            fn={goTo}
             value="/projects"
+            withIcon={<ArrowLeft size="2.4rem" />}
+            content="Back to Listing"
           />
-        )}
-        <Button
-          className="text-button list-button"
-          fn={goTo}
-          withIcon={<ArrowLeft size="2.4rem" />}
-          content="Back to Listing"
-        />
-      </div>
-      <Break type="hard" />
-      <div className="people-list-section">
-        <ActiveUserList
-          contributors={contributors}
-          creator={creator}
-          awards={awards}
-        />
-      </div>
-      <Break type="hard" />
-
-      <div className="feedback-about-section">
-        <Button
-          className="text-button list-button"
-          withIcon={<HelpCircle size="2.4rem" />}
-          content="About Us"
-          fn={goTo}
-          value="/about"
-        />
-        <Button
-          className="text-button list-button"
-          withIcon={<MessageSquare size="2.4rem" />}
-          content="Feedback"
-          fn={goTo}
-          value="/feedback"
-        />
-      </div>
-    </MainMenuPanel>
+        </div>
+        <Break type="hard" />
+        <div className="people-list-section">
+          {project && (
+            <ActiveUserList
+              contributors={project.contributors}
+              creator={project.creator}
+              awards={project.awards}
+            />
+          )}
+        </div>
+        <FeedbackAbout />
+      </MainMenuPanel>
+    </>
   );
 };
 

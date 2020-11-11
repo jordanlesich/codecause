@@ -1,14 +1,24 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import { PlusCircle, List } from "react-feather";
+import styled from "styled-components";
+import {
+  Users,
+  ArrowLeft,
+  HelpCircle,
+  List,
+  MessageSquare,
+  Edit,
+  Settings,
+  AlertCircle,
+  Home,
+  Inbox,
+} from "react-feather";
 
-import { useAuth } from "../Hooks/useAuth";
 import Break from "../components/break";
-import Search from "../components/search";
-import UserProjectList from "../components/userProjectList";
+import ActiveUserList from "../components/activeUserList";
 import Button from "../components/button";
 import { getColor } from "../helpers/palette";
+import { HeaderMd } from "../styles/typography";
 import FeedbackAbout from "../components/feedbackAbout";
 
 const MainMenuPanel = styled.div`
@@ -18,19 +28,22 @@ const MainMenuPanel = styled.div`
   display: flex;
   flex-direction: column;
   .top-list-section,
-  .search-section,
-  .project-list-section,
+  .btn-list-section,
+  .people-list-section,
   .feedback-about-section {
     padding: 1.6rem 2.4rem;
   }
 
-  .top-list-section,
+  .btn-list-section,
   .feedback-about-section {
-    button:first-child {
+    button {
       margin-bottom: 0.8rem;
     }
+    button:last-child {
+      margin-bottom: 0;
+    }
   }
-  .project-list-section {
+  .people-list-section {
     margin-bottom: auto;
   }
 
@@ -66,56 +79,51 @@ const MainMenuPanel = styled.div`
   }
 `;
 
-const MainPanel = ({ queryByName }) => {
-  const { user } = useAuth();
-  const [searchText, setSearchText] = useState("");
-  const history = useHistory();
-
-  const handleType = (e) => {
-    setSearchText(e.target.value);
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    queryByName(searchText);
-  };
-
-  const toStepper = () => {
-    history.push("/create/0/0");
-  };
-
+const ProjectVisitorPanel = ({ id, project, switchMode }) => {
   return (
     <MainMenuPanel>
-      <form className="search-section" onSubmit={handleSubmit}>
-        <Search
-          placeholder="Search for projects"
-          value={searchText}
-          onType={handleType}
-        />
-      </form>
-      <Break type="hard" />
       <div className="top-list-section">
-        <Button
-          className="text-button list-button"
-          fn={toStepper}
-          withIcon={<PlusCircle size="2.4rem" />}
-          content="Create a Project"
-        />
-        <Button
-          className="text-button list-button"
-          withIcon={<List size="2.4rem" />}
-          content="Browse Projects"
-        />
+        <HeaderMd>{project && project.name}</HeaderMd>
       </div>
       <Break type="hard" />
-      <div className="project-list-section">
-        <UserProjectList
-          contributing={user.projectsContributing || []}
-          created={user.projectsCreated || []}
+      <div className="btn-list-section">
+        <Button
+          className="text-button list-button"
+          fn={switchMode}
+          value="dashboard"
+          withIcon={<Home size="2.4rem" />}
+          content="Dashboard"
         />
+
+        <Button
+          className="text-button list-button"
+          fn={switchMode}
+          value="whitepaper"
+          withIcon={<Edit size="2.4rem" />}
+          content="Edit Whitepaper"
+        />
+        <Button
+          className="text-button list-button"
+          fn={switchMode}
+          value="settings"
+          withIcon={<Settings size="2.4rem" />}
+          content="Project Settings"
+        />
+      </div>
+
+      <Break type="hard" />
+      <div className="people-list-section">
+        {project && (
+          <ActiveUserList
+            contributors={project.contributors}
+            creator={project.creator}
+            awards={project.awards}
+          />
+        )}
       </div>
       <FeedbackAbout />
     </MainMenuPanel>
   );
 };
 
-export default MainPanel;
+export default ProjectVisitorPanel;

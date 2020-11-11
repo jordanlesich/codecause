@@ -30,7 +30,7 @@ const StyledUserList = styled.div`
   }
 `;
 
-const UserProjectList = ({ contributors = [], creator, awards = [] }) => {
+const ActiveUserList = ({ contributors = [], creator, awards = [] }) => {
   return (
     <StyledUserList>
       <Overline>CREATOR</Overline>
@@ -44,10 +44,12 @@ const UserProjectList = ({ contributors = [], creator, awards = [] }) => {
       <ul className="inner-section">
         {contributors.length !== 0 &&
           contributors.map((user) => (
-            <li key={user.name}>
-              <Link to={`user/${user.name}`}>
-                <BodySm className="user-name">{user.name}</BodySm>
-                <BodyXs className="user-role">{user.role}</BodyXs>
+            <li key={user.displayName}>
+              <Link to={`user/${user.id}`}>
+                <BodySm className="user-name">{user.displayName}</BodySm>
+                {user.role && (
+                  <BodyXs className="user-role">{user.role}</BodyXs>
+                )}
               </Link>
             </li>
           ))}
@@ -68,4 +70,4 @@ const UserProjectList = ({ contributors = [], creator, awards = [] }) => {
   );
 };
 
-export default UserProjectList;
+export default ActiveUserList;

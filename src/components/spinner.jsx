@@ -9,35 +9,35 @@ const StyledSpinner = styled.div`
     width: ${(props) => props.width};
     height: ${(props) => props.height};
     border-radius: 50%;
-    background: #707070;
+    background: #394352;
     background: -moz-linear-gradient(
       left,
-      #707070 10%,
+      #394352 10%,
       rgba(112, 112, 112, 0) 42%
     );
     background: -webkit-linear-gradient(
       left,
-      #707070 10%,
+      #394352 10%,
       rgba(112, 112, 112, 0) 42%
     );
     background: -o-linear-gradient(
       left,
-      #707070 10%,
+      #394352 10%,
       rgba(112, 112, 112, 0) 42%
     );
     background: -ms-linear-gradient(
       left,
-      #707070 10%,
+      #394352 10%,
       rgba(112, 112, 112, 0) 42%
     );
     background: linear-gradient(
       to right,
-      #707070 10%,
+      #394352 10%,
       rgba(112, 112, 112, 0) 42%
     );
     position: relative;
-    -webkit-animation: load3 1.4s infinite linear;
-    animation: load3 1.4s infinite linear;
+    -webkit-animation: load3 1s infinite linear;
+    animation: load3 1s infinite linear;
     -webkit-transform: translateZ(0);
     -ms-transform: translateZ(0);
     transform: translateZ(0);
@@ -45,7 +45,7 @@ const StyledSpinner = styled.div`
   .loader:before {
     width: 50%;
     height: 50%;
-    background: #707070;
+    background: #394352;
     border-radius: 100% 0 0 0;
     position: absolute;
     top: 0;
@@ -87,11 +87,12 @@ const StyledSpinner = styled.div`
   }
 `;
 
-const Spinner = ({ radius, width, height }) => {
+const Spinner = ({ radius, width, height, className }) => {
   return (
     <StyledSpinner
       width={radius || width || "11rem"}
       height={radius || height || "11rem"}
+      className={className}
     >
       <div className="loader" />
     </StyledSpinner>

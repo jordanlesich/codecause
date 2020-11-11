@@ -41,12 +41,13 @@ export const HeaderSm = styled.h4`
   font-weight: 700;
 `;
 export const HeaderXs = styled.p`
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   line-height: 1.5rem;
   font-weight: 700;
 `;
 export const Overline = styled.h5`
   font-size: 1.1rem;
+  text-transform: uppercase;
   letter-spacing: 0.1rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -74,12 +75,13 @@ export const BoldText = styled.span`
 `;
 
 export const StyledLink = styled(Link)`
+  display: inline-block;
   text-decoration: none;
   font-family: inherit;
   font-size: 1.3rem;
   line-height: 2rem;
   color: ${getColor("primary")};
   :visited {
-    color: ${getColor("purple400")};
+    color: ${getColor("primary")};
   }
 `;

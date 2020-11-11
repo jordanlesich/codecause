@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import { useAuth } from "../Hooks/useAuth";
-import { DisplayLg, HeaderLg, BodyMd, HeaderMd } from "../styles/typography";
+import { DisplayLg, BodyMd, HeaderMd } from "../styles/typography";
 
 const Briefing = styled.main`
   width: 48rem;
@@ -23,13 +23,8 @@ const Briefing = styled.main`
 `;
 
 const Jumbotron = ({ copy, buttonSection }) => {
-  console.log(copy);
   const { user } = useAuth();
-  const history = useHistory();
   const { onlyTitle, titleParagraph, restParagraphs } = copy;
-  const handleStartStepper = () => {
-    history.push("/create/0/0");
-  };
 
   if (!user) {
     return <Redirect to="/login" />;

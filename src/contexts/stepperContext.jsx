@@ -5,7 +5,7 @@ export const StepperContext = createContext();
 
 //TODO memoize this setup so that we're not updating everything on one keystroke.
 
-export const StepperProvider = ({ children, step, frame, steps }) => {
+export const StepperProvider = ({ children, step, frame, steps, route }) => {
   const [stepperData, setStepperData] = useState(createStepperData(steps));
 
   //******************DATA Fns************************ */
@@ -92,6 +92,7 @@ export const StepperProvider = ({ children, step, frame, steps }) => {
     <StepperContext.Provider
       value={{
         steps,
+        route,
         stepperData,
         currentInputValue,
         currentInputValid,

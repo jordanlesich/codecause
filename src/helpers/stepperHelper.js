@@ -1,16 +1,3 @@
-const omit = (obj, omitKey) => {
-  return Object.keys(obj).reduce((result, key) => {
-    if (key !== omitKey) {
-      result[key] = obj[key];
-    }
-    return result;
-  }, {});
-};
-
-// export const omitStepError = (step) => {
-//   omit(step, "error");
-// };
-
 const onlyQAFrames = (steps) => {
   return steps.map((step) => {
     return {
@@ -274,6 +261,109 @@ export const instructions = [
       },
       {
         type: "results",
+        sideTitle: "Your Project",
+        title: "Confirmation",
+        details: "Double check and verify your information.",
+      },
+    ],
+  },
+];
+
+export const applyInstructions = [
+  {
+    tag: "Q0",
+    frames: [
+      {
+        type: "singleQA",
+        sideTitle: "Motive",
+        question: "What Interests You About This Project?",
+        details: "What was the main reason you decided to be a contributor?",
+        tag: "Q0",
+        input: {
+          responseSize: "paragraph",
+        },
+      },
+    ],
+  },
+  {
+    tag: "Q1",
+    frames: [
+      {
+        type: "singleQA",
+        sideTitle: "Skills",
+        question: "What Do You Bring to the Table?",
+        details:
+          "Of the skills the creator is looking for, which ones do you have. If you have other skills, describe those as well.",
+        tag: "Q1",
+        input: {
+          responseSize: "paragraph",
+        },
+      },
+    ],
+  },
+  {
+    tag: "Q2",
+    frames: [
+      {
+        type: "singleQA",
+        sideTitle: "Location",
+        question: "Where are you based",
+        details: "Be sure to include your time zone",
+        tag: "Q2",
+        input: {
+          responseSize: "sentence",
+        },
+      },
+    ],
+  },
+  {
+    tag: "Q3",
+    frames: [
+      {
+        type: "singleQA",
+        sideTitle: "Solution",
+        question: "How Do You Plan to Help?",
+        details: "What can you do to help this project solve its problem?",
+        tag: "Q3",
+        input: {
+          responseSize: "paragraph",
+        },
+      },
+    ],
+  },
+  {
+    tag: "Q4",
+    frames: [
+      {
+        type: "singleQA",
+        sideTitle: "Commitment",
+        question: "How Many Hours Can You Pledge?",
+        details:
+          "Based on your current obligations, how many hours can the creator depend on you for?",
+        tag: "Q4",
+        input: {
+          responseSize: "sentence",
+        },
+      },
+    ],
+  },
+  {
+    tag: "Q5",
+    frames: [
+      {
+        type: "singleQA",
+        sideTitle: "Details",
+        question: "Anything to Add?",
+        details:
+          "If you have any details to add to this application, do so here.",
+        tag: "Q5",
+        input: {
+          responseSize: "paragraph",
+        },
+      },
+      {
+        type: "results",
+        tag: "Q6",
         sideTitle: "Your Project",
         title: "Confirmation",
         details: "Double check and verify your information.",

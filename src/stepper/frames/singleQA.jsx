@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { StepperContext } from "../../contexts/stepperContext";
 import InputFactory from "../factories/inputFactory";
 
-import { DisplayLg, BodyMd, BodySm } from "../../styles/typography";
+import { DisplayLg, BodyMd } from "../../styles/typography";
 
 const StyledQA = styled.form``;
 
@@ -18,7 +18,7 @@ const SingleQA = ({ submitFn }) => {
     currentInputValid,
   } = useContext(StepperContext);
 
-  const { question, details, input, tag, help } = currentFrame;
+  const { question, details, input, tag } = currentFrame;
   // const [info, setInfo] = useToggle(false);
   const handleTyping = (e) => {
     typeAnswer(e.target.value);

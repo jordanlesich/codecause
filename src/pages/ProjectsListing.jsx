@@ -17,7 +17,13 @@ import {
   queryProjectsByName,
 } from "../actions/project";
 import { listingInfo } from "../copy/infoText";
-import { DisplayLg, DisplayMd, BodySm, HeaderMd } from "../styles/typography";
+import {
+  DisplayLg,
+  DisplayMd,
+  BodySm,
+  HeaderMd,
+  StyledLink,
+} from "../styles/typography";
 
 const ListingSpace = styled.div`
   display: flex;
@@ -50,39 +56,58 @@ const ListingSpace = styled.div`
     }
   }
 `;
+const parseIntoParams = (searchStr) => {
+  const parsedSearch = searchStr.match(/[^?&]+/g);
+  return {
+    field: parsedSearch[0],
+    value: parsedSearch[1],
+  };
+};
+const MakeTitleText = (searchStr) => {
+  const { field, value } = parseIntoParams(searchStr);
+  return `${field}/${value}`;
+};
 
 const ProjectsPage = (props) => {
   const [projects, setProjects] = useState(null);
   const [sideMenu, setSideMenu] = useState("main");
   const { user } = useAuth();
-  console.log("rendering listing");
-  const routerData = props.location.state;
-
+  const routerSearch = props.location.search;
   //this useEffect is used to list projects when someone chooses to search
   //projects by tag from another page. The router props passes in the query state.
   //this useEffect listens to that state, if it undefined (router's choice, null doesn't work)
   //then we fetch all projects. If there is state, we fetch with that query.
   useEffect(() => {
-    if (routerData !== undefined) {
-      queryByTag(routerData);
+    const queryByTag = async (params) => {
+      try {
+        const newProjects = await queryProjectsByTag(params);
+        setProjects(newProjects);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const getAllProjects = async () => {
+      try {
+        const response = await getProjects();
+        setProjects(response);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (routerSearch) {
+      queryByTag(parseIntoParams(routerSearch));
     } else {
-      fetchProjects();
+      try {
+        getAllProjects();
+      } catch (error) {
+        console.error(error);
+      }
     }
-  }, [routerData]);
+  }, [routerSearch]);
 
   if (!user) {
     return <Redirect to="/login" />;
   }
-
-  const fetchProjects = async () => {
-    const projects = await getProjects();
-    setProjects(projects);
-  };
-  const queryByTag = async ({ field, value }) => {
-    setProjects(null);
-    const newProjects = await queryProjectsByTag(field, value);
-    setProjects(newProjects);
-  };
 
   const queryByName = async (name) => {
     if (name === "") return;
@@ -147,13 +172,23 @@ const ProjectsPage = (props) => {
       return <h1 className="listing-title"> Loading...</h1>;
     }
     if (projects.length === 0) {
-      return <h1 className="listing-title"> No Results Found</h1>;
+      return (
+        <>
+          <h1 className="listing-title"> No Results Found</h1>
+          <StyledLink to="projects">Back to all Projects</StyledLink>
+        </>
+      );
     }
     if (projects.length) {
       return (
         <>
+          {routerSearch && (
+            <StyledLink className='back-link'to="projects">Back to all Projects</StyledLink>
+          )}
           <div className="title-section">
-            <DisplayLg>Browse</DisplayLg>
+            <DisplayLg>
+              {routerSearch ? MakeTitleText(routerSearch) : "Browse"}
+            </DisplayLg>
             <InfoButton className="info-btn" toggle content={info} />
           </div>
           <div className="tag-chips">

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState, useRef } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import kebabCase from "lodash.kebabcase";
 import styled from "styled-components";
 

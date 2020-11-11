@@ -37,7 +37,7 @@ const UserProjectList = ({ contributing, created }) => {
         <Overline>MY PROJECTS</Overline>
         <ul className="inner-section">
           {created.map((project) => (
-            <li>
+            <li key={project.slug}>
               <Link to={`projects/${project.slug}`}>
                 <BodySm className="side-list-item">{project.name}</BodySm>
               </Link>
@@ -53,7 +53,7 @@ const UserProjectList = ({ contributing, created }) => {
         <Overline>CONTRIBUTING</Overline>
         <ul className="inner-section">
           {contributing.map((project) => (
-            <li>
+            <li key={project.slug}>
               <Link to={`projects/${project.value}`}>
                 <BodySm className="side-list-item">{project.name}</BodySm>
               </Link>

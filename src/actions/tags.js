@@ -101,28 +101,3 @@ export const handleNewTags = async (newTags) => {
 // export const testTags = () => {
 //   handleNewTags(sampleTags);
 // };
-
-export const testAddTag = async (str, slug = "lil-bitch-test") => {
-  const batch = db.batch();
-
-  batch.set(
-    db.collection("tags").doc("causeTags"),
-    formatOutgoingTags(["cause"], "tagDB", slug),
-    { merge: true }
-  );
-  batch.set(
-    db.collection("tags").doc("solutionTags"),
-    formatOutgoingTags(["daddy"], "tagDB", slug),
-    { merge: true }
-  );
-  batch.set(
-    db.collection("tags").doc("skillTags"),
-    formatOutgoingTags(["a", "b", "c", "d", "e"], "tagDB", slug),
-    { merge: true }
-  );
-
-  return batch
-    .commit()
-    .then(() => true)
-    .catch((err) => console.error(err));
-};

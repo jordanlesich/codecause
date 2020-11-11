@@ -8,7 +8,6 @@ import Spinner from "../../components/spinner";
 import TagPicker from "../frames/tagPicker";
 import Results from "../frames/results";
 import Button from "../../components/button";
-import { testAddTag } from "../../actions/tags";
 
 // import NextFrameButton from "../factories/nextFrameButton";
 

@@ -6,13 +6,14 @@ import Header from "../layouts/header";
 const StyleTemplate = styled.main`
   display: grid;
   min-height: 100%;
-  grid-template-columns: 28rem 1fr minmax(60rem, 72rem) 4fr;
+  grid-template-columns: 32rem 8rem minmax(60rem, 80rem) auto;
   grid-template-rows: 5.6rem auto;
   transition: 0.2s all;
 `;
 const MainSpace = styled.main`
   width: 100%;
   margin-top: 4rem;
+  /* margin-left: 4rem; */
   grid-column: 3/4;
   grid-row: 2;
 `;

@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 import Input from "./input";
 import { getColor } from "../helpers/palette";
-import { set } from "date-fns/esm";
 
 const StyledTagMaker = styled.form`
   position: relative;

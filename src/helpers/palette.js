@@ -21,6 +21,7 @@ export const getColor = (name) => {
     grey400: "#93A0B3",
     grey500: "#617089",
     grey600: "#394352",
+    grey700: "#232a34",
 
     purple000: "#F4ECF6",
     purple100: "#D3B1DB",
@@ -45,6 +46,22 @@ export const getColor = (name) => {
     green400: "#37943B",
     green500: "#318435",
     green600: "#256328",
+
+    yellow000: "#FDF9EA",
+    yellow100: "#F8E6AA",
+    yellow200: "#F2CE55",
+    yellow300: "#EEC22B",
+    yellow400: "#D6AE27",
+    yellow500: "#BF9B22",
+    yellow600: "#8F751A",
+
+    orange000: "#FDF2EB",
+    orange100: "#F7CBAF",
+    orange200: "#F1975F",
+    orange300: "#ED7D37",
+    orange400: "#D57031",
+    orange500: "#BE642C",
+    orange600: "#8F4B21",
   };
   return palette[name];
 };

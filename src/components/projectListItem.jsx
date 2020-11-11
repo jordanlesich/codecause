@@ -69,13 +69,7 @@ const ListItem = styled.li`
 const ProjectListItem = ({ project }) => {
   return (
     <ListItem>
-      <Link
-        to={{
-          pathname: `project/${project.slug}`,
-          state: project,
-        }}
-        className="block-link"
-      />
+      <Link to={`project/${project.slug}`} className="block-link" />
       <div className="item-title-section">
         <DisplayMd className="project-title">{project.name}</DisplayMd>
         <Tag tag={project.solutionTags[0].name} type="solution" />
@@ -100,7 +94,7 @@ const ProjectListItem = ({ project }) => {
           <Break type="soft" />
         </div>
         <div className="bottom-buttons-section">
-          <Votes project={project} />
+          <Votes project={project} variant="listing" />
           <Button
             content={project.commentCount}
             className="text-button"

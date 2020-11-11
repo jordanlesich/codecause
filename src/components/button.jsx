@@ -36,6 +36,21 @@ export const StyledButton = styled.button`
       cursor: default;
     }
   }
+  &.warning {
+    background-color: ${getColor("red400")};
+    color: ${getColor("white")};
+    :hover:enabled,
+    :focus:enabled {
+      background-color: ${getColor("red300")};
+    }
+    :active:enabled {
+      background-color: ${getColor("red500")};
+    }
+    :disabled {
+      background-color: ${getColor("red000")};
+      cursor: default;
+    }
+  }
   &.secondary {
     background-color: ${getColor("white")};
     border: 1px solid ${getColor("grey300")};
@@ -53,10 +68,15 @@ export const StyledButton = styled.button`
       cursor: default;
     }
   }
+
   &.text-button {
     background-color: transparent;
     padding: 1.1rem 0;
     color: ${getColor("font")};
+    :disabled {
+      color: ${getColor("grey300")};
+      cursor: default;
+    }
   }
   &.with-icon {
     padding: 1.1rem 1.8rem;
@@ -82,6 +102,11 @@ export const StyledButton = styled.button`
     height: 24px;
     width: 24px;
   }
+  &.long-button {
+    width: 100%;
+    flex-wrap: wrap;
+    align-content: center;
+  }
 `;
 
 const Button = ({
@@ -95,6 +120,7 @@ const Button = ({
   disabled,
   withIcon = null,
   iconButton = null,
+  appendIcon = null,
 }) => {
   return (
     <StyledButton
@@ -109,6 +135,7 @@ const Button = ({
     >
       {withIcon && <span className="icon-wrapper">{withIcon}</span>}
       {content}
+      {appendIcon && <span className="icon-wrapper">{appendIcon}</span>}
       {iconButton && <span className="icon-button-wrapper">{iconButton}</span>}
     </StyledButton>
   );

@@ -11,49 +11,43 @@ export const checkProfileExists = async (displayName) => {
   //above would usually throw in case of a permissions error. Needs to be fixed in security settings
 };
 
-export const addProfile = async ({ displayName, email }) => {
-  const profileAlreadyExists = await checkProfileExists(displayName);
+export const addProfile = async (displayName, email) => {
+  if (displayName == null || email == null)
+    throw new Error("One of the fields were empty.");
 
-  if (profileAlreadyExists) {
-    return { type: "error", error: "Error: Username already exists" };
-  } else {
-    const batch = db.batch();
-    const profileRef = db.collection("profiles").doc(kebabCase(displayName));
-    const profileData = {
-      displayName,
-      email,
-      timeJoined: Date.now(),
-      votedProjects: {},
-      projectsCreated: [],
-      projectsContributing: [],
-    };
-    batch.set(profileRef, profileData);
-    batch.set(profileRef.collection("messages").doc("all"), {
-      main: [
-        {
-          from: "Jordan",
-          to: displayName,
-          msg:
-            "Welcome to CoLab, I will make a better welcome message later on!",
-          timeSent: Date.now(),
-        },
-      ],
+  const profileAlreadyExists = await checkProfileExists(displayName);
+  if (profileAlreadyExists)
+    throw new Error("Profile already exists. Please pick a unique username.");
+
+  const id = kebabCase(displayName);
+  const batch = db.batch();
+  const profileRef = db.collection("profiles").doc(id);
+  const profileData = {
+    displayName,
+    id,
+    email,
+    timeJoined: Date.now(),
+    votedProjects: {},
+    projectsCreated: [],
+    projectsContributing: [],
+  };
+  batch.set(profileRef, profileData);
+  batch.set(profileRef.collection("messages").doc("alerts"), {});
+  batch.set(profileRef.collection("messages").doc("DMs"), {});
+  return batch
+    .commit()
+    .then(() => {
+      return { success: profileData };
+    })
+    .catch((err) => {
+      return err;
     });
-    return batch
-      .commit()
-      .then((res) => {
-        return { type: "success", data: profileData };
-      })
-      .catch((err) => {
-        return { type: "error", error: err.toString() };
-      });
-  }
 };
 
-export const getProfile = async (displayName) => {
+export const getProfile = async (id) => {
   return db
     .collection("profiles")
-    .doc(displayName)
+    .doc(id)
     .get()
     .then((doc) => doc.data())
     .catch((err) => console.error(`Doc doesn't exist. Error: ${err}`));
@@ -70,18 +64,21 @@ export const getProfileByEmail = async (email) => {
         return result[0];
       } else if (result.length > 1) {
         throw new Error("Duplicate Profiles");
+      } else {
+        throw new Error(
+          "No profile returned, or profile data has been corrupted"
+        );
       }
     })
-    .catch((err) => {
-      console.error(`Doc doesn't exist. Error: ${err}`);
-      return err;
+    .catch((error) => {
+      return error;
     });
 };
 
 export const deleteProfile = async (displayName) => {
   return db
     .collection("profiles")
-    .doc(displayName)
+    .doc(kebabCase(displayName))
     .delete()
     .then(() => console.log("Delete profile successful"))
     .catch((err) => console.error(`Doc doesn't exist. Error: ${err}`));

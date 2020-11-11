@@ -7,6 +7,7 @@ import useToggle from "../Hooks/useToggle";
 import Button from "../components/button";
 import { DisplaySm, HeaderMd } from "../styles/typography";
 import { getColor } from "../helpers/palette";
+import { useHistory } from "react-router";
 
 const NavContainer = styled.nav`
   height: 5.6rem;
@@ -59,15 +60,20 @@ const NavContainer = styled.nav`
 
 const Header = () => {
   const { user, signout } = useAuth();
+  const history = useHistory();
   const [userMenu, toggleUserMenu] = useToggle(false);
 
+  const goHome = () => {
+    history.push("/");
+  };
   return (
     <NavContainer>
       <Button
         content={<DisplaySm>colab</DisplaySm>}
         className="text-button co-lab nav-button"
+        fn={goHome}
       />
-      {user.displayName}
+
       <div className="user-menu-container">
         {userMenu ? (
           <>

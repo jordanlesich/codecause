@@ -1,9 +1,10 @@
+import firebase from "firebase/app";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../base";
 import kebabCase from "lodash.kebabcase";
 
-import { buildComment } from "./comments";
-import { handleNewTags, formatIncomingTags, formatOutgoingTags } from "./tags";
+import { createMessage } from "../actions/messages";
+import { formatIncomingTags, formatOutgoingTags } from "./tags";
 
 const projDb = db.collection("projects");
 
@@ -17,18 +18,18 @@ const formatIncomingProject = (project) => {
     solutionTags: formatIncomingTags(project.solutionTags, "solution"),
   };
 };
-const getProjectSlug = (displayName, projectName) => {
-  if (!displayName || !projectName)
+const getProjectSlug = (userID, projectName) => {
+  if (!userID || !projectName)
     throw new Error(
       "Did not recieve the required argument to create a project slug"
     );
   else {
-    return `${kebabCase(displayName)}-${kebabCase(projectName)}`;
+    return `${kebabCase(userID)}-${kebabCase(projectName)}`;
   }
 };
-export const isSlugUnique = async (displayName, projectName) => {
+export const isSlugUnique = async (userID, projectName) => {
   return projDb
-    .doc(getProjectSlug(displayName, projectName))
+    .doc(getProjectSlug(userID, projectName))
     .get()
     .then((doc) => {
       if (doc.exists) {
@@ -68,21 +69,21 @@ const createProjectParams = (stepperData, displayName, slug) => {
     ],
     commentCount: 0,
     contributors: [],
-    votes: [],
     awards: [],
+    votes: {},
   };
 };
 
 //*******************REQUESTS*********************/
 
-export const createProject = async (stepperData, displayName) => {
-  if (!stepperData || !displayName)
+export const createProject = async (stepperData, user) => {
+  if (!stepperData || !user)
     throw new Error("Create Project received falsy arguments");
-  if (!Array.isArray(stepperData) || !typeof displayName === "string")
+  if (!Array.isArray(stepperData) || !typeof user.id === "string")
     throw new Error(
       "Create Project did not receive arguments of the correct type"
     );
-  const isUnique = await isSlugUnique(displayName, stepperData[0].answer);
+  const isUnique = await isSlugUnique(user.id, stepperData[0].answer);
   if (!isUnique) throw new Error("Project id is not unique");
   if (!stepperData.every((step) => step.completed)) {
     throw new Error(
@@ -90,8 +91,12 @@ export const createProject = async (stepperData, displayName) => {
     );
   }
 
-  const slug = getProjectSlug(displayName, stepperData[0].answer);
-  const projectParams = createProjectParams(stepperData, displayName, slug);
+  const slug = getProjectSlug(user.id, stepperData[0].answer);
+  const projectParams = createProjectParams(
+    stepperData,
+    user.displayName,
+    slug
+  );
   const outgoingCause = formatOutgoingTags(
     stepperData[6].answer,
     "tagDB",
@@ -107,20 +112,37 @@ export const createProject = async (stepperData, displayName) => {
     "tagDB",
     slug
   );
-  const starterComment = buildComment(
-    "Congrats on creating a CoLab project! This is the comment section where contributors will come to ask questions about your project. Be sure to provide them with prompt and thoughtful answers.",
-    "Jordan"
-  );
+
+  const projectDataForCreator = {
+    name: projectParams.name,
+    slug,
+    id: projectParams.id,
+    description: projectParams.description,
+    role: "Creator",
+    timeCreated: projectParams.timeCreated,
+  };
 
   const batch = db.batch();
 
   batch.set(projDb.doc(slug), projectParams);
-  batch.set(projDb.doc(slug).collection("comments").doc("main"), {
-    all: [starterComment],
-  });
-  batch.set(projDb.doc(slug).collection("applications").doc("main"), {
-    all: [],
-  });
+  batch.set(projDb.doc(slug).collection("comments").doc("main"), {});
+  batch.set(projDb.doc(slug).collection("applications").doc("main"), {});
+  batch.set(
+    db.collection("profiles").doc(user.id),
+    {
+      projectsCreated: firebase.firestore.FieldValue.arrayUnion(
+        projectDataForCreator
+      ),
+    },
+    { merge: true }
+  );
+  batch.set(
+    db.collection("profiles").doc(user.id).collection("private").doc("keys"),
+    {
+      [projectParams.id]: "creator",
+    },
+    { merge: true }
+  );
   batch.set(db.collection("tags").doc("causeTags"), outgoingCause, {
     merge: true,
   });
@@ -174,11 +196,10 @@ export const queryProjectsByName = async (name) => {
     .catch((err) => console.error(err));
 };
 
-export const queryProjectsByTag = async (tagType, value) => {
-  const op = getTagSearchOp(tagType);
-  const field = getTagField(tagType);
+export const queryProjectsByTag = async ({ field, value }) => {
+  console.log(field, value);
   return projDb
-    .where(field, op, value)
+    .where(`${field}Tags.${value}`, "==", true)
     .get()
     .then((querySnapshot) =>
       querySnapshot.docs.map((doc) => formatIncomingProject(doc.data()))
@@ -189,7 +210,7 @@ export const queryProjectsByTag = async (tagType, value) => {
 export const queryProjectsByTags = async (allTags) => {
   let queryRef = projDb;
   allTags.forEach((tag) => {
-    queryRef = queryRef.where(`${tag.type}Tags.${tag.name}`, "==", true);
+    queryRef = queryRef.where(`${tag.field}Tags.${tag.name}`, "==", true);
   });
   return await queryRef
     .get()
@@ -197,16 +218,6 @@ export const queryProjectsByTags = async (allTags) => {
       querySnapshot.docs.map((doc) => formatIncomingProject(doc.data()))
     )
     .catch((err) => console.error(err));
-};
-
-const getTagField = (tagType) => {
-  if (tagType === "skill") return "skillTags";
-  if (tagType === "cause") return "causeTags";
-  if (tagType === "solution") return "solutionTags";
-};
-const getTagSearchOp = (tagType) => {
-  if (tagType === "skill") return "array-contains";
-  else return "==";
 };
 
 export const replaceSections = (
@@ -231,4 +242,67 @@ export const replaceSections = (
       setLoading(false);
       toggleModal();
     });
+};
+
+export const querySingleProjectByX = async (field, value) => {
+  return db
+    .collection("projects")
+    .where(field, "==", value)
+    .get()
+    .then((querySnapshot) => {
+      const matches = querySnapshot.docs;
+      if (matches.length < 0) {
+        throw new Error("No matches found for this project ID");
+      } else if (matches.length > 1) {
+        throw new Error("Found more than one project with the same ID");
+      } else {
+        return matches[0].data();
+      }
+    })
+    .catch((error) => error);
+};
+
+export const removeAlertByType = async (alertType, project) => {
+  //changing db data with client side data is bad practice
+  //This is temporary until I work in serverless functions
+  const { alerts } = project;
+  let newAlerts = {};
+  for (let alert in alerts) {
+    if (alerts[alert].type !== alertType) {
+      newAlerts[alert] = alerts[alert];
+    }
+  }
+  try {
+    await db
+      .collection("projects")
+      .doc(project.slug)
+      .set({ alerts: newAlerts }, { merge: true });
+    const newProject = await getProject(project.slug);
+    return newProject;
+  } catch (error) {
+    throw new Error();
+  }
+};
+
+export const addSampleAlert = async (projectSlug) => {
+  const id = uuidv4();
+
+  const fakeMessage = createMessage({
+    id,
+    recipient: projectSlug,
+    sender: "CoLab",
+    content: `This is a long message where I'll tell you to get fucked. So yeah...fuck off`,
+    status: "unread",
+    type: "newApplication",
+  });
+
+  return db
+    .collection("projects")
+    .doc(projectSlug)
+    .set(
+      {
+        alerts: { [id]: fakeMessage },
+      },
+      { merge: true }
+    );
 };

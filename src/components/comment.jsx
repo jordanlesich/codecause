@@ -1,79 +1,173 @@
 import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import styled from "styled-components";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
-import useToggle from "../Hooks/useToggle";
-import TextBox from "../components/textBox";
+import Spinner from "./spinner";
+import Input from "./input";
 import Button from "./button";
+import Break from "./break";
+import { addComment, getComments } from "../actions/comments";
+import { BodyXs, BodyMd, BoldText } from "../styles/typography";
+import { getColor } from "../helpers/palette";
 
 const StyledComment = styled.div`
-  .replies {
-    margin-left: 1rem;
+  margin-bottom: 2.4rem;
+  .info-text {
+    margin-bottom: 0.8rem;
+    color: ${getColor("grey500")};
   }
-  .comment-box {
-    height: 6rem;
-    font-size: 1rem;
-    padding: 0.5rem;
+  .comment-text {
+    margin-bottom: 0.8rem;
   }
-  .comment-sender {
+  .reply-box {
+    display: flex;
+    margin-bottom: 1.6rem;
+    button:first-child {
+      margin-right: auto;
+    }
+    /* button:last-child {
+      margin-left: auto;
+    } */
+  }
+  .comment-button {
+    text-transform: uppercase;
     font-size: 1.1rem;
-    font-weight: 500;
+    color: ${getColor("primary")};
+    padding: 0;
+    height: fit-content;
   }
-  .comment.body {
+  .comment-juice {
+    padding: 0;
+    font-size: 1.1rem;
+  }
+  .cancel {
+    color: ${getColor("grey400")};
+  }
+  .replies-root {
+    margin-left: 1.6rem;
+    padding-left: 2.4rem;
+    border-left: 1px solid ${getColor("lightBorder")};
+    margin-top: 2.4rem;
   }
 `;
 
-const Comment = ({ id, addReply, text, sender, replies, timeSent }) => {
-  const [isReplying, toggleIsReplying] = useToggle(false);
-  const [loading, toggleLoading] = useToggle(false);
-  const [replyText, setReplyText] = useState("");
+const Comment = ({ comment, projectID, user }) => {
+  const [replyDisplay, setReplyDisplay] = useState("idle");
+  const [replies, setReplies] = useState([]);
+  const [replyInput, setReplyInput] = useState("");
+  const [replyCount, setReplyCount] = useState(comment.replyCount);
 
   const handleTyping = (e) => {
-    setReplyText(e.target.value);
+    setReplyInput(e.target.value);
   };
-  const handleSubmitReply = (e) => {
+
+  const handleSubmitReply = async (e) => {
     e.preventDefault();
-    addReply(id, replyText, toggleLoading);
-    setReplyText("");
-    toggleIsReplying();
+    setReplyDisplay("loading");
+    try {
+      const newReplies = await addComment(
+        projectID,
+        comment.id,
+        replyInput,
+        user,
+        comment.parent
+      );
+      setReplies(newReplies);
+      setReplyCount(newReplies.length);
+      setReplyDisplay("display");
+    } catch (error) {
+      console.error(error);
+      setReplyDisplay("idle");
+    } finally {
+      setReplyInput("");
+    }
   };
+
+  const displayReplies = async () => {
+    if (replies.length && replyCount > 0) {
+      setReplyDisplay("display");
+    } else {
+      setReplyDisplay("loading");
+      try {
+        const replies = await getComments(comment.id, projectID);
+        setReplies(replies);
+        setReplyDisplay("display");
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const toggleReplyBox = (e) => {
+    if (e.target.value === "reply") {
+      setReplyDisplay("replying");
+    } else {
+      setReplyDisplay("idle");
+    }
+  };
+
   return (
     <StyledComment>
-      <p className="comment-sender">{sender.name} </p>
-      <p className="comment-body">{text}</p>
-      <p>{formatDistanceToNow(timeSent)} ago</p>
-      <div className="replies">
-        {loading && <p>loading</p>}
-        {isReplying ? (
-          <>
-            <label htmlFor={`${id}-reply-input`}>Leave Reply:</label>
-            <TextBox
-              id={`${id}-reply-input`}
-              value={replyText}
-              fn={handleTyping}
-            />
-            <Button type="submit" content="reply" fn={handleSubmitReply} />
-          </>
+      <BodyXs className="info-text scroll-to">
+        Posted by <BoldText>{comment.from}</BoldText>{" "}
+        {formatDistanceToNow(comment.sent)} ago
+      </BodyXs>
+      <BodyMd className="comment-text">{comment.text}</BodyMd>
+      <div className="reply-box">
+        {replyDisplay === "replying" ? (
+          <Button
+            content="cancel"
+            fn={toggleReplyBox}
+            className="text-button comment-button cancel"
+            value="cancel"
+          />
         ) : (
-          <Button content="reply" fn={toggleIsReplying} />
+          <Button
+            fn={toggleReplyBox}
+            content="reply"
+            className="text-button comment-button"
+            value="reply"
+          />
         )}
-        {replies?.length > 0 &&
-          replies.map((comment) => {
-            const subId = uuidv4();
-            return (
-              <Comment
-                key={subId}
-                id={comment.id}
-                sender={comment.from}
-                text={comment.text}
-                addReply={addReply}
-                timeSent={comment.sent}
-                replies={comment.replies}
-              />
-            );
-          })}
+        {replyCount > 0 &&
+          (replyDisplay === "display" ? (
+            <Button
+              content="hide replies"
+              className="text-button comment-button"
+              fn={toggleReplyBox}
+              value={"hide"}
+            />
+          ) : (
+            <Button
+              content="see replies"
+              className="text-button comment-button"
+              fn={displayReplies}
+            />
+          ))}
       </div>
+      {replyDisplay === "display" || <Break type="soft" />}
+      {replyDisplay === "replying" && (
+        <form onSubmit={handleSubmitReply}>
+          <Input
+            externalLabel
+            className="reply-text-box"
+            autoFocus
+            placeholder="Reply here"
+            value={replyInput}
+            onType={handleTyping}
+          />
+          <Break type="soft" />
+        </form>
+      )}
+      {replyDisplay === "loading" && <Spinner radius="4rem" />}
+      <ul className="comments-root replies-root">
+        {replyDisplay === "display" &&
+          replies.map((comment) => (
+            <li key={comment.id}>
+              <Comment comment={comment} user={user} projectID={projectID} />
+            </li>
+          ))}
+      </ul>
     </StyledComment>
   );
 };

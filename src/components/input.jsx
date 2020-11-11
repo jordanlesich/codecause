@@ -24,6 +24,9 @@ const InputGroup = styled.div`
   &.singleQA {
     max-width: 34.8rem;
   }
+  &.reply-text-box {
+    max-width: 100%;
+  }
 `;
 
 const StyledLabel = styled.label`

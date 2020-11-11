@@ -6,7 +6,7 @@ import { getColor } from "../helpers/palette";
 
 const StyledSideMenu = styled.div`
   height: calc(100% - 5.6rem);
-  width: 28rem;
+  width: 32rem;
   position: fixed;
   padding-top: 1.6rem;
   top: 5.6rem;

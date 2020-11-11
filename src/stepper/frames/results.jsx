@@ -69,7 +69,7 @@ const formatAnswer = (answer) => {
 };
 
 const Results = () => {
-  const { stepperData, currentFrame } = useContext(StepperContext);
+  const { stepperData, currentFrame, route } = useContext(StepperContext);
   const { title, details } = currentFrame;
 
   return (
@@ -81,7 +81,7 @@ const Results = () => {
         {stepperData.map((step, index) => {
           return (
             <li key={step.tag} className="result">
-              <Link className="edit-link" to={`/create/${index}/0`}>
+              <Link className="edit-link" to={`${route}/${index}/0`}>
                 <BodyMd>Edit</BodyMd>
               </Link>
               <HeaderMd className="question">{step.question}</HeaderMd>

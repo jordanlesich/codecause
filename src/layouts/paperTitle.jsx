@@ -1,9 +1,10 @@
 import React from "react";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 import { formatDistanceToNow, format } from "date-fns";
 
 import Tag from "../components/tag";
-import { DisplayLg, BodyMd, BodyXs, BoldText } from "../styles/typography";
+import { DisplayLg, BodyXs, BoldText } from "../styles/typography";
 
 const TitleSection = styled.div`
   margin-bottom: 3.2rem;
@@ -18,9 +19,10 @@ const TitleSection = styled.div`
   }
   .tag-box {
     display: flex;
-    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
     button {
-      margin-left: 0.8rem;
+      margin-right: 0.8rem;
+      margin-bottom: 0.8rem;
     }
   }
 `;
@@ -35,8 +37,17 @@ const PaperTitle = ({ project }) => {
     solutionTags,
     skillTags,
   } = project;
-
   const updated = lastUpdated || timeCreated;
+  const history = useHistory();
+
+  const searchByTag = (e) => {
+    // history.push("/projects");
+    history.push({
+      pathname: "/projects",
+      search: e.target.value,
+    });
+  };
+
   return (
     <TitleSection>
       <DisplayLg className="title">{name}</DisplayLg>
@@ -50,21 +61,32 @@ const PaperTitle = ({ project }) => {
         </BodyXs>
       </div>
       <div className="tag-box">
-        <BodyMd>Creating: </BodyMd>
         {solutionTags.map((tag) => (
-          <Tag key={tag.name + "solution"} tag={tag.name} type={"solution"} />
+          <Tag
+            key={tag.name + "solution"}
+            tag={tag.name}
+            type={tag.type}
+            value={`${tag.type}&${tag.name}`}
+            fn={searchByTag}
+          />
         ))}
-      </div>
-      <div className="tag-box">
-        <BodyMd>For: </BodyMd>
         {causeTags.map((tag) => (
-          <Tag key={tag.name + "cause"} tag={tag.name} type={"cause"} />
+          <Tag
+            key={tag.name + "cause"}
+            tag={tag.name}
+            type={"cause"}
+            value={`${tag.type}&${tag.name}`}
+            fn={searchByTag}
+          />
         ))}
-      </div>
-      <div className="tag-box">
-        <BodyMd>Needs: </BodyMd>
         {skillTags.map((tag) => (
-          <Tag key={tag.name + "skill"} tag={tag.name} type={"skill"} />
+          <Tag
+            key={tag.name + "skill"}
+            tag={tag.name}
+            type={"skill"}
+            value={`${tag.type}&${tag.name}`}
+            fn={searchByTag}
+          />
         ))}
       </div>
     </TitleSection>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
 import * as firebase from "firebase/app";
-import { getProfile, getProfileByEmail } from "../actions/profiles";
+import { getProfileByEmail } from "../actions/profiles";
 import "firebase/auth";
 
 const authContext = createContext();
@@ -35,40 +35,31 @@ function useProvideAuth() {
       .catch((err) => ({ type: "error", error: err }));
   };
 
-  const signup = async ({ email, password, displayName }) => {
-    const profile = await getProfile(displayName);
-    if (profile) {
-      return await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then((response) => {
-          localStorage.setItem("coLabLocal", "true");
-          return firebase
-            .auth()
-            .currentUser.updateProfile({
-              email,
-              password,
-              displayName,
-            })
-            .then(() => {
-              return { type: "success", data: response.user };
-            })
-            .catch(() => {
-              return { type: "error", error: "failed to update user" };
-            });
-        })
-        .catch((err) => {
-          return {
-            type: "error",
-            error: `Could not sign up. ${err}`,
-          };
-        });
-    } else {
-      return {
-        type: "error",
-        data: "Could not sign up. Profile not found in db.",
-      };
-    }
+  const signup = async (email, password, displayName) => {
+    return firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then((response) => {
+        localStorage.setItem("coLabLocal", "true");
+        return firebase
+          .auth()
+          .currentUser.updateProfile({
+            email,
+            password,
+            displayName,
+          })
+          .then(() => {
+            return response.user;
+          })
+          .catch((error) => {
+            console.error(error);
+            throw error;
+          });
+      })
+      .catch((error) => {
+        console.error(error);
+        throw error;
+      });
   };
 
   const signout = () => {
@@ -125,7 +116,8 @@ function useProvideAuth() {
     const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
         const result = await getProfileByEmail(user.email);
-        if (result.error) {
+        if (!result) {
+          console.error(result);
           signout();
         } else {
           setUser(result);

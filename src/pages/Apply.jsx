@@ -5,124 +5,76 @@ import { ArrowLeft } from "react-feather";
 import { useAuth } from "../Hooks/useAuth";
 import Stepper from "../stepper/stepper";
 import StepperMap from "../stepper/stepperMap";
-import SideMenu from "../components/sideMenu";
 import Spinner from "../components/spinner";
 import Button from "../components/button";
-import { createProject } from "../actions/project";
-import { sendFail } from "../actions/epicFails";
+import { sendApplication } from "../actions/applications";
 import Layout from "../layouts/layout";
 import CenteredLayout from "../layouts/centeredLayout";
 import Jumbotron from "../components/jumbotron";
-import {
-  createProjectBrief,
-  makeCreateProjectError,
-  createProjectSuccess,
-} from "../copy/stepperCopy";
+import { applyError, applySuccess } from "../copy/stepperCopy";
 import { StepperProvider } from "../contexts/stepperContext";
-import { instructions } from "../helpers/stepperHelper";
+import { applyInstructions } from "../helpers/stepperHelper";
+import SideMenu from "../components/sideMenu";
 
-const data = Object.freeze(instructions);
+const data = Object.freeze(applyInstructions);
 
-const Create = () => {
+const Apply = () => {
   const { user } = useAuth();
-  const { step, frame } = useParams();
+  const { id, step, frame } = useParams();
   const history = useHistory();
-  const [stepperState, setStepperState] = useState("brief");
-  const [errorData, setErrorData] = useState({});
+  const [stepperState, setStepperState] = useState("inSession");
   const [slug, setSlug] = useState("");
 
   if (!user) {
     return <Redirect to="/login" />;
   }
-  const submitStepper = async ({
-    data = "data was undefined or corrupted",
-    user,
-  }) => {
-    //The arguments are destructured to prevent
-    //event objects from interfering with the error reports
+
+  const submitStepper = async (data) => {
     setStepperState("loading");
     try {
-      const newSlug = await createProject(data, user);
-      setSlug(newSlug);
+      await sendApplication(id, data);
       setStepperState("success");
     } catch (error) {
       console.error(error);
       setStepperState("error");
-      setErrorData({ error: error.toString(), data });
     }
-  };
-
-  const handleErrorReport = async () => {
-    try {
-      await sendFail("stepper-fail-on-submit", user, errorData);
-      history.push("/projects");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const startStepper = () => {
-    setStepperState("inSession");
   };
 
   const goToProject = (e) => {
     if (slug !== "") {
       history.push(slug);
     } else {
-      history.push("/projects");
+      history.push(`/project/${id}`);
     }
   };
 
   const routeByValue = (e) => {
     history.push(e.target.value);
   };
-  const back = () => {
-    history.goBack();
-  };
+
   const reset = () => {
-    setErrorData("");
     setSlug("");
     setStepperState("inSession");
-    history.push("/create/0/0");
+    history.push(`/project/${id}/apply/0/0`);
   };
 
   const getJumbotron = (stepperState) => {
     switch (stepperState) {
-      case "brief":
-        return (
-          <Jumbotron
-            copy={createProjectBrief}
-            buttonSection={
-              <>
-                <Button fn={back} content="Maybe Later" className="secondary" />
-                <Button
-                  fn={startStepper}
-                  content="Born Ready"
-                  className="primary"
-                />
-              </>
-            }
-          />
-        );
       case "loading":
         return <Spinner />;
       case "error":
         return (
           <Jumbotron
-            copy={makeCreateProjectError()}
+            copy={applyError}
             buttonSection={
               <>
                 <Button
-                  fn={reset}
-                  content="Try Again"
+                  fn={routeByValue}
+                  content="Feedback"
                   className="secondary"
-                  value="/error"
-                />
-                <Button
-                  fn={handleErrorReport}
-                  content="Send Error and Save Project Data"
-                  className="primary"
                   value="/feedback"
                 />
+                <Button fn={reset} content="Try Again" className="primary" />
               </>
             }
           />
@@ -130,7 +82,7 @@ const Create = () => {
       case "success":
         return (
           <Jumbotron
-            copy={createProjectSuccess}
+            copy={applySuccess}
             buttonSection={
               <>
                 <Button
@@ -158,6 +110,7 @@ const Create = () => {
         );
     }
   };
+
   const sideMenu = (
     <SideMenu
       currentOption="map"
@@ -168,9 +121,9 @@ const Create = () => {
               <Button
                 className="text-button list-button"
                 fn={routeByValue}
-                value={`/projects`}
+                value={`/project${id}`}
                 withIcon={<ArrowLeft size="2.4rem" />}
-                content="Back to Listing"
+                content="Back to Whitepaper"
               />
             }
           />
@@ -178,23 +131,24 @@ const Create = () => {
       }}
     />
   );
+
   return (
     <>
       {stepperState === "inSession" ? (
         <StepperProvider
+          route={`/project/${id}/apply`}
           step={parseInt(step)}
           frame={parseInt(frame)}
           steps={data}
-          route={`/create`}
         >
           <Layout sideMenu={sideMenu}>
-            <Stepper submit={submitStepper} route={"/create"} />
-            {/* <Button
+            <Stepper submit={submitStepper} />
+            <Button
               fn={submitStepper}
               content="Test Submit"
               type="button"
               className="primary"
-            /> */}
+            />
           </Layout>
         </StepperProvider>
       ) : (
@@ -204,4 +158,4 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default Apply;

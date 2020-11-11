@@ -46,16 +46,16 @@ const getIcon = (isSelected, isCompleted) => {
   }
 };
 
-const Step = ({ stepData, isSelected, index, completed }) => {
+const Step = ({ stepData, isSelected, index, completed, route }) => {
   const QAFrame = getQAFrame(stepData);
   const history = useHistory();
   const { frame } = useContext(StepperContext);
-
   const goToStep = () => {
-    history.push(`/create/${index}/0`);
+    console.log(`${route}/${index}/0`);
+    history.push(`${route}/${index}/0`);
   };
   const goToFrame = (frameIndex) => {
-    history.push(`/create/${index}/${frameIndex}`);
+    history.push(`${route}/${index}/${frameIndex}`);
   };
 
   return (

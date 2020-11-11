@@ -46,6 +46,7 @@ const SignUpPage = ({ setMessage }) => {
     valid: nameValid,
     setValid: setNameValid,
   } = useInput("", nameRulesOnType, err["name"]);
+
   const { value: email, bind: bindEmail, valid: mailValid } = useInput(
     "",
     emailRulesOnType,
@@ -56,46 +57,40 @@ const SignUpPage = ({ setMessage }) => {
     passRulesOnType,
     err["pass"]
   );
+
   const [loading, setLoading] = useState(false);
   const history = useHistory();
 
   const fullPageResult = (msg, url) => {
-    console.log(msg);
     setMessage(msg);
     history.push(url);
-  };
-
-  const createAuth = async (inputs) => {
-    const signUpResult = await signup(inputs);
-    if (signUpResult.error || !signUpResult) {
-      deleteProfile(displayName);
-      setMessage(signUpResult);
-      setLoading(false);
-    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const exists = await checkProfileExists(displayName);
-    if (exists.error) {
-      fullPageResult(exists, "/error");
-    }
-    if (exists) {
-      setNameValid(false);
-      setLoading(false);
-      setNameErr("Name aleady exists. Please try another.");
+    try {
+      const exists = await checkProfileExists(displayName);
+      if (exists) {
+        setNameValid(false);
+        setLoading(false);
+        setNameErr("Name aleady exists. Please try another.");
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      fullPageResult(error.toString(), "/error");
       return;
     }
-    const result = await addProfile({ displayName, email, password });
-
-    if (result.error) {
-      fullPageResult(result, "/error");
-    } else if (result.data) {
-      console.log(result.data);
-      createAuth({ displayName, email, password });
-    } else {
-      fullPageResult({ type: "error", error: "There was an unkown error." });
+    try {
+      await addProfile(displayName, email);
+      await signup(email, password, displayName);
+    } catch (error) {
+      console.error(error);
+      setMessage({ type: "error", error: error.toString() });
+      //consider a try catch here for the delete
+      deleteProfile(displayName);
+      setLoading(false);
     }
   };
 
@@ -161,6 +156,7 @@ const SignUpPage = ({ setMessage }) => {
           />
         </div>
       </Form>
+
       <BodySm>Already have an account?</BodySm>
       <Button className="text-button" fn={toLogin} content="Login" />
     </>

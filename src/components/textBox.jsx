@@ -23,14 +23,14 @@ const InputGroup = styled.div`
   &.singleQA {
     max-width: 48rem;
   }
+  &.comment-text-box {
+    max-width: 100%;
+  }
 `;
 
 const StyledLabel = styled.label`
   p {
     margin-bottom: 0.8rem;
-  }
-  &.search-input {
-    display: none;
   }
 `;
 
@@ -56,6 +56,7 @@ const StyledTextBox = styled.textarea`
       font-size: 1.3rem;
     }
   }
+
   :focus:enabled {
     background-color: ${getColor("white")};
     border: 1px solid ${getColor("blue300")};
@@ -70,7 +71,7 @@ const StyledTextBox = styled.textarea`
   }
 `;
 
-const Input = ({
+const TextBox = ({
   placeholder,
   autoFocus,
   label,
@@ -112,4 +113,4 @@ const Input = ({
   );
 };
 
-export default Input;
+export default TextBox;

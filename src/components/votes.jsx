@@ -7,7 +7,6 @@ import { useAuth } from "../Hooks/useAuth";
 import { getColor } from "../helpers/palette";
 import { BodyMd } from "../styles/typography";
 import { addVote, removeVote } from "../actions/votes";
-import { set } from "date-fns/esm";
 
 const getVoteText = (hasVoted, voteAmt) => {
   if (hasVoted) {
@@ -58,7 +57,7 @@ const StyledVoteButton = styled.div`
   }
 `;
 
-const Votes = ({ project }) => {
+const Votes = ({ project, variant }) => {
   const { user, handleLocalVote } = useAuth();
   const { votes, slug } = project;
   const [hasVoted, setHasVoted] = useState(votes[user.displayName]);
@@ -69,6 +68,7 @@ const Votes = ({ project }) => {
     try {
       const result = await removeVote(user, project);
       setHasVoted(false);
+      //since the vote data is public facing, I use displayName instead of ID
       setVoteList((prevVotes) =>
         prevVotes.filter((vote) => vote !== user.displayName)
       );
@@ -85,6 +85,7 @@ const Votes = ({ project }) => {
     try {
       const result = await addVote(user, project);
       setHasVoted(true);
+      //since the vote data is public facing, I use displayName instead of ID
       setVoteList((prevVotes) => [user.displayName, ...prevVotes]);
       handleLocalVote("remove", slug);
       console.log(result);
@@ -107,18 +108,28 @@ const Votes = ({ project }) => {
 
   return (
     <StyledVoteButton className="vote-button">
-      <Button
-        content={getVoteText(hasVoted, voteList.length)}
-        className={`text-button ${hasVoted && "has-voted"}`}
-        fn={handleClick}
-        withIcon={<ThumbsUp size="2.4rem" />}
-      />
-      {voteList?.length && (
-        <div className="vote-list">
-          {voteList.slice(0, 15).map((vote) => (
-            <BodyMd key={vote}>{vote}</BodyMd>
-          ))}
-        </div>
+      {variant === "listing" ? (
+        <>
+          <Button
+            content={getVoteText(hasVoted, voteList.length)}
+            className={`text-button ${hasVoted && "has-voted"}`}
+            fn={handleClick}
+            withIcon={<ThumbsUp size="2.4rem" />}
+          />
+          <div className="vote-list">
+            {voteList?.length > 0 &&
+              voteList
+                .slice(0, 15)
+                .map((vote) => <BodyMd key={vote}>{vote}</BodyMd>)}
+          </div>
+        </>
+      ) : (
+        <Button
+          content={getVoteText(hasVoted, voteList.length)}
+          className={`secondary ${hasVoted && "has-voted"}`}
+          fn={handleClick}
+          withIcon={<ThumbsUp size="2rem" />}
+        />
       )}
     </StyledVoteButton>
   );
