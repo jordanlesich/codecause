@@ -38,7 +38,7 @@ const UserProjectList = ({ contributing, created }) => {
         <ul className="inner-section">
           {created.map((project) => (
             <li key={project.slug}>
-              <Link to={`projects/${project.slug}`}>
+              <Link to={`/project/${project.slug}`}>
                 <BodySm className="side-list-item">{project.name}</BodySm>
               </Link>
             </li>
@@ -52,13 +52,15 @@ const UserProjectList = ({ contributing, created }) => {
       <>
         <Overline>CONTRIBUTING</Overline>
         <ul className="inner-section">
-          {contributing.map((project) => (
-            <li key={project.slug}>
-              <Link to={`projects/${project.value}`}>
-                <BodySm className="side-list-item">{project.name}</BodySm>
-              </Link>
-            </li>
-          ))}
+          {contributing.map((project) => {
+            return (
+              <li key={project.slug}>
+                <Link to={`/project/${project.slug}`}>
+                  <BodySm className="side-list-item">{project.name}</BodySm>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </>
     );

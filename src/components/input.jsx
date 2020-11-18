@@ -27,6 +27,9 @@ const InputGroup = styled.div`
   &.reply-text-box {
     max-width: 100%;
   }
+  &.dynamic-section-input {
+    max-width: 100%;
+  }
 `;
 
 const StyledLabel = styled.label`

@@ -84,22 +84,3 @@ export const getComments = async (commentDir, projectID) => {
     })
     .catch((error) => console.error(error));
 };
-// export const addComment = (comments, projRef, setComments, toggleLoading) => {
-//   const batch = db.batch();
-//   toggleLoading();
-//   batch.set(projDb.doc(projRef).collection("comments").doc("all"), {
-//     main: comments,
-//   });
-//   batch.update(projDb.doc(projRef), {
-//     commentCount: firebase.firestore.FieldValue.increment(1),
-//   });
-//   batch
-//     .commit()
-//     .then(() => {
-//       setComments(comments);
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//       toggleLoading();
-//     });
-// };

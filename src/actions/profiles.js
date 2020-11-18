@@ -49,8 +49,16 @@ export const getProfile = async (id) => {
     .collection("profiles")
     .doc(id)
     .get()
-    .then((doc) => doc.data())
-    .catch((err) => console.error(`Doc doesn't exist. Error: ${err}`));
+    .then((doc) => {
+      if (doc.exists) {
+        return doc.data();
+      } else {
+        throw new Error(`user ${id} does not have a profile in the db`);
+      }
+    })
+    .catch((err) => {
+      throw err;
+    });
 };
 
 export const getProfileByEmail = async (email) => {

@@ -20,7 +20,7 @@ const BodySection = styled.div`
 
 const PaperBody = ({ body, type = "whitepaper" }) => {
   return (
-    <BodySection className={`${type === "application" && "application"}`}>
+    <BodySection className={type}>
       {body &&
         body.map((section) =>
           type === "whitepaper" ? (

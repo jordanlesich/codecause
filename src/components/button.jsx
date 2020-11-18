@@ -101,6 +101,10 @@ export const StyledButton = styled.button`
     justify-content: center;
     height: 24px;
     width: 24px;
+    :disabled {
+      color: ${getColor("grey200")};
+      cursor: default;
+    }
   }
   &.long-button {
     width: 100%;

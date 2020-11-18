@@ -97,8 +97,6 @@ const TagMaker = ({ disabled, tags, addTag }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setCursor(null);
-    console.log(cursor);
-    console.log(filteredTags.length);
     if (cursor === null) {
       addTag(inputValue);
       setInputValue("");

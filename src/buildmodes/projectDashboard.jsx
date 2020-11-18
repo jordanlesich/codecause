@@ -4,8 +4,6 @@ import styled from "styled-components";
 import Messages from "../components/messages";
 import ApplicationInbox from "../buildmodes/applicationInbox";
 import { DisplayLg } from "../styles/typography";
-import { addSampleAlert, removeAlertByType } from "../actions/project";
-import Button from "../components/button";
 const DashLayout = styled.div`
   .dash-title {
     margin-bottom: 4rem;
@@ -15,12 +13,7 @@ const DashLayout = styled.div`
   }
 `;
 
-const ProjectDashboard = ({ project, removeAlert }) => {
-  const sendSample = async () => {
-    try {
-      addSampleAlert(project.slug);
-    } catch (error) {}
-  };
+const ProjectDashboard = ({ project, removeAlert, reFetch }) => {
   return (
     <DashLayout>
       <DisplayLg className="dash-title">Dashboard</DisplayLg>
@@ -34,8 +27,8 @@ const ProjectDashboard = ({ project, removeAlert }) => {
         className="dash-section"
         project={project}
         removeAlert={removeAlert}
+        reFetch={reFetch}
       />
-      <Button fn={sendSample} content="Add sample" className="primary" />
     </DashLayout>
   );
 };

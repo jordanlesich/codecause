@@ -26,7 +26,7 @@ const BackDropStyle = styled.div`
     border: none;
     z-index: 3;
     outline: none;
-    cursor: pointer;
+
     animation: ${(props) => (props.fadeIn ? fadeIn : fadeOut)} 0.2s ease-in-out
       both;
   }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
@@ -48,6 +49,17 @@ const StyledComment = styled.div`
     padding-left: 2.4rem;
     border-left: 1px solid ${getColor("lightBorder")};
     margin-top: 2.4rem;
+  }
+  .comment-link {
+    color: ${getColor("blue400")};
+    text-decoration: none;
+    :hover,
+    :focus {
+      color: ${getColor("blue200")};
+    }
+    :visited {
+      color: ${getColor("blue400")};
+    }
   }
 `;
 
@@ -109,7 +121,10 @@ const Comment = ({ comment, projectID, user }) => {
   return (
     <StyledComment>
       <BodyXs className="info-text scroll-to">
-        Posted by <BoldText>{comment.from}</BoldText>{" "}
+        Posted by
+        <Link to={`/user/${comment.fromID}`} className="comment-link">
+          <BoldText> {comment.from} </BoldText>
+        </Link>
         {formatDistanceToNow(comment.sent)} ago
       </BodyXs>
       <BodyMd className="comment-text">{comment.text}</BodyMd>

@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import PaperBody from "./paperBody";
 import Button from "../components/button";
-import { BodyMd, HeaderLg, DisplayMd } from "../styles/typography";
+import { HeaderLg } from "../styles/typography";
 import TextBox from "../components/textBox";
 import { getColor } from "../helpers/palette";
 import Break from "../components/break";
@@ -78,18 +78,8 @@ const Application = ({ doc, acceptContributor, declineContributor }) => {
                 className="dm-input comment-text-box"
               />
               <div className="dm-btn-box">
-                <Button
-                  fn={DMmode}
-                  className="text-button"
-                  content="Cancel"
-                  fn={DMmode}
-                />
-                <Button
-                  fn={DMmode}
-                  className="primary"
-                  content="Send"
-                  fn={handleDM}
-                />
+                <Button fn={DMmode} className="text-button" content="Cancel" />
+                <Button className="primary" content="Send" fn={handleDM} />
               </div>
             </>
           ) : (

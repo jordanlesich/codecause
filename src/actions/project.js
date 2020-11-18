@@ -220,30 +220,6 @@ export const queryProjectsByTags = async (allTags) => {
     .catch((err) => console.error(err));
 };
 
-export const replaceSections = (
-  sections,
-  projId,
-  setSections,
-  setLoading,
-  toggleModal
-) => {
-  setLoading(true);
-
-  projDb
-    .doc(projId)
-    .update({ body: sections })
-    .then(() => {
-      setSections(sections);
-      setLoading(false);
-      toggleModal();
-    })
-    .catch((error) => {
-      console.error(error);
-      setLoading(false);
-      toggleModal();
-    });
-};
-
 export const querySingleProjectByX = async (field, value) => {
   return db
     .collection("projects")
@@ -256,7 +232,7 @@ export const querySingleProjectByX = async (field, value) => {
       } else if (matches.length > 1) {
         throw new Error("Found more than one project with the same ID");
       } else {
-        return matches[0].data();
+        return formatIncomingProject(matches[0].data());
       }
     })
     .catch((error) => error);

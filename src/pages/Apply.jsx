@@ -143,12 +143,6 @@ const Apply = () => {
         >
           <Layout sideMenu={sideMenu}>
             <Stepper submit={submitStepper} />
-            <Button
-              fn={submitStepper}
-              content="Test Submit"
-              type="button"
-              className="primary"
-            />
           </Layout>
         </StepperProvider>
       ) : (

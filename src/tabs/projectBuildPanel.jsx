@@ -1,18 +1,6 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import React from "react";
 import styled from "styled-components";
-import {
-  Users,
-  ArrowLeft,
-  HelpCircle,
-  List,
-  MessageSquare,
-  Edit,
-  Settings,
-  AlertCircle,
-  Home,
-  Inbox,
-} from "react-feather";
+import { Users, Edit, Home } from "react-feather";
 
 import Break from "../components/break";
 import ActiveUserList from "../components/activeUserList";
@@ -79,7 +67,7 @@ const MainMenuPanel = styled.div`
   }
 `;
 
-const ProjectVisitorPanel = ({ id, project, switchMode }) => {
+const ProjectVisitorPanel = ({ project, switchMode }) => {
   return (
     <MainMenuPanel>
       <div className="top-list-section">
@@ -105,9 +93,9 @@ const ProjectVisitorPanel = ({ id, project, switchMode }) => {
         <Button
           className="text-button list-button"
           fn={switchMode}
-          value="settings"
-          withIcon={<Settings size="2.4rem" />}
-          content="Project Settings"
+          value="users"
+          withIcon={<Users size="2.4rem" />}
+          content="Manage Team"
         />
       </div>
 

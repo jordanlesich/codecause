@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronDown, ChevronRight, ChevronUp } from "react-feather";
+import { ChevronDown, ChevronUp } from "react-feather";
 import styled from "styled-components";
 
 import Button from "../components/button";
@@ -45,15 +45,11 @@ const Dropdown = ({
   type,
   dispatchDocs,
   fetchApplications,
-  onFetch,
   count = 0,
 }) => {
   const handleClick = () => {
     if (status === "idle") {
       fetchApplications(type);
-      if (onFetch) {
-        onFetch();
-      }
     } else if (status === "open") {
       dispatchDocs({ type: "SWITCH_VIEW", docType: type, viewType: "closed" });
     } else if (status === "closed") {

@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import firebase, { firestore } from "firebase/app";
-import kebabCase from "lodash.kebabcase";
+import firebase from "firebase/app";
 import { createMessage } from "../actions/messages";
 import { db } from "../base";
 

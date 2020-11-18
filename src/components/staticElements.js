@@ -12,6 +12,27 @@ export const DashBox = styled.div`
     margin-bottom: 1.6rem;
   }
 `;
+export const ModalBox = styled.div`
+  padding: 2.4rem 4rem;
+  border-radius: 4px;
+  width: 100%;
+  .display {
+    margin-bottom: 1.6rem;
+  }
+  .space-bottom {
+    margin-bottom: 1.6rem;
+  }
+  .space-bottom-sm {
+    margin-bottom: 0.8rem;
+  }
+`;
+
+export const ButtonBox = styled.div`
+  display: flex;
+  button {
+    margin-right: 1.6rem;
+  }
+`;
 
 export const DashboxTitleSection = styled.div`
   display: flex;

@@ -13,7 +13,6 @@ import Break from "../components/break";
 import Dropdown from "../components/dropdown";
 import Application from "../layouts/application";
 import { DisplaySm } from "../styles/typography";
-import { getColor } from "../helpers/palette";
 import { DashBox, DashboxTitleSection } from "../components/staticElements";
 
 const StyledInbox = styled.div`
@@ -23,7 +22,7 @@ const StyledInbox = styled.div`
   }
 `;
 
-const ApplicationInbox = ({ project, removeAlert, className }) => {
+const ApplicationInbox = ({ project, removeAlert, className, reFetch }) => {
   const [docs, dispatchDocs] = useReducer(docReducer, {
     open: { status: "idle", all: [] },
     accepted: { status: "idle", all: [] },
@@ -79,6 +78,7 @@ const ApplicationInbox = ({ project, removeAlert, className }) => {
   const acceptContributor = async (applicant, applicationID) => {
     try {
       await acceptApplication(project, applicant, applicationID);
+      reFetch();
       dispatchDocs({
         type: "MOVE",
         from: "open",
@@ -97,6 +97,7 @@ const ApplicationInbox = ({ project, removeAlert, className }) => {
   const declineContributor = async (applicant, applicationID) => {
     try {
       await declineApplication(project, applicant, applicationID);
+      reFetch();
       dispatchDocs({
         type: "MOVE",
         from: "open",
@@ -112,18 +113,16 @@ const ApplicationInbox = ({ project, removeAlert, className }) => {
       console.error(error);
     }
   };
-  const handleNewDocAlert = () => {
-    removeAlert("newApplication");
-  };
+
   //TODO probably a good case for useMemo
   const checkForNew = () => {
-    if (project?.alerts) {
-      for (let alert in project.alerts) {
-        const alertType = project.alerts[alert].type;
-        if (alertType === "newApplication") return "NEW!";
-      }
+    if (project?.applicationRefs?.open) {
+      return Object.keys(project.applicationRefs.open).length > 0
+        ? "New!"
+        : false;
+    } else {
+      return false;
     }
-    return false;
   };
   return (
     <StyledInbox className={className}>
@@ -140,7 +139,6 @@ const ApplicationInbox = ({ project, removeAlert, className }) => {
           count={counts.open}
           status={docs.open.status}
           alert={checkForNew()}
-          onFetch={handleNewDocAlert}
           type="open"
           dispatchDocs={dispatchDocs}
           fetchApplications={fetchApplications}

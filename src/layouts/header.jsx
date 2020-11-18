@@ -39,7 +39,6 @@ const NavContainer = styled.nav`
   .user-menu-dropdown {
     position: absolute;
     width: 16rem;
-    /* right: 2.4rem; */
     top: 4.8rem;
     border: 1px solid ${getColor("lightBorder")};
     border-radius: 0 0 4px 4px;

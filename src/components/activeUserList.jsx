@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import kebabCase from "lodash.kebabcase";
 
 import { Overline, BodySm, BodyXs } from "../styles/typography";
 import { getColor } from "../helpers/palette";
@@ -35,7 +36,7 @@ const ActiveUserList = ({ contributors = [], creator, awards = [] }) => {
     <StyledUserList>
       <Overline>CREATOR</Overline>
       <div className="inner-section">
-        <Link to={`user/${creator}`} className="creator-link">
+        <Link to={`/user/${kebabCase(creator)}`} className="creator-link">
           <BodySm>{creator}</BodySm>
         </Link>
       </div>
@@ -45,7 +46,7 @@ const ActiveUserList = ({ contributors = [], creator, awards = [] }) => {
         {contributors.length !== 0 &&
           contributors.map((user) => (
             <li key={user.displayName}>
-              <Link to={`user/${user.id}`}>
+              <Link to={`/user/${user.id}`}>
                 <BodySm className="user-name">{user.displayName}</BodySm>
                 {user.role && (
                   <BodyXs className="user-role">{user.role}</BodyXs>

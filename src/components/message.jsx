@@ -31,7 +31,7 @@ const StyledMessage = styled.div`
     margin-left: 0.8rem;
   }
   .full-message {
-    margin: 1.6rem 0;
+    margin: 1.6rem 0.8rem;
     width: 100%;
     position: relative;
   }
@@ -57,18 +57,23 @@ const StyledMessage = styled.div`
 const handleMsgPreview = (msg) => {
   return msg.length > 50 ? msg.slice(0, 50) + "..." : msg;
 };
-const Message = ({ message, isChecked = false, toggleChecked }) => {
+const Message = ({ message, isChecked = false, toggleChecked, markAsRead }) => {
   const [collapsed, setCollapsed] = useState(true);
   const toggleCollapsed = () => {
+    if (message.status === "unread") {
+      markAsRead(message.id);
+    }
     setCollapsed((prevState) => !prevState);
   };
   const handleChecked = () => {
     toggleChecked(message.id);
   };
-  console.log(message.status);
+
   return (
     <>
-      <StyledMessage>
+      <StyledMessage
+        className={message.status === "read" && collapsed && "marked-as-read"}
+      >
         {collapsed ? (
           <>
             <Button

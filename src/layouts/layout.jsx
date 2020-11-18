@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
+import { OverlayProvider } from "../contexts/overlayContext";
+import Modal from "../components/modal";
 import Header from "../layouts/header";
 
 const StyleTemplate = styled.main`
@@ -26,13 +28,14 @@ const SideSpace = styled.aside`
 
 const Layout = ({ children, sideMenu }) => {
   return (
-    <>
+    <OverlayProvider>
       <StyleTemplate>
+        <Modal />
         <Header />
         <SideSpace>{sideMenu}</SideSpace>
         <MainSpace>{children}</MainSpace>
       </StyleTemplate>
-    </>
+    </OverlayProvider>
   );
 };
 

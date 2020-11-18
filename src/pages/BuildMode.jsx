@@ -1,29 +1,25 @@
 import React, { useEffect, useState } from "react";
-// import { MessageSquare, List, Users } from "react-feather";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
-// import { useAuth } from "../Hooks/useAuth";
 import Layout from "../layouts/layout";
-import BuildModeManager from "../buildmodes/buildModeManager";
+import ModeManager from "../components/modeManager";
 import ProjectDashboard from "../buildmodes/projectDashboard";
 import EditWhitepaper from "../buildmodes/editWhitepaper";
-import ApplicationInbox from "../buildmodes/applicationInbox";
-import ProjectSettings from "../buildmodes/projectSettings";
+import ManageUsers from "../buildmodes/manageUsers";
 import { querySingleProjectByX, removeAlertByType } from "../actions/project";
 import SideMenu from "../components/sideMenu";
 import ProjectBuildPanel from "../tabs/projectBuildPanel";
-import Button from "../components/button";
 
 const WhitePaperLayout = styled.div`
   /* margin: 0 4rem; */
 `;
 
-const ProjectsPage = (props) => {
+const ProjectsPage = () => {
   const [project, setProject] = useState(null);
-  const [buildMode, setBuildMode] = useState("dashboard");
+  const [buildMode, setBuildMode] = useState("users");
+
   const { id } = useParams();
-  // const { user } = useAuth();
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -72,19 +68,23 @@ const ProjectsPage = (props) => {
   );
 
   const modes = {
-    dashboard: <ProjectDashboard project={project} removeAlert={removeAlert} />,
-    whitepaper: <EditWhitepaper />,
-    settings: <ProjectSettings />,
+    dashboard: (
+      <ProjectDashboard
+        project={project}
+        removeAlert={removeAlert}
+        reFetch={reFetch}
+      />
+    ),
+    whitepaper: (
+      <EditWhitepaper project={project} setBuildMode={setBuildMode} />
+    ),
+    users: <ManageUsers project={project} />,
   };
 
   return (
     <Layout sideMenu={sideMenu}>
       <WhitePaperLayout>
-        <BuildModeManager
-          mode={buildMode}
-          switchMode={switchMode}
-          modes={modes}
-        />
+        <ModeManager mode={buildMode} switchMode={switchMode} modes={modes} />
       </WhitePaperLayout>
     </Layout>
   );
