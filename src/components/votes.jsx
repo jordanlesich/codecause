@@ -46,6 +46,7 @@ const StyledVoteButton = styled.div`
     color: ${getColor("white")};
     padding: 0.8rem 1.6rem;
     transition: 0.3s opacity;
+    z-index: 30;
     p {
       padding: 0.2rem;
     }
@@ -116,12 +117,13 @@ const Votes = ({ project, variant }) => {
             fn={handleClick}
             withIcon={<ThumbsUp size="2.4rem" />}
           />
-          <div className="vote-list">
-            {voteList?.length > 0 &&
-              voteList
-                .slice(0, 15)
-                .map((vote) => <BodyMd key={vote}>{vote}</BodyMd>)}
-          </div>
+          {voteList?.length > 0 && (
+            <div className="vote-list">
+              {voteList.slice(0, 15).map((vote) => (
+                <BodyMd key={vote}>{vote}</BodyMd>
+              ))}
+            </div>
+          )}
         </>
       ) : (
         <Button

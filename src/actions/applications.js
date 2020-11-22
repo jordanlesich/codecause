@@ -206,11 +206,15 @@ export const declineApplication = async (
   applicantData,
   applicationID
 ) => {
-  const declinedApplicationAlert = {
-    msg: `Unfortunately your application for ${project.name} has been rejected`,
-    timeSent: Date.now(),
-    unread: true,
-  };
+  const id = uuidv4();
+  const declinedApplicationAlert = createMessage({
+    id,
+    content: `Unfortunately your application for ${project.name} has been rejected`,
+    status: "unread",
+    type: "applicationRejected",
+    sender: "CoLab",
+    recipient: applicantData.displayName,
+  });
 
   const batch = db.batch();
 
@@ -241,7 +245,7 @@ export const declineApplication = async (
       .collection("messages")
       .doc("alerts"),
     {
-      [uuidv4()]: declinedApplicationAlert,
+      [id]: declinedApplicationAlert,
     },
     { merge: true }
   );

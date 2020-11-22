@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { formatDistanceToNow, format } from "date-fns";
 
+import { unicodeHyphens } from "../helpers/utils";
 import Tag from "../components/tag";
 import { DisplayLg, BodyXs, BoldText } from "../styles/typography";
 
@@ -41,10 +42,9 @@ const PaperTitle = ({ project }) => {
   const history = useHistory();
 
   const searchByTag = (e) => {
-    // history.push("/projects");
     history.push({
       pathname: "/projects",
-      search: e.target.value,
+      search: unicodeHyphens(e.target.value),
     });
   };
 

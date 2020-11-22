@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 
-import { sendDM } from "../actions/messages";
+import { sendFeedback } from "../actions/feedback";
 import TextBox from "../components/textBox";
 import Input from "../components/input";
 import DynamicSectionTemplate from "./DynamicSectionTemplate";
 import { useAuth } from "../Hooks/useAuth";
 
-const DMmodal = ({ recipient, closeModal }) => {
+const FeedbackModal = ({ closeModal }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [DM_bodyText, setDM_bodyText] = useState("");
-  const [DM_subjectText, setDM_subjectText] = useState("");
-  const handleBodyTyping = (e) => setDM_bodyText(e.target.value);
-  const handleSubjectTyping = (e) => setDM_subjectText(e.target.value);
+  const [bodyText, setBodyText] = useState("");
+  const [subjectText, setSubjectText] = useState("");
 
-  const handleSendDM = async () => {
+  const handleBodyTyping = (e) => setBodyText(e.target.value);
+  const handleSubjectTyping = (e) => setSubjectText(e.target.value);
+
+  const handleSendFeedback = async () => {
     setLoading(true);
     try {
-      await sendDM(recipient, user, DM_subjectText, DM_bodyText);
+      await sendFeedback(user, subjectText, bodyText);
     } catch (error) {
       console.error(error);
     } finally {
@@ -27,26 +28,26 @@ const DMmodal = ({ recipient, closeModal }) => {
   };
   return (
     <DynamicSectionTemplate
-      title={`Send ${recipient} a message`}
-      onSubmit={handleSendDM}
+      title={`Tell us what you think`}
+      onSubmit={handleSendFeedback}
       onCancel={closeModal}
       loading={loading}
-      disableSubmit={DM_bodyText === "" && DM_subjectText === ""}
+      disableSubmit={bodyText === "" && subjectText === ""}
     >
       <Input
-        label="Subject"
+        label="What is this about?"
         className="dynamic-section-input"
-        value={DM_subjectText}
+        value={subjectText}
         onType={handleSubjectTyping}
       />
       <TextBox
-        label="Body"
+        label="What's on your mind?"
         className="dynamic-section-input"
-        value={DM_bodyText}
+        value={bodyText}
         onType={handleBodyTyping}
       />
     </DynamicSectionTemplate>
   );
 };
 
-export default DMmodal;
+export default FeedbackModal;

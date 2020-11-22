@@ -60,25 +60,6 @@ export const instructions = [
     tag: "Q0",
     frames: [
       {
-        type: "message",
-        sideTitle: "Starting a Project on Code Cause",
-        cardTitle: "Here's What You Need to Know",
-        body: {
-          type: "list",
-          listItems: [
-            "You're about to post your project idea to a public listing online",
-            "Anyone can read that listing",
-            "The idea is to inspire developers (aspiring or otherwise) to help you make something.",
-            "Which means that CodeCause is best suited for Open Source or charitable causes",
-            "The projects can be small -- perhaps you need a database for a research project",
-            "The projects can also be big -- maybe you want to build a platform to help frontline workers",
-            "All you need to do is fill out this questionnaire and your project joins the CodeCause listing",
-            "If you're ever confused about what a question is asking you, click the '?' icon",
-            "People have short attention spans. Keep your answers as short as possible.",
-          ],
-        },
-      },
-      {
         type: "singleQA",
         sideTitle: "The Name",
         question: "What's The Name?",

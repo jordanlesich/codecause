@@ -210,7 +210,7 @@ export const queryProjectsByTag = async ({ field, value }) => {
 export const queryProjectsByTags = async (allTags) => {
   let queryRef = projDb;
   allTags.forEach((tag) => {
-    queryRef = queryRef.where(`${tag.field}Tags.${tag.name}`, "==", true);
+    queryRef = queryRef.where(`${tag.type}Tags.${tag.name}`, "==", true);
   });
   return await queryRef
     .get()

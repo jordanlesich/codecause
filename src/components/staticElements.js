@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { getColor } from "../helpers/palette";
+import { widthQuery } from "../styles/responsive";
 
 export const DashBox = styled.div`
   padding: 2.4rem 4rem;
@@ -10,6 +11,9 @@ export const DashBox = styled.div`
   }
   .display {
     margin-bottom: 1.6rem;
+  }
+  @media ${widthQuery.tablet} {
+    padding: 2.4rem 0.8rem;
   }
 `;
 export const ModalBox = styled.div`

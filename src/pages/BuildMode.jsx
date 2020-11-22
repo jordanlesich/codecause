@@ -17,7 +17,7 @@ const WhitePaperLayout = styled.div`
 
 const ProjectsPage = () => {
   const [project, setProject] = useState(null);
-  const [buildMode, setBuildMode] = useState("users");
+  const [buildMode, setBuildMode] = useState("dashboard");
 
   const { id } = useParams();
 

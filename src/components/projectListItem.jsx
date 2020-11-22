@@ -9,19 +9,24 @@ import Button from "./button";
 import Break from "./break";
 import { getColor } from "../helpers/palette";
 import { BodyMd, DisplayMd } from "../styles/typography";
+import { widthQuery } from "../styles/responsive";
 
 const ListItem = styled.li`
   width: 100%;
-  /* width: 72rem; */
   position: relative;
   list-style: none;
   padding: 2.4rem 3.2rem;
   border: 1px solid ${getColor("lightBorder")};
   border-radius: 4px;
   margin-bottom: 1.6rem;
+  @media ${widthQuery.tablet} {
+    padding: 2.4rem;
+  }
+  @media ${widthQuery.tablet} {
+    padding: 2.4rem 1.6rem;
+  }
   .block-link {
     position: absolute;
-    /* z-index: -10000; */
     top: 0;
     bottom: 0;
     right: 0;
@@ -31,8 +36,22 @@ const ListItem = styled.li`
   .item-title-section {
     display: flex;
     align-items: flex-start;
+    flex-wrap: wrap;
+    .title-tag-box {
+      display: flex;
+      flex-wrap: wrap;
+    }
     button {
       transform: translateY(0.35rem);
+      margin-bottom: 0.8rem;
+    }
+    @media ${widthQuery.mobileM} {
+      flex-direction: column;
+      button {
+        transform: none;
+        margin-right: 0.8rem;
+        margin-bottom: 0.8rem;
+      }
     }
   }
   .project-title {
@@ -60,8 +79,10 @@ const ListItem = styled.li`
   }
   .skill-tags {
     display: flex;
+    flex-wrap: wrap;
     button {
       margin-right: 0.8rem;
+      margin-bottom: 0.8rem;
     }
   }
 `;
@@ -72,12 +93,14 @@ const ProjectListItem = ({ project }) => {
       <Link to={`project/${project.slug}`} className="block-link" />
       <div className="item-title-section">
         <DisplayMd className="project-title">{project.name}</DisplayMd>
-        <Tag tag={project.solutionTags[0].name} type="solution" />
-        <Tag
-          tag={project.causeTags[0].name}
-          type="cause"
-          className="cause-tag"
-        />
+        <div className="title-tag-box">
+          <Tag tag={project.solutionTags[0].name} type="solution" />
+          <Tag
+            tag={project.causeTags[0].name}
+            type="cause"
+            className="cause-tag"
+          />
+        </div>
       </div>
       <div className="info-wrapper">
         <BodyMd className="project-description">{project.description}</BodyMd>

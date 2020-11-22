@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { MessageSquare, HelpCircle } from "react-feather";
 
+import { OverlayContext } from "../contexts/overlayContext";
+import FeedbackModal from "../modals/feedbackModal";
 import Button from "../components/button";
 import Break from "../components/break";
 import { getColor } from "../helpers/palette";
@@ -33,8 +35,12 @@ const FeedbackAboutSection = styled.div`
 
 const FeedbackAbout = () => {
   const history = useHistory();
-  const goTo = (e) => {
-    history.push(e.target.value);
+  const { openModalWithContent, closeModal } = useContext(OverlayContext);
+  const openFeedbackModal = () => {
+    openModalWithContent(<FeedbackModal closeModal={closeModal} />);
+  };
+  const goToCoLab = (e) => {
+    history.push("/project/jordan-co-lab");
   };
 
   return (
@@ -45,14 +51,14 @@ const FeedbackAbout = () => {
           className="text-button list-button"
           withIcon={<HelpCircle size="2.4rem" />}
           content="About Us"
-          fn={goTo}
+          fn={goToCoLab}
           value="/about"
         />
         <Button
           className="text-button list-button"
           withIcon={<MessageSquare size="2.4rem" />}
           content="Feedback"
-          fn={goTo}
+          fn={openFeedbackModal}
           value="/feedback"
         />
       </FeedbackAboutSection>

@@ -7,6 +7,7 @@ import Build from "../pages/BuildMode";
 import Create from "../pages/Create";
 import Apply from "../pages/Apply";
 import ViewUser from "../pages/ViewUser";
+import UserDash from "../pages/UserDash";
 
 // Set up individual routes paths here
 // Example:
@@ -19,6 +20,7 @@ const LoggedIn = () => {
       <Route path="/project/:id/apply/:step/:frame" exact component={Apply} />
       <Route path="/build/:id" exact component={Build} />
       <Route path="/user/:id" exact component={ViewUser} />
+      <Route path="/dash/:id" exact component={UserDash} />
       <Route path="/create/:step/:frame" exact component={Create} />
       <Redirect from="/" to="/projects" />
       {/* <Route path="/projects" exact component={ProjectsListingPage} />

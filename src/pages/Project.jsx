@@ -13,6 +13,7 @@ import PaperFooter from "../layouts/paperFooter";
 import { getProject } from "../actions/project";
 import SideMenu from "../components/sideMenu";
 import ProjectVisitorPanel from "../tabs/projectVisitor";
+import { widthQuery } from "../styles/responsive";
 
 const WhitePaperLayout = styled.div`
   /* margin: 0 4rem; */
@@ -72,11 +73,8 @@ const ProjectsPage = (props) => {
 
   return (
     <Layout sideMenu={sideMenu}>
-      {project ? (
+      {project && (
         <WhitePaperLayout>
-          {/* <StyledLink to="/projects" className="go-back-link">
-            Back to Listing{" "}
-          </StyledLink> */}
           {projectDisplay === "paper" && (
             <>
               <PaperTitle project={project} />
@@ -94,8 +92,6 @@ const ProjectsPage = (props) => {
             </>
           )}
         </WhitePaperLayout>
-      ) : (
-        <h1>Loading</h1>
       )}
     </Layout>
   );

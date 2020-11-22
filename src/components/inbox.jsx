@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Bell, Trash } from "react-feather";
+import { Trash } from "react-feather";
 import styled from "styled-components";
 
-import Message from "./message";
+import AlertMessage from "./alertMessage";
+import DM from "./DM";
 import Button from "./button";
 import { DashBox, DashboxTitleSection } from "../components/staticElements";
-import { deleteProjectAlert, markAlert } from "../actions/messages";
+
 import { BodyMd, DisplaySm } from "../styles/typography";
 import Break from "./break";
 import { getColor } from "../helpers/palette";
@@ -28,15 +29,43 @@ const formatMessages = (messages) => {
     .map((message) => ({ ...message, isChecked: false }));
 };
 
-const Messages = ({ title, className, project }) => {
+const Inbox = ({
+  title,
+  className,
+  msgProps,
+  withIcon,
+  deleteMessage,
+  markMessage,
+  messageType,
+  fetchMessages,
+}) => {
   const [messages, setMessages] = useState(null);
   const [canDelete, setCanDelete] = useState(false);
 
+  //This component really needs to be separated to prevent
+  //stuff like this TODO: separate this component
   useEffect(() => {
-    if (project != null) {
-      setMessages(formatMessages(project.alerts));
+    const handleFetch = async () => {
+      const msgs = await fetchMessages(msgProps.id);
+      setMessages(formatMessages(msgs));
+    };
+    if (msgProps) {
+      if (fetchMessages) {
+        handleFetch();
+      } else {
+        setMessages(formatMessages(msgProps));
+      }
     }
-  }, [project]);
+  }, [msgProps, fetchMessages]);
+
+  const handleDelete = async () => {
+    try {
+      const newMsgs = await deleteMessage(messages);
+      setMessages(formatMessages(newMsgs));
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const toggleChecked = (id) => {
     const newMessages = messages.map((m) => {
@@ -54,18 +83,9 @@ const Messages = ({ title, className, project }) => {
     setMessages(newMessages);
   };
 
-  const handleDelete = async () => {
-    try {
-      const newMsgs = await deleteProjectAlert(project.slug, messages);
-      setMessages(formatMessages(newMsgs));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const markAsRead = async (id) => {
     try {
-      const newMsgs = await markAlert(project.slug, messages, id);
+      const newMsgs = await markMessage(messages, id);
       setMessages(formatMessages(newMsgs));
     } catch (error) {
       console.error(error);
@@ -77,10 +97,8 @@ const Messages = ({ title, className, project }) => {
       <DashBox>
         <div className="top-section">
           <DashboxTitleSection className="display">
-            <DisplaySm>
-              <Bell />
-              {title}
-            </DisplaySm>
+            {withIcon}
+            <DisplaySm>{title}</DisplaySm>
             <Button
               iconButton={<Trash />}
               disabled={!canDelete}
@@ -94,15 +112,27 @@ const Messages = ({ title, className, project }) => {
         <ul>
           {messages?.length ? (
             messages.map((message) => {
-              return (
-                <Message
-                  key={message.id}
-                  message={message}
-                  toggleChecked={toggleChecked}
-                  isChecked={message.isChecked}
-                  markAsRead={markAsRead}
-                />
-              );
+              if (messageType === "alert") {
+                return (
+                  <AlertMessage
+                    key={message.id}
+                    message={message}
+                    toggleChecked={toggleChecked}
+                    isChecked={message.isChecked}
+                    markAsRead={markAsRead}
+                  />
+                );
+              } else if (messageType === "DM") {
+                return (
+                  <DM
+                    key={message.id}
+                    message={message}
+                    toggleChecked={toggleChecked}
+                    isChecked={message.isChecked}
+                    markAsRead={markAsRead}
+                  />
+                );
+              }
             })
           ) : (
             <BodyMd className="no-msg">No Messages in Inbox</BodyMd>
@@ -113,4 +143,4 @@ const Messages = ({ title, className, project }) => {
   );
 };
 
-export default Messages;
+export default Inbox;

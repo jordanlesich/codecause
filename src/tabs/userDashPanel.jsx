@@ -1,14 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import styled from "styled-components";
-import { User, Mail } from "react-feather";
+import { Edit, Home } from "react-feather";
 
-import { OverlayContext } from "../contexts/overlayContext";
-import DMmodal from "../modals/DMmodal";
 import Break from "../components/break";
 import Button from "../components/button";
 import { getColor } from "../helpers/palette";
 import { HeaderMd } from "../styles/typography";
 import FeedbackAbout from "../components/feedbackAbout";
+import UserProjectList from "../components/userProjectList";
+import { useContext } from "react";
+import { OverlayContext } from "../contexts/overlayContext";
+import ComingSoon from "../modals/comingSoon";
 
 const MainMenuPanel = styled.div`
   height: 100%;
@@ -56,24 +58,21 @@ const MainMenuPanel = styled.div`
     margin-top: 4rem;
     margin-bottom: 1.6rem;
   }
-  .user-project-list {
-    list-style: none;
-    margin-top: 1.6rem;
-    margin-bottom: 3.2rem;
-    max-height: 50%;
-    overflow-y: auto;
-  }
+
   .end-btns {
     display: flex;
   }
 `;
 
-const UserViewPanel = ({ user, switchMode }) => {
+const UserDashPanel = ({ user }) => {
   const { openModalWithContent, closeModal } = useContext(OverlayContext);
 
-  const openDMmodal = () => {
+  const comingSoonEdit = () => {
     openModalWithContent(
-      <DMmodal recipient={user.displayName} closeModal={closeModal} />
+      <ComingSoon
+        body="With the next edit, the user will be able to edit their interests, contact info, and bio."
+        primaryFn={closeModal}
+      />
     );
   };
 
@@ -86,23 +85,28 @@ const UserViewPanel = ({ user, switchMode }) => {
       <div className="btn-list-section">
         <Button
           className="text-button list-button"
-          fn={switchMode}
-          value="aboutUser"
-          withIcon={<User size="2.4rem" />}
-          content={user ? `About ${user.displayName}` : "About User"}
+          withIcon={<Home size="2.4rem" />}
+          content="Dashboard"
         />
         <Button
           className="text-button list-button"
-          fn={openDMmodal}
-          value="contactUser"
-          withIcon={<Mail size="2.4rem" />}
-          content={user ? `Contact ${user.displayName}` : "Contact User"}
+          withIcon={<Edit size="2.4rem" />}
+          content="Edit Profile"
+          fn={comingSoonEdit}
         />
       </div>
       <Break type="hard" />
+      <div className="people-list-section">
+        {user && (
+          <UserProjectList
+            contributing={user.projectsContributing || []}
+            created={user.projectsCreated || []}
+          />
+        )}
+      </div>
       <FeedbackAbout />
     </MainMenuPanel>
   );
 };
 
-export default UserViewPanel;
+export default UserDashPanel;

@@ -31,7 +31,9 @@ const AboutUser = ({ user }) => {
   const { openModalWithContent, closeModal } = useContext(OverlayContext);
 
   const openDMmodal = () => {
-    openModalWithContent(<DMmodal recipient={user} closeModal={closeModal} />);
+    openModalWithContent(
+      <DMmodal recipient={user.displayName} closeModal={closeModal} />
+    );
   };
 
   return (

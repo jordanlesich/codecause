@@ -1,17 +1,6 @@
 import { db } from "../base";
 import { v4 as uuidv4 } from "uuid";
-
-// id : {
-//     id: String
-//     recipient: String,
-//     sender: String,
-//     status: String,
-//     type: String,
-//     message type is a DM ? subject: String ,
-//     message type is a DM ? body: String
-//                    IF NOT content: string,
-//     **adds Date automatically Key = "timeSent"
-//   }
+import kebabCase from "lodash.kebabcase";
 
 export const createMessage = (params) => {
   for (let key in params) {
@@ -27,16 +16,52 @@ export const createMessage = (params) => {
   return msg;
 };
 
+const markRead = (messageArr, id) => {
+  return messageArr.reduce((acc, msg) => {
+    return msg.id === id
+      ? { ...acc, [msg.id]: { ...msg, status: "read" } }
+      : { ...acc, [msg.id]: msg };
+  }, {});
+};
+export const markProjectAlert = async (projectSlug, messages, messageID) => {
+  const alertObj = markRead(messages, messageID);
+  return db
+    .collection("projects")
+    .doc(projectSlug)
+    .update({
+      alerts: alertObj,
+    })
+    .then(() => alertObj);
+};
+export const markUserAlert = async (userID, messages, messageID) => {
+  const alertObj = markRead(messages, messageID);
+  return db
+    .collection("profiles")
+    .doc(userID)
+    .collection("messages")
+    .doc("alerts")
+    .set(alertObj)
+    .then(() => alertObj);
+};
+
+export const markDM = async (userID, messages, messageID) => {
+  let dmObj = markRead(messages, messageID);
+  return db
+    .collection("profiles")
+    .doc(userID)
+    .collection("messages")
+    .doc("DMs")
+    .update(dmObj)
+    .then(() => dmObj);
+};
+//deletes CheckedObj and converts to Object
+const deleteChecked = (messageArr) => {
+  return messageArr.reduce((acc, msg) => {
+    return msg.isChecked ? acc : { ...acc, [msg.id]: msg };
+  }, {});
+};
 export const deleteProjectAlert = async (projectSlug, messages) => {
-  //setting server data from client data is dangerous.
-  //Will replace with serverless fn in future
-
-  let alertObj = {};
-  for (let msg of messages) {
-    if (!msg.isChecked) {
-      alertObj[msg.id] = msg;
-    }
-  }
+  const alertObj = deleteChecked(messages);
   return db
     .collection("projects")
     .doc(projectSlug)
@@ -45,31 +70,51 @@ export const deleteProjectAlert = async (projectSlug, messages) => {
     })
     .then(() => alertObj);
 };
-export const markAlert = async (projectSlug, messages, messageID) => {
-  let alertObj = {};
-  for (let msg of messages) {
-    if (msg.id === messageID) {
-      alertObj[msg.id] = { ...msg, status: "read" };
-    } else {
-      alertObj[msg.id] = msg;
-    }
-  }
-  console.log(alertObj);
+export const deleteUserAlert = async (userID, messages) => {
+  const alertObj = deleteChecked(messages);
   return db
-    .collection("projects")
-    .doc(projectSlug)
-    .update({
-      alerts: alertObj,
-    })
+    .collection("profiles")
+    .doc(userID)
+    .collection("messages")
+    .doc("alerts")
+    .set(alertObj)
     .then(() => alertObj);
 };
+export const deleteDM = async (userID, messages) => {
+  const dmObj = deleteChecked(messages);
+  return db
+    .collection("profiles")
+    .doc(userID)
+    .collection("messages")
+    .doc("DMs")
+    .set(dmObj)
+    .then(() => dmObj);
+};
 
-export const sendDM = async (recipient, sender, subject, body) => {
+export const getDMs = async (userSlug) => {
+  return db
+    .collection("profiles")
+    .doc(userSlug)
+    .collection("messages")
+    .doc("DMs")
+    .get()
+    .then((doc) => doc.data());
+};
+export const getUserAlerts = async (userSlug) => {
+  return db
+    .collection("profiles")
+    .doc(userSlug)
+    .collection("messages")
+    .doc("alerts")
+    .get()
+    .then((doc) => doc.data());
+};
+
+export const sendDM = async (recipientDname, sender, subject, body) => {
   const id = uuidv4();
-
   const message = createMessage({
     id,
-    recipient: recipient.displayName,
+    recipient: recipientDname,
     sender: sender.displayName,
     subject,
     body,
@@ -78,7 +123,7 @@ export const sendDM = async (recipient, sender, subject, body) => {
   });
 
   db.collection("profiles")
-    .doc(recipient.id)
+    .doc(kebabCase(recipientDname))
     .collection("messages")
     .doc("DMs")
     .update({

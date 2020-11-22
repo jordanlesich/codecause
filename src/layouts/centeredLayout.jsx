@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useAuth } from "../Hooks/useAuth";
 
 import Header from "../layouts/header";
 

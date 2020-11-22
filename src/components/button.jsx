@@ -135,7 +135,7 @@ const Button = ({
       disabled={disabled}
       className={`${className} ${withIcon && "with-icon"}`}
       selected={selected}
-      aria-label={content}
+      // aria-label={content}
     >
       {withIcon && <span className="icon-wrapper">{withIcon}</span>}
       {content}

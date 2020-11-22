@@ -1,8 +1,10 @@
 import React from "react";
+import { X } from "react-feather";
 import styled from "styled-components";
 
-import { fadeIn, fadeOut } from "../helpers/anims";
 import { getColor } from "../helpers/palette";
+import { widthQuery } from "../styles/responsive";
+import Button from "./button";
 
 const StyledSideMenu = styled.div`
   height: calc(100% - 5.6rem);
@@ -11,73 +13,26 @@ const StyledSideMenu = styled.div`
   padding-top: 1.6rem;
   top: 5.6rem;
   background-color: ${getColor("grey200")};
-
-  .in {
-    opacity: 1;
+  @media ${widthQuery.laptop} {
+    width: 28rem;
   }
-  .anim-in {
-    animation: ${fadeIn} 0.2s ease-in both;
+  @media ${widthQuery.tablet} {
+    position: relative;
+    width: 100%;
+    top: 0;
   }
-  .anim-out {
-    animation: ${fadeOut} 0.2s ease-out both;
-  }
-  .out {
-    opacity: 0;
-  }
-  .menu-break {
-    margin: 2.4rem;
-  }
-  .options-section {
-    height: 100%;
+  .top-bar {
+    height: 4rem;
+    padding: 0 2.4rem;
   }
 `;
-const SideMenu = ({ options, currentOption }) => {
-  // const switchOption = (val) => {
-  //   setSelectedOption(options.find((option) => option.value === val));
-  // };
-
-  // const handleTabChange = (option) => {
-  //   //do nothing if in the process of animation
-  //   if (fadeAnim === "anim-in" || fadeAnim === "anim-out") return;
-  //   //open first tab
-  //   if (selectedOption === null && fadeAnim === "out") {
-  //     setFadeAnim("anim-in");
-  //     switchOption(option);
-  //     setTimeout(() => {
-  //       setFadeAnim("in");
-  //     }, 200);
-  //     return;
-  //   }
-  //   //if user clicked tab that is already open, close it.
-  //   if (selectedOption.value === e.target.value && fadeAnim === "in") {
-  //     setFadeAnim("anim-out");
-  //     setTimeout(() => {
-  //       setFadeAnim("out");
-  //       setSelectedOption(null);
-  //     }, 200);
-  //     return;
-  //   }
-  //   //if user clicked a different tab than the one that is already open,
-  //   //then fade out, then into the new tab
-  //   if (selectedOption.value !== e.target.value && fadeAnim === "in") {
-  //     setFadeAnim("anim-out");
-  //     const form = e.target.value;
-  //     setTimeout(() => {
-  //       setFadeAnim("out");
-  //       switchOption(null);
-  //     }, 200);
-  //     setTimeout(() => {
-  //       setFadeAnim("anim-in");
-  //       switchOption(form);
-  //     }, 300);
-  //     setTimeout(() => {
-  //       setFadeAnim("in");
-  //     }, 500);
-  //   }
-  // };
+const SideMenu = ({ options, currentOption, closeDrawer }) => {
   return (
     <>
       <StyledSideMenu>
+        <div className="top-bar">
+          <Button className="icon-button" iconButton={<X />} fn={closeDrawer} />
+        </div>
         <div className="options-section">{options[currentOption]}</div>
       </StyledSideMenu>
     </>

@@ -118,7 +118,7 @@ const ApplicationInbox = ({ project, removeAlert, className, reFetch }) => {
   const checkForNew = () => {
     if (project?.applicationRefs?.open) {
       return Object.keys(project.applicationRefs.open).length > 0
-        ? "New!"
+        ? "Pending Application!"
         : false;
     } else {
       return false;

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link, useHistory } from "react-router-dom";
 
 import { useAuth } from "../Hooks/useAuth";
 import { TagSearchProvider } from "../contexts/tagSearchContext";
+import Button from "../components/button";
 import SideMenu from "../components/sideMenu";
 import TagSearch from "../tabs/tagSearch";
 import MainPanel from "../tabs/mainPanel";
@@ -17,13 +18,9 @@ import {
   queryProjectsByName,
 } from "../actions/project";
 import { listingInfo } from "../copy/infoText";
-import {
-  DisplayLg,
-  DisplayMd,
-  BodySm,
-  HeaderMd,
-  StyledLink,
-} from "../styles/typography";
+import { DisplayLg } from "../styles/typography";
+import { getColor } from "../helpers/palette";
+import { widthQuery } from "../styles/responsive";
 
 const ListingSpace = styled.div`
   display: flex;
@@ -37,7 +34,6 @@ const ListingSpace = styled.div`
   .listing-section {
     width: 100%;
   }
-
   .title-section {
     display: flex;
     align-items: flex-end;
@@ -55,8 +51,12 @@ const ListingSpace = styled.div`
       margin-bottom: 0.8rem;
     }
   }
+  .reset-projects {
+    color: ${getColor("blue300")};
+  }
 `;
 const parseIntoParams = (searchStr) => {
+  console.log("searchStr", searchStr);
   const parsedSearch = searchStr.match(/[^?&]+/g);
   return {
     field: parsedSearch[0],
@@ -72,6 +72,7 @@ const ProjectsPage = (props) => {
   const [projects, setProjects] = useState(null);
   const [sideMenu, setSideMenu] = useState("main");
   const { user } = useAuth();
+  const history = useHistory();
   const routerSearch = props.location.search;
   //this useEffect is used to list projects when someone chooses to search
   //projects by tag from another page. The router props passes in the query state.
@@ -123,19 +124,16 @@ const ProjectsPage = (props) => {
       setSideMenu(val);
     }
   };
-  const info = (
-    <div className="modal-body">
-      <DisplayMd className="title">{listingInfo.title}</DisplayMd>
-      <ul className="section-list">
-        {listingInfo.sections.map((section) => (
-          <li key={section.heading} className="section">
-            <HeaderMd className="section-heading">{section.heading}</HeaderMd>
-            <BodySm>{section.body}</BodySm>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  const resetProjects = async () => {
+    try {
+      history.push({
+        pathname: "/projects",
+        search: null,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const sidePanel = (
     <SideMenu
@@ -169,27 +167,30 @@ const ProjectsPage = (props) => {
 
   const renderProjects = () => {
     if (projects === null) {
-      return <h1 className="listing-title"> Loading...</h1>;
+      return;
     }
     if (projects.length === 0) {
       return (
         <>
-          <h1 className="listing-title"> No Results Found</h1>
-          <StyledLink to="projects">Back to all Projects</StyledLink>
+          <div className="title-section">
+            <DisplayLg>No Results Found</DisplayLg>
+          </div>
+          <Button
+            fn={resetProjects}
+            content="Back to all Projects"
+            className="text-button reset-button"
+          />
         </>
       );
     }
     if (projects.length) {
       return (
         <>
-          {routerSearch && (
-            <StyledLink className='back-link'to="projects">Back to all Projects</StyledLink>
-          )}
           <div className="title-section">
             <DisplayLg>
               {routerSearch ? MakeTitleText(routerSearch) : "Browse"}
             </DisplayLg>
-            <InfoButton className="info-btn" toggle content={info} />
+            <InfoButton className="info-btn" content={listingInfo} />
           </div>
           <div className="tag-chips">
             <Chip

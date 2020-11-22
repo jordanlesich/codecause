@@ -1,15 +1,26 @@
 import React from "react";
+import styled from "styled-components";
 
 import Spinner from "../components/spinner";
-import { DisplayLg, BodyMd } from "../styles/typography";
+import CenteredLayout from "../layouts/centeredLayout";
+import { BodyMd } from "../styles/typography";
 
+const SpinnerDisplay = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .loading {
+    margin-top: 3.2rem;
+  }
+`;
 const LoggingIn = () => {
   return (
-    <>
-      <DisplayLg>Logging In</DisplayLg>
-      <BodyMd>If this takes longer than 10 seconds, click HERE</BodyMd>
-      <Spinner />
-    </>
+    <CenteredLayout>
+      <SpinnerDisplay>
+        <Spinner radius="20vw" />
+        <BodyMd className="loading">Loading</BodyMd>
+      </SpinnerDisplay>
+    </CenteredLayout>
   );
 };
 
