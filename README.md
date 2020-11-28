@@ -6,7 +6,7 @@ On online collaberation platform for passion projects.
 
 ## Motivation:
 
-I wanted an online platform where I could find like-minded individuals who where there specifically to build passion projects. While Open Souce mostly does this with creating new tools and products for developers, I wanted to bring this spirit outside of the world of code. People should be able to find work (profit or non-profit) related to what they are interested in.
+I wanted an online platform where I could find like-minded individuals who are there specifically to build passion projects. While Open Souce mostly does this with creating new tools and products for developers, I wanted to bring this spirit outside of the world of code. People should be able to find work (profit or non-profit) related to what they are interested in.
 
 I couldn't find a social platform that did this well, so I began work on my own.
 
