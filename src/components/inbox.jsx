@@ -122,7 +122,7 @@ const Inbox = ({
                     markAsRead={markAsRead}
                   />
                 );
-              } else if (messageType === "DM") {
+              } else {
                 return (
                   <DM
                     key={message.id}

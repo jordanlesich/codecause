@@ -1,16 +1,16 @@
-const widths = {
-  mobileS: "350px",
-  mobileM: "378px",
-  mobileL: "768px",
-  tablet: "1021px",
-  tabletL: "1280px",
-  laptop: "1440px",
+export const widthBreakpoint = {
+  mobileS: 350,
+  mobileM: 378,
+  mobileL: 568,
+  tablet: 1021,
+  tabletL: 1280,
+  laptop: 1440,
 };
 export const widthQuery = {
-  mobileS: `(max-width: ${widths.mobileS})`,
-  mobileM: `(max-width: ${widths.mobileM})`,
-  mobileL: `(max-width: ${widths.mobileL})`,
-  tablet: `(max-width: ${widths.tablet})`,
-  tablet2: `(max-width: ${widths.tablet2})`,
-  laptop: `(max-width: ${widths.laptop})`,
+  mobileS: `(max-width: ${widthBreakpoint.mobileS}px)`,
+  mobileM: `(max-width: ${widthBreakpoint.mobileM}px)`,
+  mobileL: `(max-width: ${widthBreakpoint.mobileL}px)`,
+  tablet: `(max-width: ${widthBreakpoint.tablet}px)`,
+  tablet2: `(max-width: ${widthBreakpoint.tablet2}px)`,
+  laptop: `(max-width: ${widthBreakpoint.laptop}px)`,
 };

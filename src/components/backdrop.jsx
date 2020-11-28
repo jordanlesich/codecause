@@ -32,7 +32,7 @@ const BackDropStyle = styled.div`
   }
 `;
 
-const Backdrop = ({ handleClick, fadeIn, children }) => {
+const Backdrop = ({ handleClick, fadeIn = true, children }) => {
   return (
     <BackDropStyle fadeIn={fadeIn}>
       <button className={`backdrop-button `} onClick={handleClick} />

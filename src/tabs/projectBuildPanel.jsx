@@ -67,7 +67,7 @@ const MainMenuPanel = styled.div`
   }
 `;
 
-const ProjectVisitorPanel = ({ project, switchMode }) => {
+const ProjectBuildPanel = ({ project, switchMode }) => {
   return (
     <MainMenuPanel>
       <div className="top-list-section">
@@ -114,4 +114,4 @@ const ProjectVisitorPanel = ({ project, switchMode }) => {
   );
 };
 
-export default ProjectVisitorPanel;
+export default ProjectBuildPanel;

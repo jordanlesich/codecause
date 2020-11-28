@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import { PlusCircle, List } from "react-feather";
+import { PlusCircle, Home } from "react-feather";
 
 import { useAuth } from "../Hooks/useAuth";
 import Break from "../components/break";
@@ -79,8 +79,8 @@ const MainPanel = ({ queryByName }) => {
     queryByName(searchText);
   };
 
-  const toStepper = () => {
-    history.push("/create/0/0");
+  const goTo = (e) => {
+    history.push(e.target.value);
   };
 
   return (
@@ -96,14 +96,17 @@ const MainPanel = ({ queryByName }) => {
       <div className="top-list-section">
         <Button
           className="text-button list-button"
-          fn={toStepper}
+          fn={goTo}
+          value="/create/0/0"
           withIcon={<PlusCircle size="2.4rem" />}
           content="Create a Project"
         />
         <Button
           className="text-button list-button"
-          withIcon={<List size="2.4rem" />}
-          content="Browse Projects"
+          fn={goTo}
+          value={`/dash/${user.id}`}
+          withIcon={<Home size="2.4rem" />}
+          content="Go To Dash"
         />
       </div>
       <Break type="hard" />

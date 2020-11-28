@@ -21,6 +21,10 @@ import {
 import { StepperProvider } from "../contexts/stepperContext";
 import { instructions } from "../helpers/stepperHelper";
 
+import { useViewport } from "../Hooks/useViewport";
+import { widthBreakpoint } from "../styles/responsive";
+import StepIndicator from "../stepper/stepIndicator";
+
 const data = Object.freeze(instructions);
 
 const Create = () => {
@@ -30,6 +34,7 @@ const Create = () => {
   const [stepperState, setStepperState] = useState("brief");
   const [errorData, setErrorData] = useState({});
   const [slug, setSlug] = useState("");
+  const { width } = useViewport();
 
   if (!user) {
     return <Redirect to="/login" />;
@@ -72,7 +77,7 @@ const Create = () => {
     }
   };
 
-  const routeByValue = (e) => {
+  const goTo = (e) => {
     history.push(e.target.value);
   };
   const back = () => {
@@ -134,7 +139,7 @@ const Create = () => {
             buttonSection={
               <>
                 <Button
-                  fn={routeByValue}
+                  fn={goTo}
                   content="To Listing"
                   className="secondary"
                   value="/listing"
@@ -167,7 +172,7 @@ const Create = () => {
             topSection={
               <Button
                 className="text-button list-button"
-                fn={routeByValue}
+                fn={goTo}
                 value={`/projects`}
                 withIcon={<ArrowLeft size="2.4rem" />}
                 content="Back to Listing"
@@ -187,14 +192,11 @@ const Create = () => {
           steps={data}
           route={`/create`}
         >
-          <Layout sideMenu={sideMenu}>
+          <Layout
+            sideMenu={sideMenu}
+            indicator={width < widthBreakpoint.tablet && <StepIndicator />}
+          >
             <Stepper submit={submitStepper} route={"/create"} />
-            {/* <Button
-              fn={submitStepper}
-              content="Test Submit"
-              type="button"
-              className="primary"
-            /> */}
           </Layout>
         </StepperProvider>
       ) : (

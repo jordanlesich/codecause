@@ -6,6 +6,7 @@ import { OverlayContext } from "../contexts/overlayContext";
 import { fadeIn, fadeOut, slideUp, slideDown } from "../helpers/anims";
 import Backdrop from "../components/backdrop";
 import { useContext } from "react";
+import { widthQuery } from "../styles/responsive";
 
 const ModalBox = styled.div`
   position: fixed;
@@ -13,27 +14,37 @@ const ModalBox = styled.div`
   background-color: #ffffff;
   width: 100%;
   max-width: 72rem;
-
-  /* padding: 3.2rem; */
   z-index: 20;
   animation: ${(props) => (props.fadeIn ? fadeIn : fadeOut)} 0.2s ease-in-out
       both,
     ${(props) => (props.fadeIn ? slideUp : slideDown)} 0.2s ease-in-out both;
+  @media ${widthQuery.mobileL} {
+    top: 5.6rem;
+    height: 100%;
+  }
   .x-icon {
     position: absolute;
     top: 1.6rem;
     right: 1.6rem;
+    z-index: 21;
   }
-
   .section-heading {
     margin-bottom: 0.8rem;
+  }
+  .content-box {
+    overflow-y: auto;
+    @media ${widthQuery.mobileL} {
+      position: relative;
+      z-index: 20;
+      height: 100%;
+      padding-bottom: 5.6rem;
+    }
   }
 `;
 
 const Modal = () => {
   const { modal, modalContent, closeModal } = useContext(OverlayContext);
-  const [isFading, setIsOpening] = useState(true);
-
+  const [isOpening, setIsOpening] = useState(true);
   const handleClick = (e) => {
     setIsOpening(false);
     setTimeout(() => {
@@ -62,12 +73,14 @@ const Modal = () => {
   return (
     <>
       {modal && (
-        <Backdrop fadeIn={isFading} handleClick={handleClick}>
-          <ModalBox fadeIn={isFading}>
-            <X className="x-icon" onClick={handleClick} type="button" />
-            {modalContent}
-          </ModalBox>
-        </Backdrop>
+        <>
+          <Backdrop fadeIn={isOpening} handleClick={handleClick}>
+            <ModalBox fadeIn={isOpening}>
+              <X className="x-icon" onClick={handleClick} type="button" />
+              <div className="content-box">{modalContent}</div>
+            </ModalBox>
+          </Backdrop>
+        </>
       )}
     </>
   );

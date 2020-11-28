@@ -44,7 +44,7 @@ const StyledLabel = styled.label`
 const StyledInput = styled.input`
   display: block;
   width: 100%;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-family: inherit;
   line-height: 2.3rem;
   padding: 1rem 1.6rem;

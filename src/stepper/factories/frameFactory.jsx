@@ -58,6 +58,7 @@ const FrameFactory = ({ actions, inputLoading, location }) => {
   const { currentFrame, checkCompleted, currentInputValue } = useContext(
     StepperContext
   );
+
   const { finishStep, finishStepper, next, prev } = actions;
   const nextBtnFn = {
     message: next,
@@ -82,7 +83,6 @@ const FrameFactory = ({ actions, inputLoading, location }) => {
       );
     }
   };
-
   return (
     <FrameTemplate>
       {getFrame(currentFrame.type, nextBtnFn[currentFrame.type], location)}

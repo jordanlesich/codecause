@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import PaperBody from "./paperBody";
 import Button from "../components/button";
 import { HeaderLg } from "../styles/typography";
-import TextBox from "../components/textBox";
 import { getColor } from "../helpers/palette";
 import Break from "../components/break";
 import { useContext } from "react";

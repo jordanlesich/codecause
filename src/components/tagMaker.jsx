@@ -3,11 +3,15 @@ import styled from "styled-components";
 
 import Input from "./input";
 import { getColor } from "../helpers/palette";
+import { widthQuery } from "../styles/responsive";
 
 const StyledTagMaker = styled.form`
   position: relative;
   width: 34.8rem;
   display: inline-block;
+  @media ${widthQuery.mobileM} {
+    width: 28rem;
+  }
 
   .list-open {
     border-bottom: none;
@@ -170,9 +174,9 @@ const TagMaker = ({ disabled, tags, addTag }) => {
     <StyledTagMaker onSubmit={handleSubmit} ref={clickRef}>
       <Input
         placeholder="Create or find a tag"
-        autoFocus
         inputClassName={`dropdown-input ${listOpen && "list-open"}`}
         label="Create Tag"
+        autoFocus
         onType={handleTyping}
         value={inputValue}
         disabled={disabled}

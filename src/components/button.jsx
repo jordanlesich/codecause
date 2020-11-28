@@ -71,7 +71,9 @@ export const StyledButton = styled.button`
 
   &.text-button {
     background-color: transparent;
-    padding: 1.1rem 0;
+    padding: 0;
+    height: auto;
+    width: auto;
     color: ${getColor("font")};
     :disabled {
       color: ${getColor("grey300")};
@@ -79,7 +81,8 @@ export const StyledButton = styled.button`
     }
   }
   &.with-icon {
-    padding: 1.1rem 1.8rem;
+    padding: 0 1.8rem;
+
     .icon-wrapper {
       display: inline-block;
       margin: 0.2rem 0.5rem;
@@ -97,10 +100,9 @@ export const StyledButton = styled.button`
   &.icon-button {
     padding: 0;
     margin: 0;
-    line-height: 0;
     justify-content: center;
-    height: 24px;
-    width: 24px;
+    height: auto;
+    width: auto;
     :disabled {
       color: ${getColor("grey200")};
       cursor: default;
@@ -110,6 +112,9 @@ export const StyledButton = styled.button`
     width: 100%;
     flex-wrap: wrap;
     align-content: center;
+  }
+  .icon-button-wrapper {
+    padding: 0;
   }
 `;
 

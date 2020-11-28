@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Redirect, Link, useHistory } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 
 import { useAuth } from "../Hooks/useAuth";
 import { TagSearchProvider } from "../contexts/tagSearchContext";
@@ -20,7 +20,6 @@ import {
 import { listingInfo } from "../copy/infoText";
 import { DisplayLg } from "../styles/typography";
 import { getColor } from "../helpers/palette";
-import { widthQuery } from "../styles/responsive";
 
 const ListingSpace = styled.div`
   display: flex;

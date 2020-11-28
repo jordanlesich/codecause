@@ -1,65 +1,145 @@
-import React, { useEffect } from "react";
-
-import useToggle from "../Hooks/useToggle";
+import React, { useState, useContext, useEffect, useRef } from "react";
+import { X } from "react-feather";
 import styled from "styled-components";
 
-import { slideFromLeft, slideOutLeft } from "../helpers/anims";
+import { OverlayContext } from "../contexts/overlayContext";
+import Button from "./button";
 import { getColor } from "../helpers/palette";
+import { widthQuery } from "../styles/responsive";
+import {
+  slideFromLeft,
+  slideFromTop,
+  slideOutLeft,
+  slideOutTop,
+} from "../helpers/anims";
+import Backdrop from "./backdrop";
 
-///TODO make 4 stage anim for drawer. Build fixed drawer open button
-const SideMenu = styled.div`
-  width: ${(props) => props.width};
-  height: calc(100vh - 4rem);
+const StyledSideMenu = styled.div`
+  height: calc(100% - 5.6rem);
+  width: 32rem;
   position: fixed;
-  margin: 0;
-  grid-column: 1;
-  grid-row: 1;
-  top: 4rem;
-  left: 0%;
-  animation: ${(props) => (props.anim ? slideFromLeft : slideOutLeft)} 0.3s
-    ease-in-out both;
-  box-shadow: 5px 5px 3px -3px rgba(89, 89, 89, 0.3);
-
-  .interior {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    background-color: ${getColor("white")};
-    height: 100%;
+  padding-top: 1.6rem;
+  top: 5.6rem;
+  background-color: ${getColor("grey200")};
+  @media ${widthQuery.laptop} {
+    width: 28rem;
   }
-  .close-button {
-    height: 10%;
+  @media ${widthQuery.tablet} {
+    position: fixed;
+    top: 5.6rem;
+    left: 0;
+    /* height: 100%; */
+    transform: ${(props) =>
+      props.open ? "translate3D(0, 0, 0)" : "translate3D(-100%, 0, 0)"};
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 32rem;
+    z-index: 20;
+    &.in {
+      transform: translate3D(0, 0, 0);
+    }
+    &.anim-in {
+      animation: ${slideFromLeft} 0.2s ease-in both;
+    }
+    &.anim-out {
+      animation: ${slideOutLeft} 0.2s ease-out both;
+    }
+    &.out {
+      transform: translate3D(-100%, 0, 0);
+    }
+  }
+  @media ${widthQuery.mobileL} {
+    width: 100%;
+    top: 0;
+    transform: translate3D(0, -120%, 0);
+    &.in {
+      transform: translate3D(0, 0, 0);
+    }
+    &.anim-in {
+      animation: ${slideFromTop} 0.2s ease-in both;
+    }
+    &.anim-out {
+      animation: ${slideOutTop} 0.2s ease-out both;
+    }
+    &.out {
+      transform: translate3D(0, -100%, 0);
+    }
+  }
+  .top-bar {
+    height: 4rem;
+    padding: 0 2.4rem;
+  }
+  .main-bar {
+    height: calc(100% - 4rem);
+    overflow-y: auto;
   }
 `;
 
-const Drawer = ({ width, children, toggleDrawer }) => {
-  const [anim, toggleAnim] = useToggle(true);
-  const handleToggle = (e) => {
-    e.stopPropagation();
-    toggleAnim();
-    setTimeout(() => toggleDrawer(), 200);
-  };
+const Drawer = ({ children }) => {
+  const { drawer, closeDrawer } = useContext(OverlayContext);
+  const [anim, setAnim] = useState(drawer ? "in" : "out");
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Escape") {
-      toggleAnim();
-      setTimeout(() => toggleDrawer(), 200);
-    }
-  };
+  const isOpen = useRef(drawer);
+
   useEffect(() => {
-    window.addEventListener("keydown", handleKeyPress);
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
+    const animIn = () => {
+      setAnim("anim-in");
+      isOpen.current = true;
+      setTimeout(() => {
+        setAnim("in");
+      }, 200);
     };
-  });
+    const animOut = () => {
+      setAnim("anim-out");
+      isOpen.current = false;
+      setTimeout(() => {
+        setAnim("out");
+      }, 200);
+    };
+    if (drawer) {
+      if (!isOpen.current) {
+        animIn();
+      } else {
+        return;
+      }
+    } else {
+      if (isOpen.current) {
+        animOut();
+      } else {
+        return;
+      }
+    }
+
+    return () => {
+      clearInterval(animIn);
+      clearInterval(animOut);
+    };
+  }, [drawer]);
+
+  const handleCloseDrawer = () => {
+    closeDrawer();
+  };
 
   return (
     <>
-      <SideMenu anim={anim} width={width}>
-        {React.cloneElement(children, { handleToggle: handleToggle }, null)}
-      </SideMenu>
+      {anim !== "out" && (
+        <Backdrop
+          handleClick={handleCloseDrawer}
+          fadeIn={anim === "anim-in" || anim === "in"}
+        >
+          <StyledSideMenu className={anim} open={drawer}>
+            <div className="top-bar">
+              <Button
+                className="icon-button"
+                iconButton={<X />}
+                fn={handleCloseDrawer}
+              />
+            </div>
+            <div className="main-bar">{children}</div>
+          </StyledSideMenu>
+        </Backdrop>
+      )}
     </>
   );
 };
-
 export default Drawer;

@@ -113,7 +113,7 @@ const Votes = ({ project, variant }) => {
         <>
           <Button
             content={getVoteText(hasVoted, voteList.length)}
-            className={`text-button ${hasVoted && "has-voted"}`}
+            className={`text-button ${hasVoted && "has-voted"} with-icon`}
             fn={handleClick}
             withIcon={<ThumbsUp size="2.4rem" />}
           />
@@ -128,7 +128,7 @@ const Votes = ({ project, variant }) => {
       ) : (
         <Button
           content={getVoteText(hasVoted, voteList.length)}
-          className={`secondary ${hasVoted && "has-voted"}`}
+          className={`secondary ${hasVoted && "has-voted"} with-icon`}
           fn={handleClick}
           withIcon={<ThumbsUp size="2rem" />}
         />

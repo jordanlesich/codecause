@@ -7,6 +7,7 @@ import Votes from "../components/votes";
 import Break from "../components/break";
 import { getColor } from "../helpers/palette";
 import { useHistory } from "react-router";
+import { widthQuery } from "../styles/responsive";
 
 const StyledPaperFooter = styled.div`
   margin-top: 0.8rem;
@@ -23,6 +24,18 @@ const StyledPaperFooter = styled.div`
     }
     button:first-child {
       margin-right: 1.6rem;
+    }
+    @media ${widthQuery.mobileL} {
+      flex-wrap: wrap;
+      button:last-child {
+        margin-left: 0;
+      }
+      button {
+        margin-right: 1.6rem;
+        margin-bottom: 1.6rem;
+      }
+    }
+    @media ${widthQuery.mobileS} {
     }
   }
   .comments-root {

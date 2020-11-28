@@ -1,15 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { FolderPlus, MoreVertical, User } from "react-feather";
+import { FolderPlus } from "react-feather";
 
 import Button from "./button";
-import { OverlayContext } from "../contexts/overlayContext";
-import { BodySm, BoldText, StyledLink } from "../styles/typography";
+import { BodySm, BoldText } from "../styles/typography";
 import { getColor } from "../helpers/palette";
 import { format } from "date-fns";
-import { manageRoles } from "../copy/comingSoon";
-import ComingSoon from "../modals/comingSoon";
-import Warning from "../modals/warning";
 import { useHistory } from "react-router";
 
 const StyledProjectItem = styled.div`

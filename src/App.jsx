@@ -3,10 +3,14 @@ import React, { useState, useEffect } from "react";
 import LoggedIn from "./routes/LoggedIn";
 import LoggingIn from "./pages/loggingIn";
 import NotLoggedIn from "./routes/NotLoggedIn";
+import { ViewportProvider } from "./Hooks/useViewport";
+import { OverlayProvider } from "./contexts/overlayContext";
+
 import { useAuth } from "./Hooks/useAuth";
 
 const App = (props) => {
   const { user } = useAuth();
+
   const [loginState, setLoginState] = useState(null);
 
   useEffect(() => {
@@ -19,11 +23,13 @@ const App = (props) => {
     }
   }, [user]);
   return (
-    <>
-      {loginState === "loading" && <LoggingIn />}
-      {loginState === "notAuthed" && <NotLoggedIn />}
-      {loginState === "authed" && <LoggedIn />}
-    </>
+    <ViewportProvider>
+      <OverlayProvider>
+        {loginState === "loading" && <LoggingIn />}
+        {loginState === "notAuthed" && <NotLoggedIn />}
+        {loginState === "authed" && <LoggedIn />}
+      </OverlayProvider>
+    </ViewportProvider>
   );
 };
 

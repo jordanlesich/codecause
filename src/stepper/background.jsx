@@ -5,7 +5,7 @@ import { fadeIn, fadeOut } from "../helpers/anims";
 
 const BackgroundStyle = styled.div`
   /* TODO: Position fixed will not work on iOS, will need to think of a solution when the time comes.*/
-  position: fixed;
+  /* position: fixed; */
   top: 0;
   justify-content: center;
   align-items: center;

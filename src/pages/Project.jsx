@@ -13,7 +13,6 @@ import PaperFooter from "../layouts/paperFooter";
 import { getProject } from "../actions/project";
 import SideMenu from "../components/sideMenu";
 import ProjectVisitorPanel from "../tabs/projectVisitor";
-import { widthQuery } from "../styles/responsive";
 
 const WhitePaperLayout = styled.div`
   /* margin: 0 4rem; */

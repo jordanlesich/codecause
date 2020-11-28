@@ -19,6 +19,7 @@ const StyledStepperMap = styled.div`
   .map-box {
     padding: 1.6rem 2.4rem;
     list-style: none;
+    overflow-y: auto;
   }
   .steps-caption {
     margin-bottom: 1.6rem;

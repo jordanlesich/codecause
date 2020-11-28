@@ -65,6 +65,22 @@ export const slideOutLeft = keyframes`
     transform: translate3D(-100%, 0, 0) ;
   }
 `;
+export const slideFromTop = keyframes`
+  from{
+    transform: translate3D(0, -100%, 0); 
+  }
+  to {
+    transform: translate3D(0, 0, 0) ;
+  }
+`;
+export const slideOutTop = keyframes`
+  from{
+    transform: translate3D(0, 0, 0); 
+  }
+  to {
+    transform: translate3D(0, -100%, 0) ;
+  }
+`;
 export const scaleIn = keyframes`
   from{
     transform: scale3d(0,0,0); 

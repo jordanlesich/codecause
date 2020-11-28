@@ -98,12 +98,14 @@ const Stepper = ({ submit }) => {
   };
 
   return (
-    <FrameFactory
-      navFns={{ canMoveForward, canMoveBackward }}
-      actions={{ finishStepper, finishStep, prev, next }}
-      inputLoading={inputLoading}
-      location={`/${step}/${frame}`}
-    />
+    <>
+      <FrameFactory
+        navFns={{ canMoveForward, canMoveBackward }}
+        actions={{ finishStepper, finishStep, prev, next }}
+        inputLoading={inputLoading}
+        location={`/${step}/${frame}`}
+      />
+    </>
   );
 };
 

@@ -1,4 +1,10 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useContext,
+} from "react";
 import styled from "styled-components";
 import {
   ChevronDown,
@@ -11,32 +17,29 @@ import {
 } from "react-feather";
 
 import { useAuth } from "../Hooks/useAuth";
+import { OverlayContext } from "../contexts/overlayContext";
 import Button from "../components/button";
-import {
-  BodyXs,
-  BoldText,
-  DisplaySm,
-  HeaderMd,
-  HeaderSm,
-} from "../styles/typography";
+import { BodyXs, BoldText, DisplaySm, HeaderMd } from "../styles/typography";
 import { getColor } from "../helpers/palette";
 import { useHistory } from "react-router";
 import Break from "../components/break";
-import { widthQuery } from "../styles/responsive";
+import { widthBreakpoint, widthQuery } from "../styles/responsive";
+import { useViewport } from "../Hooks/useViewport";
 
 const NavContainer = styled.nav`
   height: 5.6rem;
   width: 100%;
+
   padding: 0 2.4rem;
   grid-row: 1;
   grid-column: 1/6;
-  position: sticky;
+  position: fixed;
   display: flex;
   align-items: center;
   top: 0;
   background-color: ${(props) =>
     props.user ? getColor("dark") : getColor("white")};
-  z-index: 10;
+  z-index: 30;
   @media ${widthQuery.tablet} {
     padding: 0 4rem;
   }
@@ -54,10 +57,6 @@ const NavContainer = styled.nav`
     .icon-button {
       margin-right: 1.6rem;
       transform: translateY(0.2rem);
-      display: none;
-      @media ${widthQuery.tablet} {
-        display: block;
-      }
     }
   }
   .nav-button {
@@ -86,7 +85,7 @@ const NavContainer = styled.nav`
     position: absolute;
     background-color: ${getColor("white")};
     top: 4.8rem;
-    right: 2.4rem;
+    right: 0;
     padding: 0.8rem;
     /* right: 2.4rem; */
     border: 1px solid ${getColor("lightBorder")};
@@ -119,8 +118,10 @@ const NavContainer = styled.nav`
   }
 `;
 
-const Header = ({ openDrawer }) => {
+const Header = ({ singlePanel = false }) => {
   const { user, signout } = useAuth();
+  const { width } = useViewport();
+  const { toggleDrawer } = useContext(OverlayContext);
   const history = useHistory();
   const [userMenu, setUserMenu] = useState(false);
   const clickRef = useRef(null);
@@ -149,11 +150,13 @@ const Header = ({ openDrawer }) => {
   return (
     <NavContainer user={user}>
       <div className="co-lab">
-        <Button
-          className="icon-button nav-button"
-          iconButton={<Menu />}
-          fn={openDrawer}
-        />
+        {width < widthBreakpoint.tablet && (
+          <Button
+            className="icon-button nav-button"
+            iconButton={<Menu />}
+            fn={toggleDrawer}
+          />
+        )}
         <Button
           content={
             <DisplaySm>

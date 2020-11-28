@@ -9,11 +9,8 @@ import { getProfile } from "../actions/profiles";
 import ContactUser from "../userModes/contactUser";
 import AboutUser from "../userModes/aboutUser";
 import UserViewPanel from "../tabs/userViewPanel";
-import { DisplayLg } from "../styles/typography";
 
-const WhitePaperLayout = styled.div`
-  /* margin: 0 4rem; */
-`;
+const WhitePaperLayout = styled.div``;
 
 const UserPage = (props) => {
   const [userData, setUserData] = useState(null);

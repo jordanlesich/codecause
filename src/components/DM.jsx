@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { formatDistanceToNow } from "date-fns";
 import { CheckSquare, Square } from "react-feather";
-import kebabCase from "lodash.kebabcase";
 
 import Break from "./break";
 import Button from "./button";
