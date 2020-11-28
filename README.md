@@ -24,8 +24,7 @@ Much still needs to be done before that point however.
 
 Becuase of the massive package size of Firebase, I tried to keep the packages as minimalistic as possible.
 
-- Create React App (Hooks),
-- Context,
+- Create React App (Hooks, Context),
 - Styled Components,
 - React Router,
 - Firebase Auth,
