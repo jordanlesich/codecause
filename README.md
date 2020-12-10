@@ -4,9 +4,10 @@ On online collaberation platform for passion projects.
 
 **Temporary Link**: https://codecause-3c5af.web.app/projects
 
+<img src="readme-assets/projectPage.png" width="610px"/>
 ## Motivation:
 
-I wanted an online platform where I could find like-minded individuals who where there specifically to build passion projects. While Open Souce mostly does this with creating new tools and products for developers, I wanted to bring this spirit outside of the world of code. People should be able to find work (profit or non-profit) related to what they are interested in.
+I wanted an online platform where I could find like-minded individuals who were there specifically to build passion projects. While Open Souce mostly does this with creating new tools and products for developers, I wanted to bring this spirit outside of the world of code. People should be able to find work (profit or non-profit) related to what they are interested in.
 
 I couldn't find a social platform that did this well, so I began work on my own.
 
@@ -25,7 +26,7 @@ Much still needs to be done before that point however.
 Becuase of the massive package size of Firebase, I tried to keep the packages as minimalistic as possible.
 
 - Create React App (Hooks),
-- Context,
+- Context
 - Styled Components,
 - React Router,
 - Firebase Auth,
@@ -34,10 +35,9 @@ Becuase of the massive package size of Firebase, I tried to keep the packages as
 
 ## Features:
 
-- The user can sign up and login using the simple Firebase Auth system
-- The site has autologin for users who have valid accounts
-
 ### Browsing
+
+<img src="readme-assets/TagSearch.png" width="610px"/>
 
 - They can browse a listing of projects, each with a link to a project page,
 - They can search for projects using categorized tags
@@ -48,6 +48,8 @@ Becuase of the massive package size of Firebase, I tried to keep the packages as
 - There is also a string search, but it really sucks. I'm waiting to refactor to Firebase Serverless FN's to overhall the string search system.
 
 ### Interacting with other users
+
+<img src="projectPage.png" width="610px"/>
 
 - Any user can leave comments on any project.
 - Any user can send direct messages to another user
@@ -60,6 +62,9 @@ Becuase of the massive package size of Firebase, I tried to keep the packages as
 
 ### Creating a Project
 
+<img src="readme-assets/MobileStepper.png" />
+<img src="readme-assets/MobileStepperNav.png" />
+
 - Any user can create a project using a multi-step form that asks essential questions about their project idea.
 - The data collected from that form populates a rough whitepaper for their project page.
 - Items on that whitepaper can be rearranged, deleted, created, edited. Tags, and titles cannot (yet).
@@ -68,6 +73,8 @@ Becuase of the massive package size of Firebase, I tried to keep the packages as
 - All projects come with a 'Members Only' Project Dashboard
 
 ### Contributing to Projects
+
+<img src="readme-assets/Apply.png"width="610px"/>
 
 - If another user wants to join a project, they can click 'apply'. The app directs the user to a multistep form application process. The questions are boilerplate at the moment. In the future, the project creator will be able to customize their application questions.
 - The application gets sent to the project creator, who recieves an alert in their project Dashboard.
