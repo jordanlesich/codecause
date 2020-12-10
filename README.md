@@ -4,7 +4,7 @@ On online collaberation platform for passion projects.
 
 **Temporary Link**: https://codecause-3c5af.web.app/projects
 
-<img src="readme-assets/projectPage.png" width="610px"/>
+<img src="readme-assets/projectPage.png" />
 
 ## Motivation:
 
@@ -37,7 +37,7 @@ Becuase of the massive package size of Firebase, I tried to keep the packages as
 
 ### Browsing
 
-<img src="readme-assets/TagSearch.png" width="610px"/>
+<img src="readme-assets/TagSearch.png" />
 
 - They can browse a listing of projects, each with a link to a project page,
 - They can search for projects using categorized tags
@@ -49,7 +49,7 @@ Becuase of the massive package size of Firebase, I tried to keep the packages as
 
 ### Interacting with other users
 
-<img src="readme-assets/projectPage.png" width="610px"/>
+<img src="readme-assets/projectPage.png" />
 
 - Any user can leave comments on any project.
 - Any user can send direct messages to another user
@@ -74,7 +74,7 @@ Becuase of the massive package size of Firebase, I tried to keep the packages as
 
 ### Contributing to Projects
 
-<img src="readme-assets/Apply.png"width="610px"/>
+<img src="readme-assets/Apply.png" />
 
 - If another user wants to join a project, they can click 'apply'. The app directs the user to a multistep form application process. The questions are boilerplate at the moment. In the future, the project creator will be able to customize their application questions.
 - The application gets sent to the project creator, who recieves an alert in their project Dashboard.
