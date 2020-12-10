@@ -5,13 +5,10 @@ On online collaberation platform for passion projects.
 **Temporary Link**: https://codecause-3c5af.web.app/projects
 
 <img src="readme-assets/projectPage.png" width="610px"/>
+
 ## Motivation:
 
-<<<<<<< HEAD
-I wanted an online platform where I could find like-minded individuals who were there specifically to build passion projects. While Open Souce mostly does this with creating new tools and products for developers, I wanted to bring this spirit outside of the world of code. People should be able to find work (profit or non-profit) related to what they are interested in.
-=======
 I wanted an online platform where I could find like-minded individuals who are there specifically to build passion projects. While Open Souce mostly does this with creating new tools and products for developers, I wanted to bring this spirit outside of the world of code. People should be able to find work (profit or non-profit) related to what they are interested in.
->>>>>>> fe59c3a196b470ec90cff01cf83a99fa758ab958
 
 I couldn't find a social platform that did this well, so I began work on my own.
 
@@ -29,12 +26,7 @@ Much still needs to be done before that point however.
 
 Becuase of the massive package size of Firebase, I tried to keep the packages as minimalistic as possible.
 
-<<<<<<< HEAD
-- Create React App (Hooks),
-- Context
-=======
 - Create React App (Hooks, Context),
->>>>>>> fe59c3a196b470ec90cff01cf83a99fa758ab958
 - Styled Components,
 - React Router,
 - Firebase Auth,
@@ -57,7 +49,7 @@ Becuase of the massive package size of Firebase, I tried to keep the packages as
 
 ### Interacting with other users
 
-<img src="projectPage.png" width="610px"/>
+<img src="readme-assets/projectPage.png" width="610px"/>
 
 - Any user can leave comments on any project.
 - Any user can send direct messages to another user
